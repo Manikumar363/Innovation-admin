@@ -109,6 +109,7 @@ import {
   initialCmsAttractiveData,
   initialCmsMedicsInnovatorData
 } from '../services/cmsService';
+import { API_BASE } from '../config/api';
 
 interface CmsHomePageProps {
   role?: string;
@@ -9720,7 +9721,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                     formData.append('folder', 'company-profile');
                                     try {
                                       toast.loading('Uploading PDF...', { id: 'pdf-upload' });
-                                      const res = await fetch('http://localhost:5000/api/upload/public', {
+                                      const res = await fetch(`${API_BASE}/api/upload/public`, {
                                         method: 'POST',
                                         body: formData,
                                       });

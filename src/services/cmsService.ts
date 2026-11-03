@@ -1,3 +1,5 @@
+import { API_BASE } from '../config/api';
+
 export interface BilingualText {
   en: string;
   ar: string;
@@ -3444,7 +3446,6 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
 
 const CACHE_KEY = 'cms_home_data';
 const TABS_CACHE_KEY = 'cms_all_tabs_data';
-const API_BASE = 'http://localhost:5000';
 
 const ABOUT_CACHE_KEY = 'cms_about_data';
 const COMPANY_CACHE_KEY = 'cms_company_data';

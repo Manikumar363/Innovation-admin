@@ -4,6 +4,8 @@
  * structured for Mobtaker Group Admin seamless API integration.
  */
 
+import { API_BASE } from '../config/api';
+
 export interface StoredUser {
   id?: string;
   _id?: string;
@@ -320,7 +322,7 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
   };
 
   // Try real API endpoint first if configured
-  const apiBase = (typeof window !== 'undefined' && (window as any)?.__API_BASE__) || 'http://localhost:5000';
+  const apiBase = (typeof window !== 'undefined' && (window as any)?.__API_BASE__) || API_BASE;
   
   if (endpoint.startsWith('/api/order/assign-delivery-partner') && options?.body) {
     try {

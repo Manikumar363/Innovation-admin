@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000';
+import { API_BASE } from '../config/api';
 
 export interface UploadResponse {
   success: boolean;
