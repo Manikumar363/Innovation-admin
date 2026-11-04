@@ -29,23 +29,13 @@ import {
   History,
   Target,
   Compass,
-  Handshake,
-  Headphones,
-  Scale,
-  Lightbulb,
-  ShieldCheck,
-  Heart,
   HeartHandshake,
-  Users,
   Save,
   Download,
   FileText,
   Upload,
   ArrowUpRight,
-  Microscope,
-  FlaskConical,
   Stethoscope,
-  Code2,
   Phone
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
@@ -53,6 +43,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { toast } from 'react-toastify';
 import { ImageUploadField } from '../components/ui/ImageUploadField';
+import {
+  LucideIconSelect,
+  LucideIcon,
+  CORE_VALUES_ICONS,
+  HISTORY_ICONS,
+  PURPOSE_ICONS,
+  OBJECTIVES_ICONS,
+  COMPANY_CARD_ICONS,
+  SERVICES_SOLUTION_ICONS,
+  BUSINESS_AREA_ICONS,
+  PROJECTS_INNOVATOR_AREA_ICONS,
+  ALL_LUCIDE_ICONS,
+} from '../components/ui/LucideIconSelect';
 import {
   cmsService,
   initialCmsHomeData,
@@ -405,28 +408,9 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     },
   });
 
-  // Helper to render icon component dynamically
+  // Helper to render icon component dynamically via Lucide library
   const renderCustomIcon = (iconName: string, className = "w-5 h-5") => {
-    switch (iconName) {
-      case 'Eye': return <Eye className={className} />;
-      case 'Microscope': return <Microscope className={className} />;
-      case 'FlaskConical': return <FlaskConical className={className} />;
-      case 'Stethoscope': return <Stethoscope className={className} />;
-      case 'Code2': return <Code2 className={className} />;
-      case 'Handshake': return <Handshake className={className} />;
-      case 'Headphones': return <Headphones className={className} />;
-      case 'Users': return <Users className={className} />;
-      case 'Scale': return <Scale className={className} />;
-      case 'Lightbulb': return <Lightbulb className={className} />;
-      case 'ShieldCheck': return <ShieldCheck className={className} />;
-      case 'History': return <History className={className} />;
-      case 'Building2': return <Building2 className={className} />;
-      case 'Target': return <Target className={className} />;
-      case 'Heart': return <Heart className={className} />;
-      case 'HandHeart':
-      case 'HeartHandshake': return <HeartHandshake className={className} />;
-      default: return <Sparkles className={className} />;
-    }
+    return <LucideIcon name={iconName} className={className} />;
   };
 
   const ensureHomeDefaults = (res: CmsHomeData): CmsHomeData => ({
@@ -7985,23 +7969,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                 />
                               </div>
 
-                              {/* Icon Dropdown */}
+                              {/* Lucide Icon Dropdown */}
                               <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Icon</label>
-                                <select
+                                <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                                <LucideIconSelect
                                   value={val.icon}
-                                  onChange={(e) => handleCoreValueChange(vIdx, 'icon', e.target.value)}
-                                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                                >
-                                  <option value="Handshake">Handshake (🤝)</option>
-                                  <option value="Headphones">Headphones (🎧)</option>
-                                  <option value="Users">Users / Counsel (👥)</option>
-                                  <option value="Scale">Scale / Diversity (⚖️)</option>
-                                  <option value="Lightbulb">Lightbulb (💡)</option>
-                                  <option value="ShieldCheck">ShieldCheck (🛡️)</option>
-                                  <option value="Heart">Heart (❤️)</option>
-                                  <option value="HeartHandshake">HeartHandshake (🤝)</option>
-                                </select>
+                                  onChange={(newIcon) => handleCoreValueChange(vIdx, 'icon', newIcon)}
+                                  options={CORE_VALUES_ICONS}
+                                />
                               </div>
                             </div>
 
@@ -8256,19 +8231,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                 />
                               </div>
 
-                              {/* Icon Dropdown */}
+                              {/* Lucide Icon Dropdown */}
                               <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Icon</label>
-                                <select
+                                <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                                <LucideIconSelect
                                   value={item.icon}
-                                  onChange={(e) => handleHistoryItemChange(hIdx, 'icon', e.target.value)}
-                                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                                >
-                                  <option value="History">History (🕒)</option>
-                                  <option value="Building2">Building / Corporate (🏢)</option>
-                                  <option value="ShieldCheck">Shield / Governance (🛡️)</option>
-                                  <option value="Users">Users / Partnership (👥)</option>
-                                </select>
+                                  onChange={(newIcon) => handleHistoryItemChange(hIdx, 'icon', newIcon)}
+                                  options={HISTORY_ICONS}
+                                />
                               </div>
                             </div>
 
@@ -8536,25 +8506,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
 
                         <div>
-                          <label className="text-[11px] text-white/60 block mb-1">Icon</label>
-                          <select
+                          <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                          <LucideIconSelect
                             value={aboutData.purposeSection.highlightIcon}
-                            onChange={(e) =>
+                            onChange={(newIcon) =>
                               setAboutData({
                                 ...aboutData,
                                 purposeSection: {
                                   ...aboutData.purposeSection,
-                                  highlightIcon: e.target.value,
+                                  highlightIcon: newIcon,
                                 },
                               })
                             }
-                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                          >
-                            <option value="HeartHandshake">HeartHandshake (🤝)</option>
-                            <option value="Handshake">Handshake (🤝)</option>
-                            <option value="Target">Target (🎯)</option>
-                            <option value="ShieldCheck">ShieldCheck (🛡️)</option>
-                          </select>
+                            options={PURPOSE_ICONS}
+                          />
                         </div>
                       </div>
 
@@ -8625,19 +8590,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               />
                             </div>
 
-                            <div className="w-36">
-                              <label className="text-[10px] text-white/50 block mb-0.5">Icon</label>
-                              <select
+                            <div className="w-48">
+                              <label className="text-[10px] text-white/50 block mb-0.5">Lucide Icon</label>
+                              <LucideIconSelect
                                 value={obj.icon}
-                                onChange={(e) => handleObjectiveChange(oIdx, 'icon', e.target.value)}
-                                className="w-full px-2 py-1.5 text-xs rounded bg-black/40 border border-white/10 text-white focus:outline-none"
-                              >
-                                <option value="Target">Target (🎯)</option>
-                                <option value="HeartHandshake">HeartHandshake (🤝)</option>
-                                <option value="CheckCircle">CheckCircle (✅)</option>
-                                <option value="ShieldCheck">ShieldCheck (🛡️)</option>
-                                <option value="Sparkles">Sparkles (✨)</option>
-                              </select>
+                                onChange={(newIcon) => handleObjectiveChange(oIdx, 'icon', newIcon)}
+                                options={OBJECTIVES_ICONS}
+                              />
                             </div>
 
                             <div className="flex-1 w-full">
@@ -9309,22 +9268,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               </button>
                             </div>
 
-                            {/* Icon Dropdown */}
+                            {/* Lucide Icon Dropdown */}
                             <div>
-                              <label className="text-[11px] text-white/60 block mb-1">Card Icon</label>
-                              <select
+                              <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                              <LucideIconSelect
                                 value={card.icon}
-                                onChange={(e) => handleCompanyCardChange(cIdx, 'icon', e.target.value)}
-                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                              >
-                                <option value="Building2">Building / Corporate (🏢)</option>
-                                <option value="Eye">Eye / Vision (👁️)</option>
-                                <option value="Target">Target / Mission (🎯)</option>
-                                <option value="ShieldCheck">Shield / Values (🛡️)</option>
-                                <option value="Sparkles">Sparkles / Innovation (✨)</option>
-                                <option value="Lightbulb">Lightbulb / Idea (💡)</option>
-                                <option value="Handshake">Handshake / Partnership (🤝)</option>
-                              </select>
+                                onChange={(newIcon) => handleCompanyCardChange(cIdx, 'icon', newIcon)}
+                                options={COMPANY_CARD_ICONS}
+                              />
                             </div>
 
                             {/* Title */}
@@ -9965,22 +9916,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               </button>
                             </div>
 
-                            {/* Icon Dropdown */}
+                            {/* Lucide Icon Dropdown */}
                             <div>
-                              <label className="text-[11px] text-white/60 block mb-1">Card Icon</label>
-                              <select
+                              <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                              <LucideIconSelect
                                 value={card.icon}
-                                onChange={(e) => handleServiceCardChange(cIdx, 'icon', e.target.value)}
-                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                              >
-                                <option value="Microscope">Microscope / Medical Equipment (🔬)</option>
-                                <option value="Code2">Code2 / Advanced Tech (💻)</option>
-                                <option value="ShieldCheck">ShieldCheck / Standards & Safety (🛡️)</option>
-                                <option value="Handshake">Handshake / Partnerships (🤝)</option>
-                                <option value="FlaskConical">Flask / Laboratory (🧪)</option>
-                                <option value="Stethoscope">Stethoscope / Healthcare (🩺)</option>
-                                <option value="Sparkles">Sparkles / Innovation (✨)</option>
-                              </select>
+                                onChange={(newIcon) => handleServiceCardChange(cIdx, 'icon', newIcon)}
+                                options={SERVICES_SOLUTION_ICONS}
+                              />
                             </div>
 
                             {/* Title */}
@@ -10179,21 +10122,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               </button>
                             </div>
 
-                            {/* Icon Dropdown */}
+                            {/* Lucide Icon Dropdown */}
                             <div>
-                              <label className="text-[11px] text-white/60 block mb-1">Card Icon</label>
-                              <select
+                              <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                              <LucideIconSelect
                                 value={card.icon}
-                                onChange={(e) => handleBusinessAreaCardChange(aIdx, 'icon', e.target.value)}
-                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                              >
-                                <option value="Microscope">Microscope / Equipment (🔬)</option>
-                                <option value="FlaskConical">Flask / Laboratory Supplies (🧪)</option>
-                                <option value="Stethoscope">Stethoscope / Healthcare Solutions (🩺)</option>
-                                <option value="ShieldCheck">ShieldCheck / Quality & Safety (🛡️)</option>
-                                <option value="Building2">Building / Corporate (🏢)</option>
-                                <option value="Sparkles">Sparkles / Innovation (✨)</option>
-                              </select>
+                                onChange={(newIcon) => handleBusinessAreaCardChange(aIdx, 'icon', newIcon)}
+                                options={BUSINESS_AREA_ICONS}
+                              />
                             </div>
 
                             {/* Title */}
@@ -12885,7 +12821,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           >
                             <div className="flex items-center justify-between pb-2 border-b border-white/10">
                               <div className="flex items-center gap-2">
-                                <Shield className="w-4 h-4 text-red-500" />
+                                <LucideIcon name={factor.icon || 'Shield'} className="w-4 h-4 text-red-500" />
                                 <span className="text-xs text-white/60 font-semibold">Factor #{idx + 1}</span>
                               </div>
                               <button
@@ -12896,6 +12832,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
+                            </div>
+
+                            {/* Lucide Icon Selector */}
+                            <div>
+                              <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                              <LucideIconSelect
+                                value={factor.icon || 'Shield'}
+                                onChange={(newIcon) => handleInvestmentFactorChange(idx, 'icon', newIcon)}
+                                options={ALL_LUCIDE_ICONS}
+                              />
                             </div>
 
                             {activeLangTab === 'en' ? (
@@ -13747,17 +13693,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] text-white/60 mb-1">{activeLangTab === 'ar' ? 'نوع الأيقونة' : 'Icon Style'}</label>
-                  <select
+                  <label className="block text-[11px] text-white/60 mb-1">{activeLangTab === 'ar' ? 'نوع أيقونة Lucide' : 'Lucide Icon Style'}</label>
+                  <LucideIconSelect
                     value={area.icon}
-                    onChange={(e) => handlePIBusinessAreaItemChange(idx, 'icon', e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                  >
-                    <option value="microscope" className="bg-[#14112E]">Microscope / Medical Equipment</option>
-                    <option value="flask" className="bg-[#14112E]">Flask / Laboratory Supplies</option>
-                    <option value="heart" className="bg-[#14112E]">Heart / Healthcare Solutions</option>
-                    <option value="stethoscope" className="bg-[#14112E]">Stethoscope / Clinical Services</option>
-                  </select>
+                    onChange={(newIcon) => handlePIBusinessAreaItemChange(idx, 'icon', newIcon)}
+                    options={PROJECTS_INNOVATOR_AREA_ICONS}
+                  />
                 </div>
 
                 <div>
@@ -17276,13 +17217,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
-                  {area.icon === 'flask' ? (
-                    <FlaskConical className="w-5 h-5" />
-                  ) : area.icon === 'heart' ? (
-                    <Heart className="w-5 h-5" />
-                  ) : (
-                    <Microscope className="w-5 h-5" />
-                  )}
+                  <LucideIcon name={area.icon} className="w-5 h-5" />
                 </div>
 
                 <a
