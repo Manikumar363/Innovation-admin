@@ -13135,7 +13135,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             )}
 
             {/* IF EDITING PROJECTS INNOVATOR PAGE (SECTIONS 1 TO 5) */}
-            // Editor UI snippet for Projects Innovator
 {editingTabId === 'projects-innovator' && (
   <div className="space-y-8">
     {/* SECTION 1: HERO BANNER (IMAGE 1) */}
@@ -13169,188 +13168,185 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           </div>
 
           <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Logo Text (English)
-              </label>
-              <input
-                type="text"
-                value={projectsInnovatorData.heroBannerSection.logoText.en}
-                onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
-                placeholder="PROJECTS INNOVATOR"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) نص الشعار
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.heroBannerSection.logoText.ar}
-                onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
-                placeholder="شركة مبتكر المشاريع"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-              />
-            </div>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.heroBannerSection.logoText.en}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
+                  placeholder="PROJECTS INNOVATOR"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.heroBannerSection.logoText.ar}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
+                  placeholder="شركة مبتكر المشاريع"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Title & Highlight */}
+        {/* Title & Highlight & Description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Main Title Prefix (English)
-              </label>
-              <input
-                type="text"
-                value={projectsInnovatorData.heroBannerSection.title.en}
-                onChange={(e) => handlePIHeroBannerBilingualChange('title', 'en', e.target.value)}
-                placeholder="Building Tomorrow"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-red-400 mb-1">
-                Title Highlight (Red Colored) (English)
-              </label>
-              <input
-                type="text"
-                value={projectsInnovatorData.heroBannerSection.titleHighlight.en}
-                onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
-                placeholder="Through Innovation"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) بداية العنوان الرئيسي
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.heroBannerSection.title.ar}
-                onChange={(e) => handlePIHeroBannerBilingualChange('title', 'ar', e.target.value)}
-                placeholder="بناء الغد"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-red-400 mb-1 text-right">
-                (العربية) الجزء المميز باللون الأحمر
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.heroBannerSection.titleHighlight.ar}
-                onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
-                placeholder="من خلال الابتكار"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500 text-right"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Description (English)
-            </label>
-            <textarea
-              rows={3}
-              value={projectsInnovatorData.heroBannerSection.description.en}
-              onChange={(e) => handlePIHeroBannerBilingualChange('description', 'en', e.target.value)}
-              placeholder="Delivering innovative construction and infrastructure solutions..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف
-            </label>
-            <textarea
-              rows={3}
-              dir="rtl"
-              value={projectsInnovatorData.heroBannerSection.description.ar}
-              onChange={(e) => handlePIHeroBannerBilingualChange('description', 'ar', e.target.value)}
-              placeholder="تقديم حلول مبتكرة في البناء والبنية التحتية لتشكيل المساحات الحديثة..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Main Title Prefix</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.heroBannerSection.title.en}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Building Tomorrow"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400">🇬🇧 Title Highlight (Red Colored)</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.heroBannerSection.titleHighlight.en}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
+                  placeholder="Through Innovation"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                <textarea
+                  rows={3}
+                  value={projectsInnovatorData.heroBannerSection.description.en}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Delivering innovative construction and infrastructure solutions..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 بداية العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.heroBannerSection.title.ar}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="بناء الغد"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الجزء المميز باللون الأحمر بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.heroBannerSection.titleHighlight.ar}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
+                  placeholder="من خلال الابتكار"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500 text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  value={projectsInnovatorData.heroBannerSection.description.ar}
+                  onChange={(e) => handlePIHeroBannerBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="تقديم حلول مبتكرة في البناء والبنية التحتية لتشكيل المساحات الحديثة..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Buttons & Background Image */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-red-400">Primary Button (Explore Services)</h4>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Text (EN / AR)</label>
-              <div className="grid grid-cols-2 gap-2">
+            <h4 className="text-xs font-bold text-red-400">
+              {activeLangTab === 'ar' ? 'الزر الرئيسي (استكشف خدماتنا)' : 'Primary Button (Explore Services)'}
+            </h4>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Label</label>
                 <input
                   type="text"
                   value={projectsInnovatorData.heroBannerSection.primaryButtonText.en}
                   onChange={(e) => handlePIHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
                   placeholder="Explore Our Services"
-                  className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={projectsInnovatorData.heroBannerSection.primaryButtonText.ar}
                   onChange={(e) => handlePIHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
                   placeholder="استكشف خدماتنا"
-                  className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">URL Link</label>
+            )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر (URL)' : 'Button URL'}</label>
               <input
                 type="text"
                 value={projectsInnovatorData.heroBannerSection.primaryButtonUrl}
                 onChange={(e) => handlePIHeroBannerChange('primaryButtonUrl', e.target.value)}
                 placeholder="/services"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
               />
             </div>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white/80">Secondary Button (Contact Us)</h4>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Text (EN / AR)</label>
-              <div className="grid grid-cols-2 gap-2">
+            <h4 className="text-xs font-bold text-white/80">
+              {activeLangTab === 'ar' ? 'الزر الثانوي (اتصل بنا)' : 'Secondary Button (Contact Us)'}
+            </h4>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Label</label>
                 <input
                   type="text"
                   value={projectsInnovatorData.heroBannerSection.secondaryButtonText.en}
                   onChange={(e) => handlePIHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
                   placeholder="Contact Us"
-                  className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={projectsInnovatorData.heroBannerSection.secondaryButtonText.ar}
                   onChange={(e) => handlePIHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
                   placeholder="اتصل بنا"
-                  className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">URL Link</label>
+            )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر (URL)' : 'Button URL'}</label>
               <input
                 type="text"
                 value={projectsInnovatorData.heroBannerSection.secondaryButtonUrl}
                 onChange={(e) => handlePIHeroBannerChange('secondaryButtonUrl', e.target.value)}
                 placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
               />
             </div>
           </div>
@@ -13399,31 +13395,30 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Section Title / Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={projectsInnovatorData.brandsSection.title.en}
-              onChange={(e) => handlePIBrandsTitleChange('en', e.target.value)}
-              placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) عنوان القسم / الشعار
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={projectsInnovatorData.brandsSection.title.ar}
-              onChange={(e) => handlePIBrandsTitleChange('ar', e.target.value)}
-              placeholder="العلامات التجارية الموثوقة وقادة الصناعة"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title / Tagline</label>
+              <input
+                type="text"
+                value={projectsInnovatorData.brandsSection.title.en}
+                onChange={(e) => handlePIBrandsTitleChange('en', e.target.value)}
+                placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+              />
+            </div>
+          ) : (
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم / الشعار بالعربية</label>
+              <input
+                type="text"
+                dir="rtl"
+                value={projectsInnovatorData.brandsSection.title.ar}
+                onChange={(e) => handlePIBrandsTitleChange('ar', e.target.value)}
+                placeholder="العلامات التجارية الموثوقة وقادة الصناعة"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+              />
+            </div>
+          )}
         </div>
 
         {/* Brands List */}
@@ -13489,91 +13484,77 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         </div>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
-        {/* Tagline */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-red-400 mb-1">
-              Section Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={projectsInnovatorData.aboutSection.tagline.en}
-              onChange={(e) => handlePIAboutBilingualChange('tagline', 'en', e.target.value)}
-              placeholder="ABOUT PROJECTS INNOVATOR"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-red-400 mb-1 text-right">
-              (العربية) شريط العنوان الفرعي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={projectsInnovatorData.aboutSection.tagline.ar}
-              onChange={(e) => handlePIAboutBilingualChange('tagline', 'ar', e.target.value)}
-              placeholder="عن مبتكر المشاريع"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-            />
-          </div>
-        </div>
-
-        {/* Title */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Headline Title (English)
-            </label>
-            <input
-              type="text"
-              value={projectsInnovatorData.aboutSection.title.en}
-              onChange={(e) => handlePIAboutBilingualChange('title', 'en', e.target.value)}
-              placeholder="More Than a Company, A Platform for Sustainable Growth."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) العنوان الرئيسي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={projectsInnovatorData.aboutSection.title.ar}
-              onChange={(e) => handlePIAboutBilingualChange('title', 'ar', e.target.value)}
-              placeholder="أكثر من مجرد شركة، منصة للنمو المستدام."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-            />
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Description (English)
-            </label>
-            <textarea
-              rows={4}
-              value={projectsInnovatorData.aboutSection.description.en}
-              onChange={(e) => handlePIAboutBilingualChange('description', 'en', e.target.value)}
-              placeholder="Projects Innovator is the parent and holding entity of Mobtaker Group..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف
-            </label>
-            <textarea
-              rows={4}
-              dir="rtl"
-              value={projectsInnovatorData.aboutSection.description.ar}
-              onChange={(e) => handlePIAboutBilingualChange('description', 'ar', e.target.value)}
-              placeholder="تعتبر مبتكر المشاريع الكيان القابض والأم لمجموعة مبتكر..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400">🇬🇧 Section Tagline</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.aboutSection.tagline.en}
+                  onChange={(e) => handlePIAboutBilingualChange('tagline', 'en', e.target.value)}
+                  placeholder="ABOUT PROJECTS INNOVATOR"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline Title</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.aboutSection.title.en}
+                  onChange={(e) => handlePIAboutBilingualChange('title', 'en', e.target.value)}
+                  placeholder="More Than a Company, A Platform for Sustainable Growth."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Narrative Description</label>
+                <textarea
+                  rows={4}
+                  value={projectsInnovatorData.aboutSection.description.en}
+                  onChange={(e) => handlePIAboutBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Projects Innovator is the parent and holding entity of Mobtaker Group..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 شريط العنوان الفرعي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.aboutSection.tagline.ar}
+                  onChange={(e) => handlePIAboutBilingualChange('tagline', 'ar', e.target.value)}
+                  placeholder="عن مبتكر المشاريع"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.aboutSection.title.ar}
+                  onChange={(e) => handlePIAboutBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="أكثر من مجرد شركة، منصة للنمو المستدام."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
+                <textarea
+                  rows={4}
+                  dir="rtl"
+                  value={projectsInnovatorData.aboutSection.description.ar}
+                  onChange={(e) => handlePIAboutBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="تعتبر مبتكر المشاريع الكيان القابض والأم لمجموعة مبتكر..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Headquarters Building Image */}
@@ -13621,61 +13602,55 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <CardContent className="p-6 space-y-6">
         {/* Header Title & Subtitle */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Section Title (English)
-              </label>
-              <input
-                type="text"
-                value={projectsInnovatorData.businessAreasSection.title.en}
-                onChange={(e) => handlePIBusinessAreasHeaderChange('title', 'en', e.target.value)}
-                placeholder="Our Business Areas"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Description (English)
-              </label>
-              <input
-                type="text"
-                value={projectsInnovatorData.businessAreasSection.description.en}
-                onChange={(e) => handlePIBusinessAreasHeaderChange('description', 'en', e.target.value)}
-                placeholder="Explore the sectors and services that form the Projects Innovator group."
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) عنوان القسم
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.businessAreasSection.title.ar}
-                onChange={(e) => handlePIBusinessAreasHeaderChange('title', 'ar', e.target.value)}
-                placeholder="مجالات أعمالنا"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) الوصف
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.businessAreasSection.description.ar}
-                onChange={(e) => handlePIBusinessAreasHeaderChange('description', 'ar', e.target.value)}
-                placeholder="استكشف القطاعات والخدمات التي تشكل مجموعة مبتكر المشاريع."
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.businessAreasSection.title.en}
+                  onChange={(e) => handlePIBusinessAreasHeaderChange('title', 'en', e.target.value)}
+                  placeholder="Our Business Areas"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.businessAreasSection.description.en}
+                  onChange={(e) => handlePIBusinessAreasHeaderChange('description', 'en', e.target.value)}
+                  placeholder="Explore the sectors and services that form the Projects Innovator group."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.businessAreasSection.title.ar}
+                  onChange={(e) => handlePIBusinessAreasHeaderChange('title', 'ar', e.target.value)}
+                  placeholder="مجالات أعمالنا"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.businessAreasSection.description.ar}
+                  onChange={(e) => handlePIBusinessAreasHeaderChange('description', 'ar', e.target.value)}
+                  placeholder="استكشف القطاعات والخدمات التي تشكل مجموعة مبتكر المشاريع."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Business Areas Cards List */}
@@ -13691,7 +13666,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     {idx + 1}
                   </div>
                   <span className="text-sm font-bold text-white">
-                    {area.title.en || `Business Area #${idx + 1}`}
+                    {activeLangTab === 'ar' ? (area.title.ar || `مجال أعمال #${idx + 1}`) : (area.title.en || `Business Area #${idx + 1}`)}
                   </span>
                 </div>
 
@@ -13705,13 +13680,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] text-white/60 mb-1">Icon Style</label>
+                  <label className="block text-[11px] text-white/60 mb-1">{activeLangTab === 'ar' ? 'نوع الأيقونة' : 'Icon Style'}</label>
                   <select
                     value={area.icon}
                     onChange={(e) => handlePIBusinessAreaItemChange(idx, 'icon', e.target.value)}
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                    className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
                   >
                     <option value="microscope" className="bg-[#14112E]">Microscope / Medical Equipment</option>
                     <option value="flask" className="bg-[#14112E]">Flask / Laboratory Supplies</option>
@@ -13721,64 +13696,66 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-white/60 mb-1">Target Link URL</label>
+                  <label className="block text-[11px] text-white/60 mb-1">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target Link URL'}</label>
                   <input
                     type="text"
                     value={area.linkUrl}
                     onChange={(e) => handlePIBusinessAreaItemChange(idx, 'linkUrl', e.target.value)}
                     placeholder="/services"
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                    className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] text-white/60 mb-1">Card Title (EN)</label>
-                  <input
-                    type="text"
-                    value={area.title.en}
-                    onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'title', 'en', e.target.value)}
-                    placeholder="Medical & Laboratory Equipment"
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                  />
+              {activeLangTab === 'en' ? (
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-white/70">🇬🇧 Card Title</label>
+                    <input
+                      type="text"
+                      value={area.title.en}
+                      onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'title', 'en', e.target.value)}
+                      placeholder="Medical & Laboratory Equipment"
+                      className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                    <textarea
+                      rows={2}
+                      value={area.description.en}
+                      onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'description', 'en', e.target.value)}
+                      placeholder="Comprehensive medical device solutions and laboratory testing equipment."
+                      className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white resize-none"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) عنوان البطاقة</label>
-                  <input
-                    type="text"
-                    dir="rtl"
-                    value={area.title.ar}
-                    onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'title', 'ar', e.target.value)}
-                    placeholder="الأجهزة الطبية والمخبرية"
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                  />
+              ) : (
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان البطاقة بالعربية</label>
+                    <input
+                      type="text"
+                      dir="rtl"
+                      value={area.title.ar}
+                      onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'title', 'ar', e.target.value)}
+                      placeholder="الأجهزة الطبية والمخبرية"
+                      className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                    <textarea
+                      rows={2}
+                      dir="rtl"
+                      value={area.description.ar}
+                      onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'description', 'ar', e.target.value)}
+                      placeholder="حلول شاملة للأجهزة الطبية ومعدات الاختبارات المختبرية."
+                      className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right resize-none"
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] text-white/60 mb-1">Description (EN)</label>
-                  <textarea
-                    rows={2}
-                    value={area.description.en}
-                    onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'description', 'en', e.target.value)}
-                    placeholder="Comprehensive medical device solutions and laboratory testing equipment."
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) الوصف</label>
-                  <textarea
-                    rows={2}
-                    dir="rtl"
-                    value={area.description.ar}
-                    onChange={(e) => handlePIBusinessAreaBilingualChange(idx, 'description', 'ar', e.target.value)}
-                    placeholder="حلول شاملة للأجهزة الطبية ومعدات الاختبارات المختبرية."
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right resize-none"
-                  />
-                </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
@@ -13805,143 +13782,140 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Banner Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={projectsInnovatorData.workTogetherSection.tagline.en}
-              onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
-              placeholder="LET'S WORK TOGETHER"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الشعار الفرعي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={projectsInnovatorData.workTogetherSection.tagline.ar}
-              onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
-              placeholder="دعنا نعمل معاً"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400">🇬🇧 Banner Tagline</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.workTogetherSection.tagline.en}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
+                  placeholder="LET'S WORK TOGETHER"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline Title</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.workTogetherSection.title.en}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Let's Build Something That Moves Business Forward."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                <textarea
+                  rows={3}
+                  value={projectsInnovatorData.workTogetherSection.description.en}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Looking for medical products, equipment, pharmaceutical solutions..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white resize-none"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Primary Button Label</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.workTogetherSection.primaryButtonText.en}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
+                  placeholder="Get a Quote"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
+                <input
+                  type="text"
+                  value={projectsInnovatorData.workTogetherSection.secondaryButtonText.en}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                  placeholder="Contact Us"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.workTogetherSection.tagline.ar}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
+                  placeholder="دعنا نعمل معاً"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.workTogetherSection.title.ar}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  value={projectsInnovatorData.workTogetherSection.description.ar}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="هل تبحث عن منتجات طبية، معدات، حلول دوائية، أو خدمات تجارية؟..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right resize-none"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.workTogetherSection.primaryButtonText.ar}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                  placeholder="احصل على عرض أسعار"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={projectsInnovatorData.workTogetherSection.secondaryButtonText.ar}
+                  onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                  placeholder="اتصل بنا"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
+        {/* Button URLs (Common) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Headline Title (English)
-            </label>
-            <input
-              type="text"
-              value={projectsInnovatorData.workTogetherSection.title.en}
-              onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'en', e.target.value)}
-              placeholder="Let's Build Something That Moves Business Forward."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) العنوان الرئيسي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={projectsInnovatorData.workTogetherSection.title.ar}
-              onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
-              placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Description (English)
-            </label>
-            <textarea
-              rows={3}
-              value={projectsInnovatorData.workTogetherSection.description.en}
-              onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'en', e.target.value)}
-              placeholder="Looking for medical products, equipment, pharmaceutical solutions..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف
-            </label>
-            <textarea
-              rows={3}
-              dir="rtl"
-              value={projectsInnovatorData.workTogetherSection.description.ar}
-              onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
-              placeholder="هل تبحث عن منتجات طبية، معدات، حلول دوائية، أو خدمات تجارية؟..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right resize-none"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white">Primary Button (Get a Quote)</h4>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="text"
-                value={projectsInnovatorData.workTogetherSection.primaryButtonText.en}
-                onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
-                placeholder="Get a Quote"
-                className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.workTogetherSection.primaryButtonText.ar}
-                onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                placeholder="احصل على عرض أسعار"
-                className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</label>
             <input
               type="text"
               value={projectsInnovatorData.workTogetherSection.primaryButtonUrl}
               onChange={(e) => handlePIWorkTogetherChange('primaryButtonUrl', e.target.value)}
               placeholder="/contact"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
             />
           </div>
-
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white">Secondary Button (Contact Us)</h4>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="text"
-                value={projectsInnovatorData.workTogetherSection.secondaryButtonText.en}
-                onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                placeholder="Contact Us"
-                className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.workTogetherSection.secondaryButtonText.ar}
-                onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                placeholder="اتصل بنا"
-                className="px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</label>
             <input
               type="text"
               value={projectsInnovatorData.workTogetherSection.secondaryButtonUrl}
               onChange={(e) => handlePIWorkTogetherChange('secondaryButtonUrl', e.target.value)}
               placeholder="/contact"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
             />
           </div>
         </div>
@@ -13985,198 +13959,185 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           </div>
 
           <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Logo Text (English)
-              </label>
-              <input
-                type="text"
-                value={attractiveData.heroBannerSection.logoText.en}
-                onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'en', e.target.value)}
-                placeholder="ATTRACTIVE"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) نص الشعار
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={attractiveData.heroBannerSection.logoText.ar}
-                onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
-                placeholder="أتراكتيف"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
+                <input
+                  type="text"
+                  value={attractiveData.heroBannerSection.logoText.en}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'en', e.target.value)}
+                  placeholder="ATTRACTIVE"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.heroBannerSection.logoText.ar}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
+                  placeholder="أتراكتيف"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Headline & Colored Highlight */}
+        {/* Headline & Colored Highlight & Description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Main Headline (English)
-              </label>
-              <input
-                type="text"
-                value={attractiveData.heroBannerSection.title.en}
-                onChange={(e) => handleAttHeroBannerBilingualChange('title', 'en', e.target.value)}
-                placeholder="Building Tomorrow"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) العنوان الرئيسي
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={attractiveData.heroBannerSection.title.ar}
-                onChange={(e) => handleAttHeroBannerBilingualChange('title', 'ar', e.target.value)}
-                placeholder="بناء الغد"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-blue-400 mb-1">
-                Highlighted Phrase in Accent Color (English)
-              </label>
-              <input
-                type="text"
-                value={attractiveData.heroBannerSection.titleHighlight.en}
-                onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
-                placeholder="Through Innovation"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-blue-400 mb-1 text-right">
-                (العربية) العبارة المميزة بلون بارز
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={attractiveData.heroBannerSection.titleHighlight.ar}
-                onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
-                placeholder="من خلال الابتكار"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold text-right"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Hero Description (English)
-            </label>
-            <textarea
-              rows={3}
-              value={attractiveData.heroBannerSection.description.en}
-              onChange={(e) => handleAttHeroBannerBilingualChange('description', 'en', e.target.value)}
-              placeholder="Delivering innovative solutions..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف الرئيسي للواجهة
-            </label>
-            <textarea
-              rows={3}
-              dir="rtl"
-              value={attractiveData.heroBannerSection.description.ar}
-              onChange={(e) => handleAttHeroBannerBilingualChange('description', 'ar', e.target.value)}
-              placeholder="تقديم حلول مبتكرة..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Main Headline</label>
+                <input
+                  type="text"
+                  value={attractiveData.heroBannerSection.title.en}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Building Tomorrow"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Highlighted Phrase in Accent Color</label>
+                <input
+                  type="text"
+                  value={attractiveData.heroBannerSection.titleHighlight.en}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
+                  placeholder="Through Innovation"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Hero Description</label>
+                <textarea
+                  rows={3}
+                  value={attractiveData.heroBannerSection.description.en}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Delivering innovative solutions..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.heroBannerSection.title.ar}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="بناء الغد"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 العبارة المميزة بلون بارز</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.heroBannerSection.titleHighlight.ar}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
+                  placeholder="من خلال الابتكار"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500 text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الرئيسي للواجهة</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  value={attractiveData.heroBannerSection.description.ar}
+                  onChange={(e) => handleAttHeroBannerBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="تقديم حلول مبتكرة..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
             <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
-              Primary Button (BLUE)
+              {activeLangTab === 'ar' ? 'الزر الرئيسي (أزرق)' : 'Primary Button (BLUE)'}
             </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
                 <input
                   type="text"
                   value={attractiveData.heroBannerSection.primaryButtonText.en}
                   onChange={(e) => handleAttHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
                   placeholder="Explore Our Services →"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
               </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={attractiveData.heroBannerSection.primaryButtonText.ar}
                   onChange={(e) => handleAttHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
                   placeholder="استكشف خدماتنا ←"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
+            )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
               <input
                 type="text"
                 value={attractiveData.heroBannerSection.primaryButtonUrl}
                 onChange={(e) => handleAttHeroBannerChange('primaryButtonUrl', e.target.value)}
                 placeholder="/services"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
               />
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
             <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
-              Secondary Button (White Outline)
+              {activeLangTab === 'ar' ? 'الزر الثانوي (تحديد أبيض)' : 'Secondary Button (White Outline)'}
             </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
                 <input
                   type="text"
                   value={attractiveData.heroBannerSection.secondaryButtonText.en}
                   onChange={(e) => handleAttHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
                   placeholder="Contact Us"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
               </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={attractiveData.heroBannerSection.secondaryButtonText.ar}
                   onChange={(e) => handleAttHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
                   placeholder="اتصل بنا"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
+            )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
               <input
                 type="text"
                 value={attractiveData.heroBannerSection.secondaryButtonUrl}
                 onChange={(e) => handleAttHeroBannerChange('secondaryButtonUrl', e.target.value)}
                 placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
               />
             </div>
           </div>
@@ -14224,31 +14185,30 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Section Title (English)
-            </label>
-            <input
-              type="text"
-              value={attractiveData.brandsSection.title.en}
-              onChange={(e) => handleAttBrandsTitleChange('en', e.target.value)}
-              placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) عنوان القسم
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.brandsSection.title.ar}
-              onChange={(e) => handleAttBrandsTitleChange('ar', e.target.value)}
-              placeholder="العلامات التجارية الموثوقة ورواد الصناعة"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title / Tagline</label>
+              <input
+                type="text"
+                value={attractiveData.brandsSection.title.en}
+                onChange={(e) => handleAttBrandsTitleChange('en', e.target.value)}
+                placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+              />
+            </div>
+          ) : (
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم بالعربية</label>
+              <input
+                type="text"
+                dir="rtl"
+                value={attractiveData.brandsSection.title.ar}
+                onChange={(e) => handleAttBrandsTitleChange('ar', e.target.value)}
+                placeholder="العلامات التجارية الموثوقة ورواد الصناعة"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+              />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/5">
@@ -14315,87 +14275,76 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1">
-              Top Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={attractiveData.aboutSection.tagline.en}
-              onChange={(e) => handleAttAboutBilingualChange('tagline', 'en', e.target.value)}
-              placeholder="ABOUT ATTRACTIVE"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1 text-right">
-              (العربية) الشعار الترويجي العلوي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.aboutSection.tagline.ar}
-              onChange={(e) => handleAttAboutBilingualChange('tagline', 'ar', e.target.value)}
-              placeholder="عن أتراكتيف"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              About Title / Headline (English)
-            </label>
-            <input
-              type="text"
-              value={attractiveData.aboutSection.title.en}
-              onChange={(e) => handleAttAboutBilingualChange('title', 'en', e.target.value)}
-              placeholder="More Than a Company..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) عنوان القصة / الرؤية
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.aboutSection.title.ar}
-              onChange={(e) => handleAttAboutBilingualChange('title', 'ar', e.target.value)}
-              placeholder="أكثر من مجرد شركة..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              About Description (English)
-            </label>
-            <textarea
-              rows={4}
-              value={attractiveData.aboutSection.description.en}
-              onChange={(e) => handleAttAboutBilingualChange('description', 'en', e.target.value)}
-              placeholder="Descriptive narrative..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف السردي
-            </label>
-            <textarea
-              rows={4}
-              dir="rtl"
-              value={attractiveData.aboutSection.description.ar}
-              onChange={(e) => handleAttAboutBilingualChange('description', 'ar', e.target.value)}
-              placeholder="وصف سردي..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Top Tagline</label>
+                <input
+                  type="text"
+                  value={attractiveData.aboutSection.tagline.en}
+                  onChange={(e) => handleAttAboutBilingualChange('tagline', 'en', e.target.value)}
+                  placeholder="ABOUT ATTRACTIVE"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 About Title / Headline</label>
+                <input
+                  type="text"
+                  value={attractiveData.aboutSection.title.en}
+                  onChange={(e) => handleAttAboutBilingualChange('title', 'en', e.target.value)}
+                  placeholder="More Than a Company..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 About Description</label>
+                <textarea
+                  rows={4}
+                  value={attractiveData.aboutSection.description.en}
+                  onChange={(e) => handleAttAboutBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Descriptive narrative..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 الشعار الترويجي العلوي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.aboutSection.tagline.ar}
+                  onChange={(e) => handleAttAboutBilingualChange('tagline', 'ar', e.target.value)}
+                  placeholder="عن أتراكتيف"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القصة / الرؤية بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.aboutSection.title.ar}
+                  onChange={(e) => handleAttAboutBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="أكثر من مجرد شركة..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
+                <textarea
+                  rows={4}
+                  dir="rtl"
+                  value={attractiveData.aboutSection.description.ar}
+                  onChange={(e) => handleAttAboutBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="وصف سردي..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <div className="pt-4 border-t border-white/5">
@@ -14441,94 +14390,88 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <CardContent className="p-6 space-y-6">
         {/* Section Title & Description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1">
-              Section Title (English)
-            </label>
-            <input
-              type="text"
-              value={attractiveData.productsSection.title.en}
-              onChange={(e) => handleAttProductsHeaderBilingualChange('title', 'en', e.target.value)}
-              placeholder="Our Products"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1 text-right">
-              (العربية) عنوان القسم
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.productsSection.title.ar}
-              onChange={(e) => handleAttProductsHeaderBilingualChange('title', 'ar', e.target.value)}
-              placeholder="منتجاتنا"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Section Title</label>
+                <input
+                  type="text"
+                  value={attractiveData.productsSection.title.en}
+                  onChange={(e) => handleAttProductsHeaderBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Our Products"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 View All Button Text</label>
+                <input
+                  type="text"
+                  value={attractiveData.productsSection.viewAllButtonText.en}
+                  onChange={(e) => handleAttProductsHeaderBilingualChange('viewAllButtonText', 'en', e.target.value)}
+                  placeholder="View All Products"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Section Subtitle / Description</label>
+                <textarea
+                  rows={2}
+                  value={attractiveData.productsSection.description.en}
+                  onChange={(e) => handleAttProductsHeaderBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Explore our range of high-quality medical equipment..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 عنوان القسم بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.productsSection.title.ar}
+                  onChange={(e) => handleAttProductsHeaderBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="منتجاتنا"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص زر عرض الكل بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.productsSection.viewAllButtonText.ar}
+                  onChange={(e) => handleAttProductsHeaderBilingualChange('viewAllButtonText', 'ar', e.target.value)}
+                  placeholder="عرض جميع المنتجات"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الفرعي للقسم بالعربية</label>
+                <textarea
+                  rows={2}
+                  dir="rtl"
+                  value={attractiveData.productsSection.description.ar}
+                  onChange={(e) => handleAttProductsHeaderBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="استكشف مجموعتنا من المعدات الطبية والحلول..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Section Subtitle / Description (English)
-            </label>
-            <textarea
-              rows={2}
-              value={attractiveData.productsSection.description.en}
-              onChange={(e) => handleAttProductsHeaderBilingualChange('description', 'en', e.target.value)}
-              placeholder="Explore our range of high-quality medical equipment..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف الفرعي للقسم
-            </label>
-            <textarea
-              rows={2}
-              dir="rtl"
-              value={attractiveData.productsSection.description.ar}
-              onChange={(e) => handleAttProductsHeaderBilingualChange('description', 'ar', e.target.value)}
-              placeholder="استكشف مجموعتنا من المعدات الطبية والحلول..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
-        </div>
-
-        {/* View All Button Settings */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-          <div>
-            <label className="block text-[11px] text-white/60 mb-1">View All Button Text (EN)</label>
-            <input
-              type="text"
-              value={attractiveData.productsSection.viewAllButtonText.en}
-              onChange={(e) => handleAttProductsHeaderBilingualChange('viewAllButtonText', 'en', e.target.value)}
-              placeholder="View All Products"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) نص الزر</label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.productsSection.viewAllButtonText.ar}
-              onChange={(e) => handleAttProductsHeaderBilingualChange('viewAllButtonText', 'ar', e.target.value)}
-              placeholder="عرض جميع المنتجات"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] text-white/60 mb-1">View All Target URL</label>
-            <input
-              type="text"
-              value={attractiveData.productsSection.viewAllButtonUrl}
-              onChange={(e) => handleAttProductsChange('viewAllButtonUrl', e.target.value)}
-              placeholder="/shop"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
+        {/* View All Target URL (Common) */}
+        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+          <label className="block text-[11px] text-white/60 mb-1">{activeLangTab === 'ar' ? 'رابط زر عرض الكل (URL)' : 'View All Target URL'}</label>
+          <input
+            type="text"
+            value={attractiveData.productsSection.viewAllButtonUrl}
+            onChange={(e) => handleAttProductsChange('viewAllButtonUrl', e.target.value)}
+            placeholder="/shop"
+            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+          />
         </div>
 
         {/* Products List Cards */}
@@ -14545,10 +14488,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     #{prodIdx + 1}
                   </span>
                   <span className="text-sm font-bold text-white">
-                    {prod.name.en || 'Untitled Product'}
+                    {activeLangTab === 'ar' ? (prod.name.ar || 'منتج جديد') : (prod.name.en || 'Untitled Product')}
                   </span>
                   <span className="text-xs text-white/50">
-                    ({prod.brand.en || 'Brand'})
+                    ({activeLangTab === 'ar' ? (prod.brand.ar || 'العلامة') : (prod.brand.en || 'Brand')})
                   </span>
                 </div>
 
@@ -14574,87 +14517,137 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
 
                 <div className="md:col-span-2 space-y-3">
-                  {/* Brand & Name */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1">Brand Tag (EN)</label>
-                      <input
-                        type="text"
-                        value={prod.brand.en}
-                        onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'brand', 'en', e.target.value)}
-                        placeholder="e.g. MedTech"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) العلامة التجارية</label>
-                      <input
-                        type="text"
-                        dir="rtl"
-                        value={prod.brand.ar}
-                        onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'brand', 'ar', e.target.value)}
-                        placeholder="مثال: ميدتيك"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                      />
-                    </div>
-                  </div>
+                  {activeLangTab === 'en' ? (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/70">🇬🇧 Brand Tag</label>
+                          <input
+                            type="text"
+                            value={prod.brand.en}
+                            onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'brand', 'en', e.target.value)}
+                            placeholder="e.g. MedTech"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/70">🇬🇧 Product Name</label>
+                          <input
+                            type="text"
+                            value={prod.name.en}
+                            onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'name', 'en', e.target.value)}
+                            placeholder="Patient Monitor"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1">Product Name (EN)</label>
-                      <input
-                        type="text"
-                        value={prod.name.en}
-                        onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'name', 'en', e.target.value)}
-                        placeholder="Patient Monitor"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) اسم المنتج</label>
-                      <input
-                        type="text"
-                        dir="rtl"
-                        value={prod.name.ar}
-                        onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'name', 'ar', e.target.value)}
-                        placeholder="شاشة مراقبة المريض"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-                      />
-                    </div>
-                  </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                        <textarea
+                          rows={2}
+                          value={prod.description.en}
+                          onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'description', 'en', e.target.value)}
+                          placeholder="A medical monitoring device..."
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                        />
+                      </div>
 
-                  {/* Description */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1">Description (EN)</label>
-                      <textarea
-                        rows={2}
-                        value={prod.description.en}
-                        onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'description', 'en', e.target.value)}
-                        placeholder="A medical monitoring device..."
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) الوصف</label>
-                      <textarea
-                        rows={2}
-                        dir="rtl"
-                        value={prod.description.ar}
-                        onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'description', 'ar', e.target.value)}
-                        placeholder="جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية..."
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-                      />
-                    </div>
-                  </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
+                          <input
+                            type="text"
+                            value={prod.buttonText.en}
+                            onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'buttonText', 'en', e.target.value)}
+                            placeholder="Request a Quote ↗"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50">Target URL</label>
+                          <input
+                            type="text"
+                            value={prod.buttonUrl}
+                            onChange={(e) => handleAttProductItemChange(prodIdx, 'buttonUrl', e.target.value)}
+                            placeholder="/contact"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العلامة التجارية بالعربية</label>
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={prod.brand.ar}
+                            onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'brand', 'ar', e.target.value)}
+                            placeholder="مثال: ميدتيك"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 اسم المنتج بالعربية</label>
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={prod.name.ar}
+                            onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'name', 'ar', e.target.value)}
+                            placeholder="شاشة مراقبة المريض"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                        <textarea
+                          rows={2}
+                          dir="rtl"
+                          value={prod.description.ar}
+                          onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'description', 'ar', e.target.value)}
+                          placeholder="جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية..."
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={prod.buttonText.ar}
+                            onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'buttonText', 'ar', e.target.value)}
+                            placeholder="طلب عرض أسعار ↗"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 text-right block">رابط الزر (URL)</label>
+                          <input
+                            type="text"
+                            value={prod.buttonUrl}
+                            onChange={(e) => handleAttProductItemChange(prodIdx, 'buttonUrl', e.target.value)}
+                            placeholder="/contact"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
-              {/* Badges / Certifications & Button Settings */}
+              {/* Badges / Certifications */}
               <div className="pt-3 border-t border-white/5 space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-blue-400">
-                    Certifications & Badges (CE Certified, FDA Registered, ISO Certified)
+                    {activeLangTab === 'ar' ? 'الشهادات والشارات (معتمد من CE، مسجل لدى FDA، معتمد من ISO)' : 'Certifications & Badges (CE Certified, FDA Registered, ISO Certified)'}
                   </label>
                   <button
                     type="button"
@@ -14672,22 +14665,25 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       key={b.id || bIdx}
                       className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 flex items-center gap-2"
                     >
-                      <div className="flex-1 space-y-1">
-                        <input
-                          type="text"
-                          value={b.en}
-                          onChange={(e) => handleAttProductBadgeBilingualChange(prodIdx, bIdx, 'en', e.target.value)}
-                          placeholder="e.g. CE Certified"
-                          className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white"
-                        />
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={b.ar}
-                          onChange={(e) => handleAttProductBadgeBilingualChange(prodIdx, bIdx, 'ar', e.target.value)}
-                          placeholder="معتمد من CE"
-                          className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white text-right"
-                        />
+                      <div className="flex-1">
+                        {activeLangTab === 'en' ? (
+                          <input
+                            type="text"
+                            value={b.en}
+                            onChange={(e) => handleAttProductBadgeBilingualChange(prodIdx, bIdx, 'en', e.target.value)}
+                            placeholder="e.g. CE Certified"
+                            className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white"
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={b.ar}
+                            onChange={(e) => handleAttProductBadgeBilingualChange(prodIdx, bIdx, 'ar', e.target.value)}
+                            placeholder="معتمد من CE"
+                            className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white text-right"
+                          />
+                        )}
                       </div>
                       <button
                         type="button"
@@ -14698,41 +14694,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </button>
                     </div>
                   ))}
-                </div>
-
-                {/* Button Action */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                  <div>
-                    <label className="block text-[11px] text-white/60 mb-1">Button Text (EN)</label>
-                    <input
-                      type="text"
-                      value={prod.buttonText.en}
-                      onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'buttonText', 'en', e.target.value)}
-                      placeholder="Request a Quote ↗"
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) نص الزر</label>
-                    <input
-                      type="text"
-                      dir="rtl"
-                      value={prod.buttonText.ar}
-                      onChange={(e) => handleAttProductItemBilingualChange(prodIdx, 'buttonText', 'ar', e.target.value)}
-                      placeholder="طلب عرض أسعار ↗"
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium text-right"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
-                    <input
-                      type="text"
-                      value={prod.buttonUrl}
-                      onChange={(e) => handleAttProductItemChange(prodIdx, 'buttonUrl', e.target.value)}
-                      placeholder="/contact"
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                    />
-                  </div>
                 </div>
               </div>
             </div>
@@ -14761,166 +14722,141 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-red-400 mb-1">
-              Top Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={attractiveData.workTogetherSection.tagline.en}
-              onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
-              placeholder="— LET'S WORK TOGETHER —"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-red-400 mb-1 text-right">
-              (العربية) الشعار الفرعي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.workTogetherSection.tagline.ar}
-              onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
-              placeholder="— لنعمل معاً —"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Headline (English)
-            </label>
-            <input
-              type="text"
-              value={attractiveData.workTogetherSection.title.en}
-              onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'en', e.target.value)}
-              placeholder="Let's Build Something That Moves Business Forward."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) العنوان الرئيسي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={attractiveData.workTogetherSection.title.ar}
-              onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'ar', e.target.value)}
-              placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Banner Description (English)
-            </label>
-            <textarea
-              rows={3}
-              value={attractiveData.workTogetherSection.description.en}
-              onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'en', e.target.value)}
-              placeholder="Partner with us to design and deliver..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) وصف البانر
-            </label>
-            <textarea
-              rows={3}
-              dir="rtl"
-              value={attractiveData.workTogetherSection.description.ar}
-              onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'ar', e.target.value)}
-              placeholder="تشارك معنا لتصميم وتنفيذ..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
-              Primary Button (BLUE)
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400">🇬🇧 Top Tagline</label>
+                <input
+                  type="text"
+                  value={attractiveData.workTogetherSection.tagline.en}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
+                  placeholder="— LET'S WORK TOGETHER —"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline</label>
+                <input
+                  type="text"
+                  value={attractiveData.workTogetherSection.title.en}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Let's Build Something That Moves Business Forward."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Banner Description</label>
+                <textarea
+                  rows={3}
+                  value={attractiveData.workTogetherSection.description.en}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Partner with us to design and deliver..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Primary Button Label</label>
                 <input
                   type="text"
                   value={attractiveData.workTogetherSection.primaryButtonText.en}
                   onChange={(e) => handleAttWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
                   placeholder="Get a Quote ↗"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
               </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
+                <input
+                  type="text"
+                  value={attractiveData.workTogetherSection.secondaryButtonText.en}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                  placeholder="Contact Us"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.workTogetherSection.tagline.ar}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
+                  placeholder="— لنعمل معاً —"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={attractiveData.workTogetherSection.title.ar}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف البانر بالعربية</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  value={attractiveData.workTogetherSection.description.ar}
+                  onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="تشارك معنا لتصميم وتنفيذ..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={attractiveData.workTogetherSection.primaryButtonText.ar}
                   onChange={(e) => handleAttWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
                   placeholder="احصل على عرض أسعار ↗"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
-              <input
-                type="text"
-                value={attractiveData.workTogetherSection.primaryButtonUrl}
-                onChange={(e) => handleAttWorkTogetherChange('primaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
-              Secondary Button (Outline)
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
-                <input
-                  type="text"
-                  value={attractiveData.workTogetherSection.secondaryButtonText.en}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={attractiveData.workTogetherSection.secondaryButtonText.ar}
                   onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
                   placeholder="اتصل بنا"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
-              <input
-                type="text"
-                value={attractiveData.workTogetherSection.secondaryButtonUrl}
-                onChange={(e) => handleAttWorkTogetherChange('secondaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
+            </>
+          )}
+        </div>
+
+        {/* Action Button URLs (Common) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</label>
+            <input
+              type="text"
+              value={attractiveData.workTogetherSection.primaryButtonUrl}
+              onChange={(e) => handleAttWorkTogetherChange('primaryButtonUrl', e.target.value)}
+              placeholder="/contact"
+              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</label>
+            <input
+              type="text"
+              value={attractiveData.workTogetherSection.secondaryButtonUrl}
+              onChange={(e) => handleAttWorkTogetherChange('secondaryButtonUrl', e.target.value)}
+              placeholder="/contact"
+              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+            />
           </div>
         </div>
       </CardContent>
@@ -14963,198 +14899,185 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           </div>
 
           <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Logo Text (English)
-              </label>
-              <input
-                type="text"
-                value={medicsInnovatorData.heroBannerSection.logoText.en}
-                onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
-                placeholder="MEDICS INNOVATOR"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) نص الشعار
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={medicsInnovatorData.heroBannerSection.logoText.ar}
-                onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
-                placeholder="ميديكس إنوفيتور"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.heroBannerSection.logoText.en}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
+                  placeholder="MEDICS INNOVATOR"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.heroBannerSection.logoText.ar}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
+                  placeholder="ميديكس إنوفيتور"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Headline & Colored Highlight */}
+        {/* Headline & Colored Highlight & Description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1">
-                Main Headline (English)
-              </label>
-              <input
-                type="text"
-                value={medicsInnovatorData.heroBannerSection.title.en}
-                onChange={(e) => handleMIHeroBannerBilingualChange('title', 'en', e.target.value)}
-                placeholder="Building Tomorrow"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-                (العربية) العنوان الرئيسي
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={medicsInnovatorData.heroBannerSection.title.ar}
-                onChange={(e) => handleMIHeroBannerBilingualChange('title', 'ar', e.target.value)}
-                placeholder="بناء الغد"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-blue-400 mb-1">
-                Highlighted Phrase in Accent Color (English)
-              </label>
-              <input
-                type="text"
-                value={medicsInnovatorData.heroBannerSection.titleHighlight.en}
-                onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
-                placeholder="Through Innovation"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-blue-400 mb-1 text-right">
-                (العربية) العبارة المميزة بلون بارز
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                value={medicsInnovatorData.heroBannerSection.titleHighlight.ar}
-                onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
-                placeholder="من خلال الابتكار"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold text-right"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Hero Description (English)
-            </label>
-            <textarea
-              rows={3}
-              value={medicsInnovatorData.heroBannerSection.description.en}
-              onChange={(e) => handleMIHeroBannerBilingualChange('description', 'en', e.target.value)}
-              placeholder="Delivering innovative solutions..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف الرئيسي للواجهة
-            </label>
-            <textarea
-              rows={3}
-              dir="rtl"
-              value={medicsInnovatorData.heroBannerSection.description.ar}
-              onChange={(e) => handleMIHeroBannerBilingualChange('description', 'ar', e.target.value)}
-              placeholder="تقديم حلول مبتكرة..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Main Headline</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.heroBannerSection.title.en}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Building Tomorrow"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Highlighted Phrase in Accent Color</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.heroBannerSection.titleHighlight.en}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
+                  placeholder="Through Innovation"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Hero Description</label>
+                <textarea
+                  rows={3}
+                  value={medicsInnovatorData.heroBannerSection.description.en}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Delivering innovative solutions..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.heroBannerSection.title.ar}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="بناء الغد"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 العبارة المميزة بلون بارز</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.heroBannerSection.titleHighlight.ar}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
+                  placeholder="من خلال الابتكار"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500 text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الرئيسي للواجهة</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  value={medicsInnovatorData.heroBannerSection.description.ar}
+                  onChange={(e) => handleMIHeroBannerBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="تقديم حلول مبتكرة..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
             <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
-              Primary Button (BLUE)
+              {activeLangTab === 'ar' ? 'الزر الرئيسي (أزرق)' : 'Primary Button (BLUE)'}
             </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
                 <input
                   type="text"
                   value={medicsInnovatorData.heroBannerSection.primaryButtonText.en}
                   onChange={(e) => handleMIHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
                   placeholder="Explore Our Services →"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
               </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={medicsInnovatorData.heroBannerSection.primaryButtonText.ar}
                   onChange={(e) => handleMIHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
                   placeholder="استكشف خدماتنا ←"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
+            )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
               <input
                 type="text"
                 value={medicsInnovatorData.heroBannerSection.primaryButtonUrl}
                 onChange={(e) => handleMIHeroBannerChange('primaryButtonUrl', e.target.value)}
                 placeholder="/services"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
               />
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
             <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
-              Secondary Button (White Outline)
+              {activeLangTab === 'ar' ? 'الزر الثانوي (تحديد أبيض)' : 'Secondary Button (White Outline)'}
             </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
+            {activeLangTab === 'en' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
                 <input
                   type="text"
                   value={medicsInnovatorData.heroBannerSection.secondaryButtonText.en}
                   onChange={(e) => handleMIHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
                   placeholder="Contact Us"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
               </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={medicsInnovatorData.heroBannerSection.secondaryButtonText.ar}
                   onChange={(e) => handleMIHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
                   placeholder="اتصل بنا"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
+            )}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
               <input
                 type="text"
                 value={medicsInnovatorData.heroBannerSection.secondaryButtonUrl}
                 onChange={(e) => handleMIHeroBannerChange('secondaryButtonUrl', e.target.value)}
                 placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
               />
             </div>
           </div>
@@ -15202,31 +15125,30 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Section Title (English)
-            </label>
-            <input
-              type="text"
-              value={medicsInnovatorData.brandsSection.title.en}
-              onChange={(e) => handleMIBrandsTitleChange('en', e.target.value)}
-              placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) عنوان القسم
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.brandsSection.title.ar}
-              onChange={(e) => handleMIBrandsTitleChange('ar', e.target.value)}
-              placeholder="العلامات التجارية الموثوقة ورواد الصناعة"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title / Tagline</label>
+              <input
+                type="text"
+                value={medicsInnovatorData.brandsSection.title.en}
+                onChange={(e) => handleMIBrandsTitleChange('en', e.target.value)}
+                placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+              />
+            </div>
+          ) : (
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم بالعربية</label>
+              <input
+                type="text"
+                dir="rtl"
+                value={medicsInnovatorData.brandsSection.title.ar}
+                onChange={(e) => handleMIBrandsTitleChange('ar', e.target.value)}
+                placeholder="العلامات التجارية الموثوقة ورواد الصناعة"
+                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+              />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/5">
@@ -15293,87 +15215,76 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1">
-              Top Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={medicsInnovatorData.aboutSection.tagline.en}
-              onChange={(e) => handleMIAboutBilingualChange('tagline', 'en', e.target.value)}
-              placeholder="ABOUT MEDICS INNOVATOR"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1 text-right">
-              (العربية) الشعار الترويجي العلوي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.aboutSection.tagline.ar}
-              onChange={(e) => handleMIAboutBilingualChange('tagline', 'ar', e.target.value)}
-              placeholder="عن ميديكس إنوفيتور"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              About Title / Headline (English)
-            </label>
-            <input
-              type="text"
-              value={medicsInnovatorData.aboutSection.title.en}
-              onChange={(e) => handleMIAboutBilingualChange('title', 'en', e.target.value)}
-              placeholder="More Than a Company..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) عنوان القصة / الرؤية
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.aboutSection.title.ar}
-              onChange={(e) => handleMIAboutBilingualChange('title', 'ar', e.target.value)}
-              placeholder="أكثر من مجرد شركة..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              About Description (English)
-            </label>
-            <textarea
-              rows={4}
-              value={medicsInnovatorData.aboutSection.description.en}
-              onChange={(e) => handleMIAboutBilingualChange('description', 'en', e.target.value)}
-              placeholder="Descriptive narrative..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف السردي
-            </label>
-            <textarea
-              rows={4}
-              dir="rtl"
-              value={medicsInnovatorData.aboutSection.description.ar}
-              onChange={(e) => handleMIAboutBilingualChange('description', 'ar', e.target.value)}
-              placeholder="وصف سردي..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Top Tagline</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.aboutSection.tagline.en}
+                  onChange={(e) => handleMIAboutBilingualChange('tagline', 'en', e.target.value)}
+                  placeholder="ABOUT MEDICS INNOVATOR"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 About Title / Headline</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.aboutSection.title.en}
+                  onChange={(e) => handleMIAboutBilingualChange('title', 'en', e.target.value)}
+                  placeholder="More Than a Company..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 About Description</label>
+                <textarea
+                  rows={4}
+                  value={medicsInnovatorData.aboutSection.description.en}
+                  onChange={(e) => handleMIAboutBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Descriptive narrative..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 الشعار الترويجي العلوي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.aboutSection.tagline.ar}
+                  onChange={(e) => handleMIAboutBilingualChange('tagline', 'ar', e.target.value)}
+                  placeholder="عن ميديكس إنوفيتور"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القصة / الرؤية بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.aboutSection.title.ar}
+                  onChange={(e) => handleMIAboutBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="أكثر من مجرد شركة..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
+                <textarea
+                  rows={4}
+                  dir="rtl"
+                  value={medicsInnovatorData.aboutSection.description.ar}
+                  onChange={(e) => handleMIAboutBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="وصف سردي..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <div className="pt-4 border-t border-white/5">
@@ -15419,94 +15330,88 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <CardContent className="p-6 space-y-6">
         {/* Section Title & Description */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1">
-              Section Title (English)
-            </label>
-            <input
-              type="text"
-              value={medicsInnovatorData.productsSection.title.en}
-              onChange={(e) => handleMIProductsHeaderBilingualChange('title', 'en', e.target.value)}
-              placeholder="Our Products"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-blue-400 mb-1 text-right">
-              (العربية) عنوان القسم
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.productsSection.title.ar}
-              onChange={(e) => handleMIProductsHeaderBilingualChange('title', 'ar', e.target.value)}
-              placeholder="منتجاتنا"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold text-right"
-            />
-          </div>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Section Title</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.productsSection.title.en}
+                  onChange={(e) => handleMIProductsHeaderBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Our Products"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 View All Button Text</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.productsSection.viewAllButtonText.en}
+                  onChange={(e) => handleMIProductsHeaderBilingualChange('viewAllButtonText', 'en', e.target.value)}
+                  placeholder="View All Products"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Section Subtitle / Description</label>
+                <textarea
+                  rows={2}
+                  value={medicsInnovatorData.productsSection.description.en}
+                  onChange={(e) => handleMIProductsHeaderBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Explore our range of high-quality medical equipment..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 عنوان القسم بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.productsSection.title.ar}
+                  onChange={(e) => handleMIProductsHeaderBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="منتجاتنا"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص زر عرض الكل بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.productsSection.viewAllButtonText.ar}
+                  onChange={(e) => handleMIProductsHeaderBilingualChange('viewAllButtonText', 'ar', e.target.value)}
+                  placeholder="عرض جميع المنتجات"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الفرعي للقسم بالعربية</label>
+                <textarea
+                  rows={2}
+                  dir="rtl"
+                  value={medicsInnovatorData.productsSection.description.ar}
+                  onChange={(e) => handleMIProductsHeaderBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="استكشف مجموعتنا من المعدات الطبية والحلول..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+            </>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Section Subtitle / Description (English)
-            </label>
-            <textarea
-              rows={2}
-              value={medicsInnovatorData.productsSection.description.en}
-              onChange={(e) => handleMIProductsHeaderBilingualChange('description', 'en', e.target.value)}
-              placeholder="Explore our range of high-quality medical equipment..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) الوصف الفرعي للقسم
-            </label>
-            <textarea
-              rows={2}
-              dir="rtl"
-              value={medicsInnovatorData.productsSection.description.ar}
-              onChange={(e) => handleMIProductsHeaderBilingualChange('description', 'ar', e.target.value)}
-              placeholder="استكشف مجموعتنا من المعدات الطبية والحلول..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
-        </div>
-
-        {/* View All Button Settings */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-          <div>
-            <label className="block text-[11px] text-white/60 mb-1">View All Button Text (EN)</label>
-            <input
-              type="text"
-              value={medicsInnovatorData.productsSection.viewAllButtonText.en}
-              onChange={(e) => handleMIProductsHeaderBilingualChange('viewAllButtonText', 'en', e.target.value)}
-              placeholder="View All Products"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) نص الزر</label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.productsSection.viewAllButtonText.ar}
-              onChange={(e) => handleMIProductsHeaderBilingualChange('viewAllButtonText', 'ar', e.target.value)}
-              placeholder="عرض جميع المنتجات"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] text-white/60 mb-1">View All Target URL</label>
-            <input
-              type="text"
-              value={medicsInnovatorData.productsSection.viewAllButtonUrl}
-              onChange={(e) => handleMIProductsChange('viewAllButtonUrl', e.target.value)}
-              placeholder="/shop"
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
+        {/* View All Target URL (Common) */}
+        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+          <label className="block text-[11px] text-white/60 mb-1">{activeLangTab === 'ar' ? 'رابط زر عرض الكل (URL)' : 'View All Target URL'}</label>
+          <input
+            type="text"
+            value={medicsInnovatorData.productsSection.viewAllButtonUrl}
+            onChange={(e) => handleMIProductsChange('viewAllButtonUrl', e.target.value)}
+            placeholder="/shop"
+            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+          />
         </div>
 
         {/* Products List Cards */}
@@ -15523,10 +15428,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     #{prodIdx + 1}
                   </span>
                   <span className="text-sm font-bold text-white">
-                    {prod.name.en || 'Untitled Product'}
+                    {activeLangTab === 'ar' ? (prod.name.ar || 'منتج جديد') : (prod.name.en || 'Untitled Product')}
                   </span>
                   <span className="text-xs text-white/50">
-                    ({prod.brand.en || 'Brand'})
+                    ({activeLangTab === 'ar' ? (prod.brand.ar || 'العلامة') : (prod.brand.en || 'Brand')})
                   </span>
                 </div>
 
@@ -15552,87 +15457,137 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
 
                 <div className="md:col-span-2 space-y-3">
-                  {/* Brand & Name */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1">Brand Tag (EN)</label>
-                      <input
-                        type="text"
-                        value={prod.brand.en}
-                        onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'brand', 'en', e.target.value)}
-                        placeholder="e.g. MedTech"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) العلامة التجارية</label>
-                      <input
-                        type="text"
-                        dir="rtl"
-                        value={prod.brand.ar}
-                        onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'brand', 'ar', e.target.value)}
-                        placeholder="مثال: ميدتيك"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                      />
-                    </div>
-                  </div>
+                  {activeLangTab === 'en' ? (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/70">🇬🇧 Brand Tag</label>
+                          <input
+                            type="text"
+                            value={prod.brand.en}
+                            onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'brand', 'en', e.target.value)}
+                            placeholder="e.g. MedTech"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/70">🇬🇧 Product Name</label>
+                          <input
+                            type="text"
+                            value={prod.name.en}
+                            onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'name', 'en', e.target.value)}
+                            placeholder="Patient Monitor"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1">Product Name (EN)</label>
-                      <input
-                        type="text"
-                        value={prod.name.en}
-                        onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'name', 'en', e.target.value)}
-                        placeholder="Patient Monitor"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) اسم المنتج</label>
-                      <input
-                        type="text"
-                        dir="rtl"
-                        value={prod.name.ar}
-                        onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'name', 'ar', e.target.value)}
-                        placeholder="شاشة مراقبة المريض"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-                      />
-                    </div>
-                  </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                        <textarea
+                          rows={2}
+                          value={prod.description.en}
+                          onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'description', 'en', e.target.value)}
+                          placeholder="A medical monitoring device..."
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                        />
+                      </div>
 
-                  {/* Description */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1">Description (EN)</label>
-                      <textarea
-                        rows={2}
-                        value={prod.description.en}
-                        onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'description', 'en', e.target.value)}
-                        placeholder="A medical monitoring device..."
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) الوصف</label>
-                      <textarea
-                        rows={2}
-                        dir="rtl"
-                        value={prod.description.ar}
-                        onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'description', 'ar', e.target.value)}
-                        placeholder="جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية..."
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-                      />
-                    </div>
-                  </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
+                          <input
+                            type="text"
+                            value={prod.buttonText.en}
+                            onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'buttonText', 'en', e.target.value)}
+                            placeholder="Request a Quote ↗"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50">Target URL</label>
+                          <input
+                            type="text"
+                            value={prod.buttonUrl}
+                            onChange={(e) => handleMIProductItemChange(prodIdx, 'buttonUrl', e.target.value)}
+                            placeholder="/contact"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العلامة التجارية بالعربية</label>
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={prod.brand.ar}
+                            onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'brand', 'ar', e.target.value)}
+                            placeholder="مثال: ميدتيك"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 اسم المنتج بالعربية</label>
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={prod.name.ar}
+                            onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'name', 'ar', e.target.value)}
+                            placeholder="شاشة مراقبة المريض"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                        <textarea
+                          rows={2}
+                          dir="rtl"
+                          value={prod.description.ar}
+                          onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'description', 'ar', e.target.value)}
+                          placeholder="جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية..."
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={prod.buttonText.ar}
+                            onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'buttonText', 'ar', e.target.value)}
+                            placeholder="طلب عرض أسعار ↗"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 text-right block">رابط الزر (URL)</label>
+                          <input
+                            type="text"
+                            value={prod.buttonUrl}
+                            onChange={(e) => handleMIProductItemChange(prodIdx, 'buttonUrl', e.target.value)}
+                            placeholder="/contact"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
-              {/* Badges / Certifications & Button Settings */}
+              {/* Badges / Certifications */}
               <div className="pt-3 border-t border-white/5 space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-blue-400">
-                    Certifications & Badges (CE Certified, FDA Registered, ISO Certified)
+                    {activeLangTab === 'ar' ? 'الشهادات والشارات (معتمد من CE، مسجل لدى FDA، معتمد من ISO)' : 'Certifications & Badges (CE Certified, FDA Registered, ISO Certified)'}
                   </label>
                   <button
                     type="button"
@@ -15650,22 +15605,25 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       key={b.id || bIdx}
                       className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 flex items-center gap-2"
                     >
-                      <div className="flex-1 space-y-1">
-                        <input
-                          type="text"
-                          value={b.en}
-                          onChange={(e) => handleMIProductBadgeBilingualChange(prodIdx, bIdx, 'en', e.target.value)}
-                          placeholder="e.g. CE Certified"
-                          className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white"
-                        />
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={b.ar}
-                          onChange={(e) => handleMIProductBadgeBilingualChange(prodIdx, bIdx, 'ar', e.target.value)}
-                          placeholder="معتمد من CE"
-                          className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white text-right"
-                        />
+                      <div className="flex-1">
+                        {activeLangTab === 'en' ? (
+                          <input
+                            type="text"
+                            value={b.en}
+                            onChange={(e) => handleMIProductBadgeBilingualChange(prodIdx, bIdx, 'en', e.target.value)}
+                            placeholder="e.g. CE Certified"
+                            className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white"
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={b.ar}
+                            onChange={(e) => handleMIProductBadgeBilingualChange(prodIdx, bIdx, 'ar', e.target.value)}
+                            placeholder="معتمد من CE"
+                            className="w-full px-2 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-white text-right"
+                          />
+                        )}
                       </div>
                       <button
                         type="button"
@@ -15676,41 +15634,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </button>
                     </div>
                   ))}
-                </div>
-
-                {/* Button Action */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                  <div>
-                    <label className="block text-[11px] text-white/60 mb-1">Button Text (EN)</label>
-                    <input
-                      type="text"
-                      value={prod.buttonText.en}
-                      onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'buttonText', 'en', e.target.value)}
-                      placeholder="Request a Quote ↗"
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) نص الزر</label>
-                    <input
-                      type="text"
-                      dir="rtl"
-                      value={prod.buttonText.ar}
-                      onChange={(e) => handleMIProductItemBilingualChange(prodIdx, 'buttonText', 'ar', e.target.value)}
-                      placeholder="طلب عرض أسعار ↗"
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-medium text-right"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
-                    <input
-                      type="text"
-                      value={prod.buttonUrl}
-                      onChange={(e) => handleMIProductItemChange(prodIdx, 'buttonUrl', e.target.value)}
-                      placeholder="/contact"
-                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                    />
-                  </div>
                 </div>
               </div>
             </div>
@@ -15739,166 +15662,141 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-red-400 mb-1">
-              Top Tagline (English)
-            </label>
-            <input
-              type="text"
-              value={medicsInnovatorData.workTogetherSection.tagline.en}
-              onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
-              placeholder="— LET'S WORK TOGETHER —"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-red-400 mb-1 text-right">
-              (العربية) الشعار الفرعي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.workTogetherSection.tagline.ar}
-              onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
-              placeholder="— لنعمل معاً —"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Headline (English)
-            </label>
-            <input
-              type="text"
-              value={medicsInnovatorData.workTogetherSection.title.en}
-              onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'en', e.target.value)}
-              placeholder="Let's Build Something That Moves Business Forward."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) العنوان الرئيسي
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={medicsInnovatorData.workTogetherSection.title.ar}
-              onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
-              placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1">
-              Banner Description (English)
-            </label>
-            <textarea
-              rows={3}
-              value={medicsInnovatorData.workTogetherSection.description.en}
-              onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'en', e.target.value)}
-              placeholder="Partner with us to design and deliver..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-white/70 mb-1 text-right">
-              (العربية) وصف البانر
-            </label>
-            <textarea
-              rows={3}
-              dir="rtl"
-              value={medicsInnovatorData.workTogetherSection.description.ar}
-              onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
-              placeholder="تشارك معنا لتصميم وتنفيذ..."
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none text-right"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
-              Primary Button (BLUE)
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
+          {activeLangTab === 'en' ? (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400">🇬🇧 Top Tagline</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.workTogetherSection.tagline.en}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
+                  placeholder="— LET'S WORK TOGETHER —"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.workTogetherSection.title.en}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'en', e.target.value)}
+                  placeholder="Let's Build Something That Moves Business Forward."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Banner Description</label>
+                <textarea
+                  rows={3}
+                  value={medicsInnovatorData.workTogetherSection.description.en}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'en', e.target.value)}
+                  placeholder="Partner with us to design and deliver..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400">🇬🇧 Primary Button Label</label>
                 <input
                   type="text"
                   value={medicsInnovatorData.workTogetherSection.primaryButtonText.en}
                   onChange={(e) => handleMIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
                   placeholder="Get a Quote ↗"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                 />
               </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
+                <input
+                  type="text"
+                  value={medicsInnovatorData.workTogetherSection.secondaryButtonText.en}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                  placeholder="Contact Us"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.workTogetherSection.tagline.ar}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
+                  placeholder="— لنعمل معاً —"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  value={medicsInnovatorData.workTogetherSection.title.ar}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
+                  placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف البانر بالعربية</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  value={medicsInnovatorData.workTogetherSection.description.ar}
+                  onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
+                  placeholder="تشارك معنا لتصميم وتنفيذ..."
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={medicsInnovatorData.workTogetherSection.primaryButtonText.ar}
                   onChange={(e) => handleMIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
                   placeholder="احصل على عرض أسعار ↗"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
-              <input
-                type="text"
-                value={medicsInnovatorData.workTogetherSection.primaryButtonUrl}
-                onChange={(e) => handleMIWorkTogetherChange('primaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
-              Secondary Button (Outline)
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Text (EN)</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.workTogetherSection.secondaryButtonText.en}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1 text-right">(AR) النص</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
                 <input
                   type="text"
                   dir="rtl"
                   value={medicsInnovatorData.workTogetherSection.secondaryButtonText.ar}
                   onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
                   placeholder="اتصل بنا"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-[11px] text-white/60 mb-1">Target URL</label>
-              <input
-                type="text"
-                value={medicsInnovatorData.workTogetherSection.secondaryButtonUrl}
-                onChange={(e) => handleMIWorkTogetherChange('secondaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-              />
-            </div>
+            </>
+          )}
+        </div>
+
+        {/* Action Button URLs (Common) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</label>
+            <input
+              type="text"
+              value={medicsInnovatorData.workTogetherSection.primaryButtonUrl}
+              onChange={(e) => handleMIWorkTogetherChange('primaryButtonUrl', e.target.value)}
+              placeholder="/contact"
+              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</label>
+            <input
+              type="text"
+              value={medicsInnovatorData.workTogetherSection.secondaryButtonUrl}
+              onChange={(e) => handleMIWorkTogetherChange('secondaryButtonUrl', e.target.value)}
+              placeholder="/contact"
+              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+            />
           </div>
         </div>
       </CardContent>
