@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { CmsHomePage } from "./pages/CmsHomePage";
+import { QuoteRequestsPage } from "./pages/QuoteRequestsPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { getAuthToken, getStoredUserData } from "./lib/api";
 
@@ -78,6 +79,22 @@ export const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <CmsHomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quotes"
+          element={
+            <ProtectedRoute>
+              <QuoteRequestsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quote-requests"
+          element={
+            <ProtectedRoute>
+              <QuoteRequestsPage />
             </ProtectedRoute>
           }
         />

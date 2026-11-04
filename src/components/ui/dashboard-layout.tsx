@@ -58,12 +58,34 @@ const CmsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
+const QuotesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+    <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Z" />
+    <path d="M9 11h6" />
+    <path d="M9 15h6" />
+    <path d="M9 19h4" />
+  </svg>
+);
+
 const topNavigationItems: NavItem[] = [
   { icon: DashboardIcon, label: "Dashboard", href: "/dashboard" },
   { icon: CmsIcon, label: "CMS Portal", href: "/cms" },
+  { icon: QuotesIcon, label: "Quote Requests", href: "/quotes" },
 ];
 
 const CMS_SEARCH_SECTIONS = [
+  { name: "Quote Requests", path: "/quotes", desc: "Customer product quotation requests & leads" },
   { name: "Home Page", path: "/cms?tab=home", desc: "Hero, Brands, About, Divisions, Vision & Mission, Banner" },
   { name: "About Us", path: "/cms?tab=about", desc: "10 sections: Leadership, Heritage, Journey, Values, Purpose" },
   { name: "Company Profile", path: "/cms?tab=company", desc: "3 sections: Profile, Who We Are, What Guides Us" },
@@ -189,7 +211,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 (pathname === "/" ||
                   pathname === "/agent/dashboard" ||
                   pathname === "/university/dashboard")) ||
-              (item.href === "/cms" && pathname.includes("/cms"));
+              (item.href === "/cms" && pathname.includes("/cms")) ||
+              (item.href === "/quotes" && (pathname.includes("/quotes") || pathname.includes("/quote-requests")));
 
             return (
               <li key={item.label}>

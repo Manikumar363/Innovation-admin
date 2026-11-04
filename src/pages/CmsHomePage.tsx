@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Plus,
   Trash2,
@@ -3308,6 +3309,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               </div>
 
               <div className="flex flex-wrap items-center gap-2.5">
+                <Link
+                  to="/quotes"
+                  className="px-3 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-[#7c1420] to-[#961c28] hover:from-[#8c1724] hover:to-[#a7202c] text-white border border-red-500/30 flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
+                >
+                  <FileText className="w-3.5 h-3.5 text-white" />
+                  Quote Requests
+                </Link>
                 <Button
                   variant="outline"
                   onClick={() => setShowPreviewModal(true)}
