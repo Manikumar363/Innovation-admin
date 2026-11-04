@@ -442,7 +442,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     companiesSection: {
       ...initialCmsHomeData.companiesSection,
       ...(res.companiesSection || {}),
-      companies: res.companiesSection?.companies || initialCmsHomeData.companiesSection.companies,
+      companies: (res.companiesSection?.companies || initialCmsHomeData.companiesSection.companies).map((c, i) => ({
+        ...c,
+        color: c.color || (i === 0 ? 'red' : 'blue'),
+      })),
     },
     purposeSection: {
       ...initialCmsHomeData.purposeSection,
@@ -3094,6 +3097,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       description: { en: '', ar: '' },
       logoUrl: '',
       websiteUrl: '',
+      color: 'blue',
     };
     setData((prev) => ({
       ...prev,
@@ -3117,7 +3121,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
   const handleCompanyChange = (
     index: number,
-    field: 'name' | 'description' | 'logoUrl' | 'websiteUrl',
+    field: 'name' | 'description' | 'logoUrl' | 'websiteUrl' | 'color',
     langOrVal: string,
     val?: string
   ) => {
@@ -5779,6 +5783,65 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                   placeholder="/projects-innovator"
                                   className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                                 />
+                              </div>
+
+                              {/* Card Color (Red / Blue) */}
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="text-[11px] text-white/60 block">
+                                    {activeLangTab === 'ar' ? 'لون البطاقة (Color)' : 'Card Color'}
+                                  </label>
+                                  <span
+                                    className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full flex items-center gap-1.5 transition-all"
+                                    style={{
+                                      backgroundColor: (comp.color || 'blue').toLowerCase() === 'red' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)',
+                                      color: (comp.color || 'blue').toLowerCase() === 'red' ? '#f87171' : '#60a5fa',
+                                      border: `1px solid ${(comp.color || 'blue').toLowerCase() === 'red' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
+                                    }}
+                                  >
+                                    <span
+                                      className="w-1.5 h-1.5 rounded-full"
+                                      style={{
+                                        backgroundColor: (comp.color || 'blue').toLowerCase() === 'red' ? '#ef4444' : '#3b82f6',
+                                      }}
+                                    />
+                                    {(comp.color || 'blue').toUpperCase()}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <select
+                                    value={comp.color || 'blue'}
+                                    onChange={(e) => handleCompanyChange(cIdx, 'color', e.target.value)}
+                                    className="flex-1 px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] cursor-pointer"
+                                  >
+                                    <option value="red" className="bg-[#14112E] text-red-400">🔴 Red {activeLangTab === 'ar' ? '(أحمر)' : ''}</option>
+                                    <option value="blue" className="bg-[#14112E] text-blue-400">🔵 Blue {activeLangTab === 'ar' ? '(أزرق)' : ''}</option>
+                                  </select>
+                                  <div className="flex items-center gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCompanyChange(cIdx, 'color', 'red')}
+                                      className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all cursor-pointer ${
+                                        (comp.color || 'blue').toLowerCase() === 'red'
+                                          ? 'bg-red-600/90 text-white border-red-500 shadow-md shadow-red-500/30'
+                                          : 'bg-white/5 text-white/50 border-white/10 hover:text-white hover:bg-white/10'
+                                      }`}
+                                    >
+                                      Red
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCompanyChange(cIdx, 'color', 'blue')}
+                                      className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all cursor-pointer ${
+                                        (comp.color || 'blue').toLowerCase() === 'blue'
+                                          ? 'bg-blue-600/90 text-white border-blue-500 shadow-md shadow-blue-500/30'
+                                          : 'bg-white/5 text-white/50 border-white/10 hover:text-white hover:bg-white/10'
+                                      }`}
+                                    >
+                                      Blue
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
