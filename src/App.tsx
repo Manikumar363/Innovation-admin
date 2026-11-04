@@ -1,8 +1,11 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { CmsHomePage } from "./pages/CmsHomePage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 import { getAuthToken, getStoredUserData } from "./lib/api";
 
 // Protected Route Guard
@@ -32,6 +35,20 @@ const RootRedirect: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
+      {/* Global Toast Notification System */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -115,8 +132,8 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Catch-all redirect */}
-        <Route path="*" element={<RootRedirect />} />
+        {/* Catch-all 404 Route */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

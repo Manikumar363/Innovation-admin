@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { login, storeAuthToken, storeUserData } from "../lib/api";
 
@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
         role: "admin",
       };
 
-      toast.loading("Signing in...");
+      const loadToastId = toast.loading("Signing in...");
       const response = await login(loginData);
 
       // Handle Remember Me storage
@@ -86,10 +86,8 @@ export const LoginPage: React.FC = () => {
       storeAuthToken(response.token);
       storeUserData(response.user);
 
-      toast.dismiss();
-      toast.success("Login successful!", {
-        style: { background: "#14112E", color: "#fff", border: "1px solid #F68E2D" },
-      });
+      toast.dismiss(loadToastId);
+      toast.success("Login successful! Welcome back.");
 
       // Redirect directly to main Dashboard
       setTimeout(() => {
@@ -107,7 +105,6 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#050b1f] flex flex-col justify-center items-center py-12 px-4 sm:px-6">
-      <Toaster position="top-right" />
 
       {/* Ambient background glow */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#F68E2D]/10 rounded-full blur-3xl pointer-events-none" />
@@ -189,7 +186,7 @@ export const LoginPage: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => toast("Contact system administrator for password recovery.", { icon: "ℹ️" })}
+              onClick={() => toast.info("Contact system administrator for password recovery.")}
               className="text-white/60 hover:text-[#F68E2D] transition-colors cursor-pointer"
             >
               Forget Password?

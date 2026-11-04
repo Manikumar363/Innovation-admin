@@ -5,6 +5,7 @@
  */
 
 import { API_BASE } from '../config/api';
+import { toast } from 'react-toastify';
 
 export interface StoredUser {
   id?: string;
@@ -374,8 +375,14 @@ export async function apiFetch<T = any>(endpoint: string, options?: RequestInit)
     if (res.ok) {
       return (await res.json()) as T;
     }
+    if (res.status === 404) {
+      toast.error(`404: Endpoint not found (${endpoint})`);
+    } else {
+      toast.error(`Request failed with status ${res.status}`);
+    }
   } catch (err) {
-    // Return mock fallback
+    // Network or server offline
+    console.warn(`[API] Endpoint unavailable: ${endpoint}`, err);
   }
 
   return ({ success: false, message: 'Endpoint unavailable' } as unknown as T);

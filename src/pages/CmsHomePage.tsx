@@ -51,7 +51,7 @@ import {
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { ImageUploadField } from '../components/ui/ImageUploadField';
 import {
   cmsService,
@@ -9719,8 +9719,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                     const formData = new FormData();
                                     formData.append('file', file);
                                     formData.append('folder', 'company-profile');
+                                    const uploadToastId = toast.loading('Uploading PDF...');
                                     try {
-                                      toast.loading('Uploading PDF...', { id: 'pdf-upload' });
                                       const res = await fetch(`${API_BASE}/api/upload/public`, {
                                         method: 'POST',
                                         body: formData,
@@ -9738,12 +9738,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                             },
                                           },
                                         });
-                                        toast.success('Company profile PDF uploaded!', { id: 'pdf-upload' });
+                                        toast.dismiss(uploadToastId);
+                                        toast.success('Company profile PDF uploaded!');
                                       } else {
                                         throw new Error(json.message || 'Upload failed');
                                       }
                                     } catch (err: any) {
-                                      toast.error(err.message || 'PDF upload failed', { id: 'pdf-upload' });
+                                      toast.dismiss(uploadToastId);
+                                      toast.error(err.message || 'PDF upload failed');
                                     }
                                   }}
                                 />

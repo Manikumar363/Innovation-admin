@@ -1,4 +1,5 @@
 import { API_BASE } from '../config/api';
+import { toast } from 'react-toastify';
 
 export interface BilingualText {
   en: string;
@@ -3459,13 +3460,22 @@ const ATTRACTIVE_CACHE_KEY = 'cms_attractive_data';
 const MEDICS_INNOVATOR_CACHE_KEY = 'cms_medics_innovator_data';
 const INVESTMENT_CACHE_KEY = 'cms_investment_data';
 
+async function cmsFetch(url: string, init?: RequestInit): Promise<Response> {
+  const res = await fetch(url, init);
+  if (res.status === 404) {
+    const cleanUrl = url.replace(API_BASE, '');
+    toast.error(`404 Not Found: Server endpoint does not exist (${cleanUrl})`);
+  }
+  return res;
+}
+
 export const cmsService = {
 
 
   // CMS Investment Services
   async getCmsInvestment(): Promise<CmsInvestmentData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/investment`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/investment`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3492,7 +3502,7 @@ export const cmsService = {
   async updateCmsInvestment(data: CmsInvestmentData): Promise<CmsInvestmentData> {
     try {
       localStorage.setItem(INVESTMENT_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/investment`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/investment`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3517,7 +3527,7 @@ export const cmsService = {
   // CMS Contact Services
   async getCmsContact(): Promise<CmsContactData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/contact`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/contact`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3544,7 +3554,7 @@ export const cmsService = {
   async updateCmsContact(data: CmsContactData): Promise<CmsContactData> {
     try {
       localStorage.setItem(CONTACT_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/contact`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/contact`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3569,7 +3579,7 @@ export const cmsService = {
   // CMS Projects Innovator Services
   async getCmsProjectsInnovator(): Promise<CmsProjectsInnovatorData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/projects-innovator`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/projects-innovator`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3596,7 +3606,7 @@ export const cmsService = {
   async updateCmsProjectsInnovator(data: CmsProjectsInnovatorData): Promise<CmsProjectsInnovatorData> {
     try {
       localStorage.setItem(PROJECTS_INNOVATOR_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/projects-innovator`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/projects-innovator`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3621,7 +3631,7 @@ export const cmsService = {
   // CMS Attractive Services
   async getCmsAttractive(): Promise<CmsAttractiveData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/attractive`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/attractive`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3648,7 +3658,7 @@ export const cmsService = {
   async updateCmsAttractive(data: CmsAttractiveData): Promise<CmsAttractiveData> {
     try {
       localStorage.setItem(ATTRACTIVE_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/attractive`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/attractive`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3673,7 +3683,7 @@ export const cmsService = {
   // CMS Medics Innovator Services
   async getCmsMedicsInnovator(): Promise<CmsMedicsInnovatorData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/medics-innovator`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/medics-innovator`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3700,7 +3710,7 @@ export const cmsService = {
   async updateCmsMedicsInnovator(data: CmsMedicsInnovatorData): Promise<CmsMedicsInnovatorData> {
     try {
       localStorage.setItem(MEDICS_INNOVATOR_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/medics-innovator`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/medics-innovator`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3725,7 +3735,7 @@ export const cmsService = {
   // CMS Partners Services
   async getCmsPartners(): Promise<CmsPartnersData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/partners`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/partners`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3752,7 +3762,7 @@ export const cmsService = {
   async updateCmsPartners(data: CmsPartnersData): Promise<CmsPartnersData> {
     try {
       localStorage.setItem(PARTNERS_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/partners`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/partners`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3777,7 +3787,7 @@ export const cmsService = {
   // CMS Projects Services
   async getCmsProjects(): Promise<CmsProjectsData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/projects`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/projects`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3804,7 +3814,7 @@ export const cmsService = {
   async updateCmsProjects(data: CmsProjectsData): Promise<CmsProjectsData> {
     try {
       localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/projects`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/projects`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3829,7 +3839,7 @@ export const cmsService = {
   // CMS Shop Services
   async getCmsShop(): Promise<CmsShopData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/shop`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/shop`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3856,7 +3866,7 @@ export const cmsService = {
   async updateCmsShop(data: CmsShopData): Promise<CmsShopData> {
     try {
       localStorage.setItem(SHOP_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/shop`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/shop`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3881,7 +3891,7 @@ export const cmsService = {
   // CMS Services
   async getCmsServices(): Promise<CmsServicesData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/services`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/services`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3908,7 +3918,7 @@ export const cmsService = {
   async updateCmsServices(data: CmsServicesData): Promise<CmsServicesData> {
     try {
       localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/services`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/services`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3934,7 +3944,7 @@ export const cmsService = {
   // CMS Company Profile Services
   async getCmsCompany(): Promise<CmsCompanyData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/company`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/company`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -3961,7 +3971,7 @@ export const cmsService = {
   async updateCmsCompany(data: CmsCompanyData): Promise<CmsCompanyData> {
     try {
       localStorage.setItem(COMPANY_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/company`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/company`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3987,7 +3997,7 @@ export const cmsService = {
   // CMS About Us Services
   async getCmsAbout(): Promise<CmsAboutData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/about`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/about`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -4014,7 +4024,7 @@ export const cmsService = {
   async updateCmsAbout(data: CmsAboutData): Promise<CmsAboutData> {
     try {
       localStorage.setItem(ABOUT_CACHE_KEY, JSON.stringify(data));
-      const res = await fetch(`${API_BASE}/api/cms/about`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/about`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -4038,7 +4048,7 @@ export const cmsService = {
 
   async getCmsHome(): Promise<CmsHomeData> {
     try {
-      const res = await fetch(`${API_BASE}/api/cms/home`);
+      const res = await cmsFetch(`${API_BASE}/api/cms/home`);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
@@ -4066,7 +4076,7 @@ export const cmsService = {
     localStorage.setItem(CACHE_KEY, JSON.stringify(payload));
 
     try {
-      const res = await fetch(`${API_BASE}/api/cms/home`, {
+      const res = await cmsFetch(`${API_BASE}/api/cms/home`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

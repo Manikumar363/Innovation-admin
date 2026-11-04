@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { getStoredUserData, removeAuthToken } from "../../lib/api";
 import type { StoredUser } from "../../lib/api";
 
@@ -150,10 +150,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const handleLogout = () => {
     try {
       removeAuthToken();
-      toast.success("Successfully logged out!", {
-        duration: 3000,
-        style: { background: "#fff", color: "#2A020D", fontWeight: "bold" },
-      });
+      toast.success("Successfully logged out!");
       setTimeout(() => {
         navigate(`/login`);
       }, 500);

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload, RefreshCw, X, CheckCircle2 } from 'lucide-react';
 import { uploadService } from '../../services/uploadService';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 interface ImageUploadFieldProps {
   label?: string;
