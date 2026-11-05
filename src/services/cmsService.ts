@@ -123,10 +123,75 @@ export const initialCmsCtaBannerData: CmsCtaBannerData = {
   isActive: true,
 };
 
+// ==================== CENTRALIZED BRAND LOGOS INTERFACES ====================
+export interface CentralBrandItem {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl?: string;
+  order?: number;
+}
+
+export interface CmsBrandsData {
+  _id?: string;
+  tagline: BilingualText;
+  title: BilingualText;
+  description: BilingualText;
+  brands: CentralBrandItem[];
+  isActive?: boolean;
+  updatedAt?: string;
+}
+
+export const initialCmsBrandsData: CmsBrandsData = {
+  tagline: {
+    en: 'TRUSTED BRANDS & PARTNERS',
+    ar: 'العلامات التجارية الموثوقة والشركاء',
+  },
+  title: {
+    en: 'Trusted Brands & Partners',
+    ar: 'العلامات التجارية والشركاء الموثوقون',
+  },
+  description: {
+    en: 'Partner and investor logos displayed in the trusted brands slider',
+    ar: 'شعارات الشركاء والمستثمرين المعروضة في شريط العلامات التجارية الموثوقة',
+  },
+  brands: [
+    {
+      id: 'brand-1',
+      name: 'Aramco Ventures',
+      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: 'https://aramcoventures.com',
+      order: 1,
+    },
+    {
+      id: 'brand-2',
+      name: 'NEOM Tech',
+      logoUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: 'https://neom.com',
+      order: 2,
+    },
+    {
+      id: 'brand-3',
+      name: 'SABIC Horizon',
+      logoUrl: 'https://images.unsplash.com/photo-1516876437184-593fda40c7ce?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: 'https://sabic.com',
+      order: 3,
+    },
+    {
+      id: 'brand-4',
+      name: 'Global Innovation Hub',
+      logoUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: 'https://example.com',
+      order: 4,
+    },
+  ],
+  isActive: true,
+};
+
 export interface CmsHomeData {
   _id?: string;
   hero: HeroSection;
-  trustedBrands: TrustedBrand[];
+  trustedBrands?: TrustedBrand[];
   aboutSectorsSection: AboutSectorsSection;
   companiesSection: CompaniesSection;
   purposeSection: PurposeSection;
@@ -569,7 +634,7 @@ export interface ProjectsInnovatorWorkTogetherSection {
 export interface CmsProjectsInnovatorData {
   _id?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
-  brandsSection: ProjectsInnovatorBrandsSection;
+  brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
   businessAreasSection: ProjectsInnovatorBusinessAreasSection;
   workTogetherSection: ProjectsInnovatorWorkTogetherSection;
@@ -605,7 +670,7 @@ export interface EntityProductsSection {
 export interface CmsAttractiveData {
   _id?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
-  brandsSection: ProjectsInnovatorBrandsSection;
+  brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
   productsSection: EntityProductsSection;
   workTogetherSection: ProjectsInnovatorWorkTogetherSection;
@@ -615,7 +680,7 @@ export interface CmsAttractiveData {
 export interface CmsMedicsInnovatorData {
   _id?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
-  brandsSection: ProjectsInnovatorBrandsSection;
+  brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
   productsSection: EntityProductsSection;
   workTogetherSection: ProjectsInnovatorWorkTogetherSection;
@@ -765,28 +830,6 @@ export const initialCmsHomeData: CmsHomeData = {
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     },
   },
-  trustedBrands: [
-    {
-      name: 'Aramco Ventures',
-      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      websiteUrl: 'https://aramco.com',
-    },
-    {
-      name: 'NEOM Tech',
-      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      websiteUrl: 'https://neom.com',
-    },
-    {
-      name: 'SABIC Horizon',
-      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      websiteUrl: 'https://sabic.com',
-    },
-    {
-      name: 'Global Innovation Hub',
-      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      websiteUrl: 'https://example.com',
-    },
-  ],
   aboutSectorsSection: {
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
     title: {
@@ -1612,34 +1655,6 @@ export const initialCmsProjectsInnovatorData: CmsProjectsInnovatorData = {
     secondaryButtonUrl: '/contact',
     backgroundImageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80',
   },
-  brandsSection: {
-    title: {
-      en: 'TRUSTED BRANDS & INDUSTRY LEADERS',
-      ar: 'العلامات التجارية الموثوقة وقادة الصناعة',
-    },
-    brands: [
-      {
-        id: 'brand-1',
-        name: 'Oracle',
-        logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-2',
-        name: 'ATRIKTIF',
-        logoUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-3',
-        name: 'Winners',
-        logoUrl: 'https://images.unsplash.com/photo-1516876437184-593fda40c7ce?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-4',
-        name: 'AKS Group',
-        logoUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=200&q=80',
-      },
-    ],
-  },
   aboutSection: {
     tagline: {
       en: 'ABOUT PROJECTS INNOVATOR',
@@ -1762,34 +1777,6 @@ export const initialCmsAttractiveData: CmsAttractiveData = {
     },
     secondaryButtonUrl: '/contact',
     backgroundImageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80',
-  },
-  brandsSection: {
-    title: {
-      en: 'TRUSTED BRANDS & INDUSTRY LEADERS',
-      ar: 'العلامات التجارية الموثوقة ورواد الصناعة',
-    },
-    brands: [
-      {
-        id: 'brand-1',
-        name: 'Oracle',
-        logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg',
-      },
-      {
-        id: 'brand-2',
-        name: 'Atriktif',
-        logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-3',
-        name: 'Winners',
-        logoUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-4',
-        name: 'AKS Group',
-        logoUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=200&q=80',
-      },
-    ],
   },
   aboutSection: {
     tagline: {
@@ -1928,34 +1915,6 @@ export const initialCmsMedicsInnovatorData: CmsMedicsInnovatorData = {
     },
     secondaryButtonUrl: '/contact',
     backgroundImageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1600&q=80',
-  },
-  brandsSection: {
-    title: {
-      en: 'TRUSTED BRANDS & INDUSTRY LEADERS',
-      ar: 'العلامات التجارية الموثوقة ورواد الصناعة',
-    },
-    brands: [
-      {
-        id: 'brand-1',
-        name: 'Oracle Health',
-        logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg',
-      },
-      {
-        id: 'brand-2',
-        name: 'SonoCare Systems',
-        logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-3',
-        name: 'MedTech Global',
-        logoUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'brand-4',
-        name: 'CareFlow Medical',
-        logoUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=200&q=80',
-      },
-    ],
   },
   aboutSection: {
     tagline: {
@@ -2944,7 +2903,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Home Page',
     labelAr: 'الصفحة الرئيسية',
     iconName: 'Home',
-    description: 'Manage main hero title, tags, founder details, trusted brands, and our sectors portfolio.',
+    description: 'Manage main hero title, tags, founder details, and our sectors portfolio.',
     groups: [
       {
         id: 'home-hero',
@@ -2980,25 +2939,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
         ],
       },
       {
-        id: 'home-brands',
-        title: { en: 'Section II: Trusted Brands & Partners', ar: 'القسم الثاني: العلامات الموثوقة والشركاء' },
-        description: { en: 'Manage verified partner logos, brand showcase, and collaborator web links', ar: 'إدارة شعارات الشركاء المعتمدين وروابطهم الرقمية' },
-        iconName: 'Building2',
-        accentColor: 'green',
-        items: [
-          {
-            id: 'brands-carousel',
-            title: { en: 'Trusted Partner Logos', ar: 'شعارات الشركاء الموثوقين' },
-            subtitle: { en: 'Dynamic brand logos and partner company URLs', ar: 'شعارات العلامات التجارية وروابطها المباشرة' },
-            status: 'Active',
-            lastUpdated: '26 Oct 2026',
-            badgeColor: 'green',
-          },
-        ],
-      },
-      {
         id: 'home-sectors',
-        title: { en: 'Section III: About & Our Sectors', ar: 'القسم الثالث: عن الشركة وقطاعاتنا' },
+        title: { en: 'Section II: About & Our Sectors', ar: 'القسم الثاني: عن الشركة وقطاعاتنا' },
         description: { en: 'Manage section feature image, location, and dynamic industry sectors list', ar: 'إدارة صورة القسم، الموقع الجغرافي، وقائمة القطاعات الحيوية' },
         iconName: 'Layers',
         accentColor: 'purple',
@@ -3018,6 +2960,40 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             status: 'Active',
             lastUpdated: '26 Oct 2026',
             badgeColor: 'purple',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'brands',
+    label: 'Brand Logos',
+    labelAr: 'شعارات العلامات التجارية',
+    iconName: 'Sparkles',
+    description: 'Centralized brand & partner logos displayed across all website sections and company pages.',
+    groups: [
+      {
+        id: 'brands-group',
+        title: { en: 'Centralized Brand Logos', ar: 'شعارات العلامات التجارية الموحدة' },
+        description: { en: 'Manage partner, client, and investor logos shared across the entire platform', ar: 'إدارة شعارات الشركاء والعملاء والمستثمرين المعروضة عبر المنصة' },
+        iconName: 'Sparkles',
+        accentColor: 'orange',
+        items: [
+          {
+            id: 'brands-header-item',
+            title: { en: 'Section Header & Description', ar: 'عنوان القسم والوصف' },
+            subtitle: { en: 'Tagline, title, and subtitle copy for brand logos showcase', ar: 'الشعار والعنوان والنص التوضيحي لمعرض العلامات التجارية' },
+            status: 'Active',
+            lastUpdated: '05 Nov 2026',
+            badgeColor: 'orange',
+          },
+          {
+            id: 'brands-collection-item',
+            title: { en: 'Brand Logos Collection', ar: 'مجموعة شعارات العلامات التجارية' },
+            subtitle: { en: 'Partner logos, brand names, and external redirect links', ar: 'شعارات الشركاء، أسماء العلامات، والروابط الخارجية' },
+            status: 'Active',
+            lastUpdated: '05 Nov 2026',
+            badgeColor: 'green',
           },
         ],
       },
@@ -3352,7 +3328,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Projects Innovator',
     labelAr: 'مبتكر المشاريع',
     iconName: 'Building2',
-    description: 'Holding entity banner, brand logos, about profile, business areas, and work together banner.',
+    description: 'Holding entity banner, about profile, business areas, and work together banner.',
     groups: [
       {
         id: 'pi-overview',
@@ -3370,16 +3346,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             badgeColor: 'red',
           },
           {
-            id: 'pi-brands',
-            title: { en: 'Section 2: Brand Logos', ar: 'القسم الثاني: شعارات العلامات التجارية' },
-            subtitle: { en: 'Trusted brands and industry leaders list', ar: 'قائمة العلامات التجارية وقادة الصناعة' },
-            status: 'Active',
-            lastUpdated: '02 Nov 2026',
-            badgeColor: 'blue',
-          },
-          {
             id: 'pi-about',
-            title: { en: 'Section 3: About Projects Innovator', ar: 'القسم الثالث: عن مبتكر المشاريع' },
+            title: { en: 'Section 2: About Projects Innovator', ar: 'القسم الثاني: عن مبتكر المشاريع' },
             subtitle: { en: 'Holding entity platform for sustainable growth', ar: 'منصة الكيان القابض للنمو المستدام' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3387,7 +3355,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
           },
           {
             id: 'pi-business-areas',
-            title: { en: 'Section 4: Our Business Areas', ar: 'القسم الرابع: مجالات أعمالنا' },
+            title: { en: 'Section 3: Our Business Areas', ar: 'القسم الثالث: مجالات أعمالنا' },
             subtitle: { en: 'Medical & Lab Equipment, Supplies, and Healthcare Solutions', ar: 'الأجهزة الطبية، المستلزمات المخبرية، وحلول الرعاية' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3395,7 +3363,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
           },
           {
             id: 'pi-banner-cta',
-            title: { en: 'Section 5: Let\'s Work Together Banner', ar: 'القسم الخامس: بانر لنعمل معاً' },
+            title: { en: 'Section 4: Let\'s Work Together Banner', ar: 'القسم الرابع: بانر لنعمل معاً' },
             subtitle: { en: 'Call-to-action banner, quotes, and enquiries', ar: 'بانر الحث على اتخاذ إجراء وطلب عروض الأسعار' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3410,12 +3378,12 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Attractive',
     labelAr: 'أتراكتيف',
     iconName: 'Sparkles',
-    description: 'Attractive company hero banner, brands, about profile, products catalog showcase, and partnership banner.',
+    description: 'Attractive company hero banner, about profile, products catalog showcase, and partnership banner.',
     groups: [
       {
         id: 'att-overview',
         title: { en: 'Attractive Division', ar: 'قسم شركة أتراكتيف' },
-        description: { en: 'Manage Attractive company hero, brand logos, profile, and products', ar: 'إدارة واجهة أتراكتيف والعلامات التجارية والمنتجات' },
+        description: { en: 'Manage Attractive company hero, profile, and products', ar: 'إدارة واجهة أتراكتيف والملف التعريفي والمنتجات' },
         iconName: 'Sparkles',
         accentColor: 'blue',
         items: [
@@ -3428,16 +3396,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             badgeColor: 'blue',
           },
           {
-            id: 'att-brands',
-            title: { en: 'Section 2: Brand Logos', ar: 'القسم الثاني: شعارات العلامات التجارية' },
-            subtitle: { en: 'Brand partner logos and leadership showcase', ar: 'شعارات الشركاء والعلامات التجارية' },
-            status: 'Active',
-            lastUpdated: '02 Nov 2026',
-            badgeColor: 'blue',
-          },
-          {
             id: 'att-about',
-            title: { en: 'Section 3: About Attractive', ar: 'القسم الثالث: عن أتراكتيف' },
+            title: { en: 'Section 2: About Attractive', ar: 'القسم الثاني: عن أتراكتيف' },
             subtitle: { en: 'Tagline, mission story, and building visual', ar: 'الشعار الفرعي ورؤية الشركة وصورة المقر' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3445,7 +3405,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
           },
           {
             id: 'att-products',
-            title: { en: 'Section 4: Our Products', ar: 'القسم الرابع: منتجاتنا' },
+            title: { en: 'Section 3: Our Products', ar: 'القسم الثالث: منتجاتنا' },
             subtitle: { en: 'Patient Monitor, Ultrasound, Infusion Pump, CE/FDA/ISO badges', ar: 'شاشات المراقبة والموجات فوق الصوتية والمضخات والشهادات' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3453,7 +3413,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
           },
           {
             id: 'att-cta',
-            title: { en: 'Section 5: Let\'s Work Together Banner', ar: 'القسم الخامس: بانر لنعمل معاً' },
+            title: { en: 'Section 4: Let\'s Work Together Banner', ar: 'القسم الرابع: بانر لنعمل معاً' },
             subtitle: { en: 'Bottom partnership call-to-action and quote triggers', ar: 'دعوة الشراكة السفلية وطلب عروض الأسعار' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3468,7 +3428,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Medics Innovator',
     labelAr: 'ميديكس إنوفيتور',
     iconName: 'Stethoscope',
-    description: 'Medics Innovator medical division hero, brands, clinical profile, healthcare products, and consultation banner.',
+    description: 'Medics Innovator medical division hero, clinical profile, healthcare products, and consultation banner.',
     groups: [
       {
         id: 'mi-overview',
@@ -3486,16 +3446,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             badgeColor: 'blue',
           },
           {
-            id: 'mi-brands',
-            title: { en: 'Section 2: Brand Logos', ar: 'القسم الثاني: شعارات العلامات التجارية' },
-            subtitle: { en: 'Healthcare manufacturer logos and partners', ar: 'شعارات مصنعي الرعاية الصحية والشركاء' },
-            status: 'Active',
-            lastUpdated: '02 Nov 2026',
-            badgeColor: 'blue',
-          },
-          {
             id: 'mi-about',
-            title: { en: 'Section 3: About Medics Innovator', ar: 'القسم الثالث: عن ميديكس إنوفيتور' },
+            title: { en: 'Section 2: About Medics Innovator', ar: 'القسم الثاني: عن ميديكس إنوفيتور' },
             subtitle: { en: 'Clinical excellence tagline, story, and hospital image', ar: 'رؤية التميز السريري وصورة المنشأة' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3503,7 +3455,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
           },
           {
             id: 'mi-products',
-            title: { en: 'Section 4: Our Products', ar: 'القسم الرابع: منتجاتنا' },
+            title: { en: 'Section 3: Our Products', ar: 'القسم الثالث: منتجاتنا' },
             subtitle: { en: 'Featured equipment, certifications, specs, and quote actions', ar: 'الأجهزة المميزة والشهادات والمواصفات وطلب عروض الأسعار' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -3511,7 +3463,7 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
           },
           {
             id: 'mi-cta',
-            title: { en: 'Section 5: Let\'s Work Together Banner', ar: 'القسم الخامس: بانر لنعمل معاً' },
+            title: { en: 'Section 4: Let\'s Work Together Banner', ar: 'القسم الرابع: بانر لنعمل معاً' },
             subtitle: { en: 'Healthcare partnership call-to-action and clinical consultations', ar: 'دعوة الشراكة الطبية والاستشارات السريرية' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -4227,19 +4179,77 @@ export const cmsService = {
     }
   },
 
+  async getCmsBrands(): Promise<CmsBrandsData> {
+    const BRANDS_CACHE_KEY = 'cms_brands_data';
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/brands`);
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const data = await res.json();
+      if (data.success && data.data) {
+        localStorage.setItem(BRANDS_CACHE_KEY, JSON.stringify(data.data));
+        return data.data;
+      }
+    } catch (err) {
+      console.warn('Backend unavailable or error for Brands, reading from local cache:', err);
+    }
+
+    const cached = localStorage.getItem(BRANDS_CACHE_KEY);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        // ignore
+      }
+    }
+    return initialCmsBrandsData;
+  },
+
+  async updateCmsBrands(payload: Partial<CmsBrandsData>): Promise<{ success: boolean; data?: CmsBrandsData; message?: string }> {
+    const BRANDS_CACHE_KEY = 'cms_brands_data';
+    const merged = { ...initialCmsBrandsData, ...payload };
+    localStorage.setItem(BRANDS_CACHE_KEY, JSON.stringify(merged));
+
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/brands`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(merged),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const result = await res.json();
+      return { success: true, data: result.data, message: result.message };
+    } catch (err) {
+      console.warn('Failed to save Brands to backend, saved to local cache:', err);
+      return {
+        success: true,
+        data: merged,
+        message: 'Saved locally in cache (backend offline)',
+      };
+    }
+  },
+
   getAllTabs(): CmsTabConfig[] {
     const cached = localStorage.getItem(TABS_CACHE_KEY);
     if (cached) {
       try {
         const parsed: CmsTabConfig[] = JSON.parse(cached);
-        const existingIds = new Set(parsed.map((t) => t.id));
-        const missingTabs = ALL_CMS_TABS.filter((t) => !existingIds.has(t.id));
-        if (missingTabs.length > 0) {
-          const merged = [...parsed, ...missingTabs];
-          localStorage.setItem(TABS_CACHE_KEY, JSON.stringify(merged));
-          return merged;
-        }
-        return parsed;
+        // Merge missing tabs and ensure fresh groups definition from code
+        const merged = ALL_CMS_TABS.map((codeTab) => {
+          const userTab = parsed.find((p) => p.id === codeTab.id);
+          if (!userTab) return codeTab;
+          return {
+            ...codeTab,
+            ...userTab,
+            groups: codeTab.groups,
+          };
+        });
+        
+        localStorage.setItem(TABS_CACHE_KEY, JSON.stringify(merged));
+        return merged;
       } catch {
         // ignore
       }

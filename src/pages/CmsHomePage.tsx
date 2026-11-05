@@ -62,7 +62,6 @@ import {
   initialCmsHomeData,
   ALL_CMS_TABS,
   type CmsHomeData,
-  type TrustedBrand,
   type SectorItem,
   type CompanyItem,
   type PurposeTag,
@@ -103,7 +102,6 @@ import {
   type InvestmentFactorItem,
   initialCmsInvestmentData,
   type CmsProjectsInnovatorData,
-  type BrandLogoItem,
   type ProjectsInnovatorHeroBannerSection,
   type ProjectsInnovatorAboutSection,
   type ProjectsInnovatorWorkTogetherSection,
@@ -113,7 +111,10 @@ import {
   initialCmsAttractiveData,
   initialCmsMedicsInnovatorData,
   type CmsCtaBannerData,
-  initialCmsCtaBannerData
+  initialCmsCtaBannerData,
+  type CmsBrandsData,
+  type CentralBrandItem,
+  initialCmsBrandsData
 } from '../services/cmsService';
 import { API_BASE } from '../config/api';
 
@@ -124,6 +125,7 @@ interface CmsHomePageProps {
 export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [data, setData] = useState<CmsHomeData>(initialCmsHomeData);
   const [ctaBannerData, setCtaBannerData] = useState<CmsCtaBannerData>(initialCmsCtaBannerData);
+  const [brandsData, setBrandsData] = useState<CmsBrandsData>(initialCmsBrandsData);
   const [aboutData, setAboutData] = useState<CmsAboutData>(initialCmsAboutData);
   const [companyData, setCompanyData] = useState<CmsCompanyData>(initialCmsCompanyData);
   const [servicesData, setServicesData] = useState<CmsServicesData>(initialCmsServicesData);
@@ -149,19 +151,22 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     isActive: res?.isActive !== undefined ? res.isActive : true,
   });
 
+  const ensureBrandsDefaults = (res?: Partial<CmsBrandsData>): CmsBrandsData => ({
+    ...initialCmsBrandsData,
+    ...(res || {}),
+    tagline: { ...initialCmsBrandsData.tagline, ...(res?.tagline || {}) },
+    title: { ...initialCmsBrandsData.title, ...(res?.title || {}) },
+    description: { ...initialCmsBrandsData.description, ...(res?.description || {}) },
+    brands: Array.isArray(res?.brands) && res.brands.length > 0 ? res.brands : initialCmsBrandsData.brands,
+    isActive: res?.isActive !== undefined ? res.isActive : true,
+  });
+
   const ensureAttractiveDefaults = (res: CmsAttractiveData): CmsAttractiveData => ({
     ...initialCmsAttractiveData,
     ...res,
     heroBannerSection: {
       ...initialCmsAttractiveData.heroBannerSection,
       ...(res?.heroBannerSection || {}),
-    },
-    brandsSection: {
-      ...initialCmsAttractiveData.brandsSection,
-      ...(res?.brandsSection || {}),
-      brands: res?.brandsSection?.brands && res.brandsSection.brands.length > 0
-        ? res.brandsSection.brands
-        : initialCmsAttractiveData.brandsSection.brands,
     },
     aboutSection: {
       ...initialCmsAttractiveData.aboutSection,
@@ -187,13 +192,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       ...initialCmsMedicsInnovatorData.heroBannerSection,
       ...(res?.heroBannerSection || {}),
     },
-    brandsSection: {
-      ...initialCmsMedicsInnovatorData.brandsSection,
-      ...(res?.brandsSection || {}),
-      brands: res?.brandsSection?.brands && res.brandsSection.brands.length > 0
-        ? res.brandsSection.brands
-        : initialCmsMedicsInnovatorData.brandsSection.brands,
-    },
     aboutSection: {
       ...initialCmsMedicsInnovatorData.aboutSection,
       ...(res?.aboutSection || {}),
@@ -217,13 +215,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     heroBannerSection: {
       ...initialCmsProjectsInnovatorData.heroBannerSection,
       ...(res?.heroBannerSection || {}),
-    },
-    brandsSection: {
-      ...initialCmsProjectsInnovatorData.brandsSection,
-      ...(res?.brandsSection || {}),
-      brands: res?.brandsSection?.brands && res.brandsSection.brands.length > 0
-        ? res.brandsSection.brands
-        : initialCmsProjectsInnovatorData.brandsSection.brands,
     },
     aboutSection: {
       ...initialCmsProjectsInnovatorData.aboutSection,
@@ -434,7 +425,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     ...initialCmsHomeData,
     ...res,
     hero: { ...initialCmsHomeData.hero, ...(res.hero || {}) },
-    trustedBrands: res.trustedBrands || initialCmsHomeData.trustedBrands,
     aboutSectorsSection: {
       ...initialCmsHomeData.aboutSectorsSection,
       ...(res.aboutSectorsSection || {}),
@@ -504,9 +494,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [homeRes, ctaRes, aboutRes, companyRes, servicesRes, shopRes, projectsRes, partnersRes, contactRes, investmentRes, projectsInnovatorRes, attractiveRes, medicsInnovatorRes] = await Promise.all([
+      const [homeRes, ctaRes, brandsRes, aboutRes, companyRes, servicesRes, shopRes, projectsRes, partnersRes, contactRes, investmentRes, projectsInnovatorRes, attractiveRes, medicsInnovatorRes] = await Promise.all([
         cmsService.getCmsHome(),
         cmsService.getCmsCtaBanner(),
+        cmsService.getCmsBrands(),
         cmsService.getCmsAbout(),
         cmsService.getCmsCompany(),
         cmsService.getCmsServices(),
@@ -532,6 +523,9 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           secondaryButtonText: cleanedCta.secondaryButtonText,
           secondaryButtonUrl: cleanedCta.secondaryButtonUrl,
         };
+      }
+      if (brandsRes) {
+        setBrandsData(ensureBrandsDefaults(brandsRes));
       }
       setData(loadedHome);
       if (aboutRes) {
@@ -650,6 +644,21 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     }
   };
 
+  const handleSaveBrandsData = async () => {
+    try {
+      setSaving(true);
+      const res = await cmsService.updateCmsBrands(brandsData);
+      if (res && res.data) {
+        setBrandsData(ensureBrandsDefaults(res.data));
+      }
+      toast.success('Centralized Brand Logos updated successfully!');
+    } catch (err) {
+      console.error('Save Brands error:', err);
+      toast.error('Failed to save Brand Logos');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // Save About Us Data
 
@@ -1235,60 +1244,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     }));
   };
 
-  const handlePIBrandsTitleChange = (lang: 'en' | 'ar', value: string) => {
-    setProjectsInnovatorData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        title: {
-          ...prev.brandsSection.title,
-          [lang]: value,
-        },
-      },
-    }));
-  };
-
-  const handlePIBrandItemChange = (index: number, field: keyof BrandLogoItem, value: string) => {
-    setProjectsInnovatorData((prev) => {
-      const updated = [...prev.brandsSection.brands];
-      updated[index] = { ...updated[index], [field]: value };
-      return {
-        ...prev,
-        brandsSection: {
-          ...prev.brandsSection,
-          brands: updated,
-        },
-      };
-    });
-  };
-
-  const handleAddPIBrand = () => {
-    setProjectsInnovatorData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        brands: [
-          ...prev.brandsSection.brands,
-          {
-            id: `brand-${Date.now()}`,
-            name: 'New Brand',
-            logoUrl: '',
-          },
-        ],
-      },
-    }));
-  };
-
-  const handleDeletePIBrand = (index: number) => {
-    setProjectsInnovatorData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        brands: prev.brandsSection.brands.filter((_, i) => i !== index),
-      },
-    }));
-  };
-
   const handlePIAboutChange = (field: keyof ProjectsInnovatorAboutSection, value: any) => {
     setProjectsInnovatorData((prev) => ({
       ...prev,
@@ -1465,60 +1420,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           ...prev.heroBannerSection[field],
           [lang]: value,
         },
-      },
-    }));
-  };
-
-  const handleAttBrandsTitleChange = (lang: 'en' | 'ar', value: string) => {
-    setAttractiveData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        title: {
-          ...prev.brandsSection.title,
-          [lang]: value,
-        },
-      },
-    }));
-  };
-
-  const handleAttBrandItemChange = (index: number, field: keyof BrandLogoItem, value: string) => {
-    setAttractiveData((prev) => {
-      const updated = [...prev.brandsSection.brands];
-      updated[index] = { ...updated[index], [field]: value };
-      return {
-        ...prev,
-        brandsSection: {
-          ...prev.brandsSection,
-          brands: updated,
-        },
-      };
-    });
-  };
-
-  const handleAddAttBrand = () => {
-    setAttractiveData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        brands: [
-          ...prev.brandsSection.brands,
-          {
-            id: `brand-${Date.now()}`,
-            name: 'New Brand',
-            logoUrl: '',
-          },
-        ],
-      },
-    }));
-  };
-
-  const handleDeleteAttBrand = (index: number) => {
-    setAttractiveData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        brands: prev.brandsSection.brands.filter((_, i) => i !== index),
       },
     }));
   };
@@ -1783,60 +1684,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           ...prev.heroBannerSection[field],
           [lang]: value,
         },
-      },
-    }));
-  };
-
-  const handleMIBrandsTitleChange = (lang: 'en' | 'ar', value: string) => {
-    setMedicsInnovatorData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        title: {
-          ...prev.brandsSection.title,
-          [lang]: value,
-        },
-      },
-    }));
-  };
-
-  const handleMIBrandItemChange = (index: number, field: keyof BrandLogoItem, value: string) => {
-    setMedicsInnovatorData((prev) => {
-      const updated = [...prev.brandsSection.brands];
-      updated[index] = { ...updated[index], [field]: value };
-      return {
-        ...prev,
-        brandsSection: {
-          ...prev.brandsSection,
-          brands: updated,
-        },
-      };
-    });
-  };
-
-  const handleAddMIBrand = () => {
-    setMedicsInnovatorData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        brands: [
-          ...prev.brandsSection.brands,
-          {
-            id: `brand-${Date.now()}`,
-            name: 'New Brand',
-            logoUrl: '',
-          },
-        ],
-      },
-    }));
-  };
-
-  const handleDeleteMIBrand = (index: number) => {
-    setMedicsInnovatorData((prev) => ({
-      ...prev,
-      brandsSection: {
-        ...prev.brandsSection,
-        brands: prev.brandsSection.brands.filter((_, i) => i !== index),
       },
     }));
   };
@@ -3067,36 +2914,49 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     }
   };
 
-  // Brand Management
-  const handleAddBrand = () => {
-    const newBrand: TrustedBrand = {
-      name: 'New Partner',
-      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80',
+  // ==================== CENTRALIZED BRAND LOGOS MANAGEMENT ====================
+  const handleAddCentralBrand = () => {
+    const newBrand: CentralBrandItem = {
+      id: `brand-${Date.now()}`,
+      name: 'New Partner Brand',
+      logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80',
       websiteUrl: 'https://example.com',
+      order: (brandsData.brands?.length || 0) + 1,
     };
-    setData((prev) => ({
+    setBrandsData((prev) => ({
       ...prev,
-      trustedBrands: [...prev.trustedBrands, newBrand],
+      brands: [...(prev.brands || []), newBrand],
     }));
-    toast.success('New brand added');
+    toast.success('New brand added to central collection');
   };
 
-  const handleRemoveBrand = (index: number) => {
-    setData((prev) => ({
+  const handleRemoveCentralBrand = (index: number) => {
+    setBrandsData((prev) => ({
       ...prev,
-      trustedBrands: prev.trustedBrands.filter((_, i) => i !== index),
+      brands: (prev.brands || []).filter((_, i) => i !== index),
     }));
+    toast.info('Brand removed');
   };
 
-  const handleBrandChange = (index: number, field: keyof TrustedBrand, val: string) => {
-    setData((prev) => {
-      const updated = [...prev.trustedBrands];
+  const handleCentralBrandChange = (index: number, field: keyof CentralBrandItem, val: string | number) => {
+    setBrandsData((prev) => {
+      const updated = [...(prev.brands || [])];
       updated[index] = { ...updated[index], [field]: val };
-      return { ...prev, trustedBrands: updated };
+      return { ...prev, brands: updated };
     });
   };
 
-  // Section 3 Sector Management (Headings Only)
+  const handleCentralBrandHeaderChange = (field: 'tagline' | 'title' | 'description', lang: 'en' | 'ar', val: string) => {
+    setBrandsData((prev) => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [lang]: val,
+      },
+    }));
+  };
+
+  // Section 2 Sector Management (Headings Only)
   const handleAddSector = () => {
     const newSector: SectorItem = {
       id: `sector-${Date.now()}`,
@@ -3511,29 +3371,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    {/* Section II */}
+                    {/* Section II: About & Our Sectors */}
                     <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section II: Trusted Brands
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            Active
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-white/50">
-                          Partner logos carousel ({data.trustedBrands.length} brands configured)
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Section III */}
-                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-semibold text-white">
-                            Section III: About & Our Sectors
+                            Section II: About & Our Sectors
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -3545,12 +3388,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    {/* Section IV: Specialized Companies */}
+                    {/* Section III: Specialized Companies */}
                     <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section IV: Specialized Companies & Divisions
+                            Section III: Specialized Companies & Divisions
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -3562,12 +3405,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    {/* Section V: Vision & Mission */}
+                    {/* Section IV: Vision & Mission */}
                     <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section V: Purpose, Vision & Mission
+                            Section IV: Purpose, Vision & Mission
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -3579,12 +3422,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    {/* Section VI: CTA Banner */}
+                    {/* Section V: CTA Banner */}
                     <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section VI: Call-To-Action Banner
+                            Section V: Call-To-Action Banner
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -3665,6 +3508,75 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
                         <p className="text-[11px] text-white/50">
                           Route 1: {ctaBannerData.primaryButtonUrl || '/quotes'} &bull; Route 2: {ctaBannerData.secondaryButtonUrl || '/contact'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* CARD: BRAND LOGOS (Centralized Global Brand Logos) */}
+              {(selectedCategory === 'all' || selectedCategory === 'brands') && (
+                <div className="bg-[#14112E] border border-[#F68E2D]/20 hover:border-[#F68E2D]/40 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
+                  {/* Card Header with Edit button in TOP RIGHT */}
+                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      {renderCardHeaderIcon('orange', 'Sparkles')}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-[#F68E2D]">
+                            Brand Logos
+                          </h3>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F68E2D]/20 text-[#F68E2D] border border-[#F68E2D]/30">
+                            Centralized Global API
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/60 mt-0.5 leading-relaxed">
+                          Centralized brand & partner logos displayed across all website sections and company pages.
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenPageEditor('brands')}
+                      className="p-2.5 rounded-xl border border-[#F68E2D]/30 text-[#F68E2D] hover:text-white hover:bg-[#F68E2D]/20 transition-all cursor-pointer shrink-0 shadow-sm flex items-center justify-center group"
+                      title="Edit Entire Brand Logos Section"
+                    >
+                      <Edit3 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </button>
+                  </div>
+
+                  {/* Section Rows */}
+                  <div className="divide-y divide-white/5 flex-1 flex flex-col justify-start">
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-semibold text-white">
+                            Header & Tagline: {activeLangTab === 'ar' ? (brandsData.title?.ar || 'العلامات التجارية والشركاء') : (brandsData.title?.en || 'Trusted Brands & Partners')}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Tagline: {activeLangTab === 'ar' ? (brandsData.tagline?.ar || 'شركاؤنا الموثوقون') : (brandsData.tagline?.en || 'TRUSTED PARTNERS')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-semibold text-white">
+                            Configured Brands: {brandsData.brands?.length || 0} Brand Logos
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                            Global
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Shared dynamically across Home, Projects Innovator, Attractive, and Medics Innovator
                         </p>
                       </div>
                     </div>
@@ -4482,23 +4394,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 2: Brand Logos ({projectsInnovatorData.brandsSection.brands.length} Brands)
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            Active
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-white/50">
-                          Trusted brands and industry leaders partner logos
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-semibold text-white">
-                            Section 3: About Projects Innovator
+                            Section 2: About Projects Innovator
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4514,7 +4410,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 4: Our Business Areas ({projectsInnovatorData.businessAreasSection.areas.length} Areas)
+                            Section 3: Our Business Areas ({projectsInnovatorData.businessAreasSection.areas.length} Areas)
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4530,7 +4426,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 5: Let's Work Together Banner
+                            Section 4: Let's Work Together Banner
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4599,23 +4495,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 2: Brand Logos ({attractiveData.brandsSection.brands.length} Brands)
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            Active
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-white/50">
-                          Trusted brands and industry leaders partner logos
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-semibold text-white">
-                            Section 3: About Attractive
+                            Section 2: About Attractive
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4631,7 +4511,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 4: Our Products ({attractiveData.productsSection.products.length} Products)
+                            Section 3: Our Products ({attractiveData.productsSection.products.length} Products)
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4647,7 +4527,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 5: Let's Work Together Banner
+                            Section 4: Let's Work Together Banner
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4716,23 +4596,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 2: Brand Logos ({medicsInnovatorData.brandsSection.brands.length} Brands)
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            Active
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-white/50">
-                          Medical equipment manufacturers and clinical partners
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-semibold text-white">
-                            Section 3: About Medics Innovator
+                            Section 2: About Medics Innovator
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4748,7 +4612,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 4: Our Products ({medicsInnovatorData.productsSection.products.length} Products)
+                            Section 3: Our Products ({medicsInnovatorData.productsSection.products.length} Products)
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4764,7 +4628,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section 5: Let's Work Together Banner
+                            Section 4: Let's Work Together Banner
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -4907,7 +4771,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
 
                 <Button
-                  onClick={editingTabId === 'home' ? handleSaveHomeData : editingTabId === 'cta-banner' ? handleSaveCtaBannerData : editingTabId === 'about' ? handleSaveAboutData : editingTabId === 'company' ? handleSaveCompanyData : editingTabId === 'services' ? handleSaveServicesData : editingTabId === 'shop' ? handleSaveShopData : editingTabId === 'projects' ? handleSaveProjectsData : editingTabId === 'partners' ? handleSavePartnersData : editingTabId === 'contact' ? handleSaveContactData : editingTabId === 'investment' ? handleSaveInvestmentData : editingTabId === 'projects-innovator' ? handleSaveProjectsInnovatorData : editingTabId === 'attractive' ? handleSaveAttractiveData : editingTabId === 'medics-innovator' ? handleSaveMedicsInnovatorData : () => handleSaveOtherPageData(editingTabId)}
+                  onClick={editingTabId === 'home' ? handleSaveHomeData : editingTabId === 'brands' ? handleSaveBrandsData : editingTabId === 'cta-banner' ? handleSaveCtaBannerData : editingTabId === 'about' ? handleSaveAboutData : editingTabId === 'company' ? handleSaveCompanyData : editingTabId === 'services' ? handleSaveServicesData : editingTabId === 'shop' ? handleSaveShopData : editingTabId === 'projects' ? handleSaveProjectsData : editingTabId === 'partners' ? handleSavePartnersData : editingTabId === 'contact' ? handleSaveContactData : editingTabId === 'investment' ? handleSaveInvestmentData : editingTabId === 'projects-innovator' ? handleSaveProjectsInnovatorData : editingTabId === 'attractive' ? handleSaveAttractiveData : editingTabId === 'medics-innovator' ? handleSaveMedicsInnovatorData : () => handleSaveOtherPageData(editingTabId)}
                   disabled={saving}
                   className="bg-[#F68E2D] hover:bg-[#e28124] text-white font-semibold text-xs px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-[#F68E2D]/20 cursor-pointer"
                 >
@@ -5266,104 +5130,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
-                {/* SECTION 2: TRUSTED BRANDS */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                          2
-                        </span>
-                        <div>
-                          <CardTitle className="text-base font-bold text-white">
-                            Section II: Trusted Brands & Partners
-                          </CardTitle>
-                          <p className="text-xs text-white/50">
-                            Partner and investor logos displayed in the trusted brands slider ({data.trustedBrands.length} brands)
-                          </p>
-                        </div>
-                      </div>
-
-                      <Button
-                        onClick={handleAddBrand}
-                        className="bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#F68E2D]/20 self-start sm:self-auto"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Add Brand
-                      </Button>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {data.trustedBrands.map((brand, bIdx) => (
-                        <div
-                          key={bIdx}
-                          className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-3 relative transition-all group"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-white/70">Brand #{bIdx + 1}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveBrand(bIdx)}
-                              className="text-white/40 hover:text-red-400 p-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
-                              title="Delete Brand"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-
-                          <div className="h-14 bg-black/40 rounded-lg flex items-center justify-center p-2 border border-white/5">
-                            {brand.logoUrl ? (
-                              <img
-                                src={brand.logoUrl}
-                                alt={brand.name}
-                                className="max-h-full max-w-full object-contain filter brightness-110"
-                                onError={(e) => {
-                                  e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80';
-                                }}
-                              />
-                            ) : (
-                              <ImageIcon className="w-6 h-6 text-white/20" />
-                            )}
-                          </div>
-
-                          <div>
-                            <label className="text-[11px] text-white/60 block mb-1">Brand Name</label>
-                            <input
-                              type="text"
-                              value={brand.name}
-                              onChange={(e) => handleBrandChange(bIdx, 'name', e.target.value)}
-                              placeholder="e.g. Aramco Ventures"
-                              className="w-full px-2.5 py-1.5 text-xs rounded bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                            />
-                          </div>
-
-                          <div>
-                            <ImageUploadField
-                              label="Logo Image"
-                              compact
-                              folder="brands"
-                              value={brand.logoUrl}
-                              onChange={(url) => handleBrandChange(bIdx, 'logoUrl', url)}
-                              placeholder="Logo URL or upload"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 3: ABOUT & OUR SECTORS */}
+                {/* SECTION 2: ABOUT & OUR SECTORS */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
                     <div className="flex items-center gap-3">
                       <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                        3
+                        2
                       </span>
                       <div>
                         <CardTitle className="text-base font-bold text-white">
-                          Section III: About & Our Sectors
+                          Section II: About & Our Sectors
                         </CardTitle>
                         <p className="text-xs text-white/50">
                           Feature Image, Location, Section Description, and Sector Headings (as pill tags)
@@ -5662,18 +5438,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
-                {/* SECTION 4: SPECIALIZED COMPANIES & DIVISIONS */}
+                {/* SECTION 3: SPECIALIZED COMPANIES & DIVISIONS */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                          4
+                          3
                         </span>
                         <div>
                           <CardTitle className="text-base font-bold text-white flex items-center gap-2">
                             <Briefcase className="w-4 h-4 text-[#F68E2D]" />
-                            Section IV: Specialized Companies & Divisions
+                            Section III: Specialized Companies & Divisions
                           </CardTitle>
                           <p className="text-xs text-white/50">
                             Three specialized group divisions with company logo, name, description, and explore link ({data.companiesSection?.companies?.length || 0} companies)
@@ -6002,18 +5778,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
-                {/* SECTION 5: PURPOSE, VISION & MISSION */}
+                {/* SECTION 4: PURPOSE, VISION & MISSION */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                          5
+                          4
                         </span>
                         <div>
                           <CardTitle className="text-base font-bold text-white flex items-center gap-2">
                             <Target className="w-4 h-4 text-[#F68E2D]" />
-                            Section V: Purpose, Vision & Mission
+                            Section IV: Purpose, Vision & Mission
                           </CardTitle>
                           <p className="text-xs text-white/50">
                             Core strategic purpose, vision & mission cards, and guiding principles infographic image
@@ -6282,17 +6058,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
-                {/* SECTION 6: CTA BANNER */}
+                {/* SECTION 5: CTA BANNER */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
                     <div className="flex items-center gap-3">
                       <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                        6
+                        5
                       </span>
                       <div>
                         <CardTitle className="text-base font-bold text-white flex items-center gap-2">
                           <Zap className="w-4 h-4 text-[#F68E2D]" />
-                          Section VI: Call-To-Action Banner
+                          Section V: Call-To-Action Banner
                         </CardTitle>
                         <p className="text-xs text-white/50">
                           Full-width gradient conversion banner with title, tagline, description, and action buttons
@@ -6605,6 +6381,265 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
+              </div>
+            )}
+
+            {/* IF EDITING BRAND LOGOS (Dedicated Centralized Brand Logos & Partners) */}
+            {editingTabId === 'brands' && (
+              <div className="space-y-8">
+                {/* SECTION 1: HEADER & TAGLINE */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
+                          <Sparkles className="w-5 h-5 text-[#F68E2D]" />
+                        </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <CardTitle className="text-base font-bold text-white">
+                              Centralized Brand & Partner Logos
+                            </CardTitle>
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F68E2D]/20 text-[#F68E2D] border border-[#F68E2D]/30">
+                              Global API
+                            </span>
+                          </div>
+                          <p className="text-xs text-white/50">
+                            Centralized brand logos slider shared dynamically across Home, Projects Innovator, Attractive, and Medics Innovator.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-white/60">Status:</span>
+                        <button
+                          type="button"
+                          onClick={() => setBrandsData({ ...brandsData, isActive: !brandsData.isActive })}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                            brandsData.isActive !== false
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-white/10 text-white/40 border border-white/10'
+                          }`}
+                        >
+                          {brandsData.isActive !== false ? 'Active (Published)' : 'Inactive'}
+                        </button>
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div>
+                            <label className="text-xs font-semibold text-white/80 block mb-1">
+                              🇬🇧 Section Tagline (English)
+                            </label>
+                            <input
+                              type="text"
+                              value={brandsData.tagline?.en || ''}
+                              onChange={(e) => handleCentralBrandHeaderChange('tagline', 'en', e.target.value)}
+                              placeholder="TRUSTED BRANDS & PARTNERS"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-white/80 block mb-1">
+                              🇬🇧 Main Section Title (English)
+                            </label>
+                            <input
+                              type="text"
+                              value={brandsData.title?.en || ''}
+                              onChange={(e) => handleCentralBrandHeaderChange('title', 'en', e.target.value)}
+                              placeholder="Trusted Brands & Partners"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="text-xs font-semibold text-white/80 block mb-1">
+                              🇬🇧 Section Description (English)
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={brandsData.description?.en || ''}
+                              onChange={(e) => handleCentralBrandHeaderChange('description', 'en', e.target.value)}
+                              placeholder="Partner and investor logos displayed in the trusted brands slider"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <label className="text-xs font-semibold text-[#F68E2D] block mb-1 text-right">
+                              🇸🇦 شعار القسم (بالعربية)
+                            </label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={brandsData.tagline?.ar || ''}
+                              onChange={(e) => handleCentralBrandHeaderChange('tagline', 'ar', e.target.value)}
+                              placeholder="العلامات التجارية الموثوقة والشركاء"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-[#F68E2D] block mb-1 text-right">
+                              🇸🇦 عنوان القسم الرئيسي (بالعربية)
+                            </label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={brandsData.title?.ar || ''}
+                              onChange={(e) => handleCentralBrandHeaderChange('title', 'ar', e.target.value)}
+                              placeholder="العلامات التجارية والشركاء الموثوقون"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block mb-1 text-right">
+                              🇸🇦 وصف القسم (بالعربية)
+                            </label>
+                            <textarea
+                              rows={2}
+                              dir="rtl"
+                              value={brandsData.description?.ar || ''}
+                              onChange={(e) => handleCentralBrandHeaderChange('description', 'ar', e.target.value)}
+                              placeholder="شعارات الشركاء والمستثمرين المعروضة في شريط العلامات التجارية الموثوقة"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right resize-none"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 2: BRAND LOGOS COLLECTION */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
+                          {brandsData.brands?.length || 0}
+                        </span>
+                        <div>
+                          <CardTitle className="text-base font-bold text-white">
+                            Brand Logos Collection
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            Partner and investor logos displayed in the trusted brands slider ({brandsData.brands?.length || 0} brands)
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        onClick={handleAddCentralBrand}
+                        className="bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#F68E2D]/20 self-start sm:self-auto"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Add Brand
+                      </Button>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {(brandsData.brands || []).map((brand, bIdx) => (
+                        <div
+                          key={brand.id || bIdx}
+                          className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-3 relative transition-all group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-white/70">Brand #{bIdx + 1}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCentralBrand(bIdx)}
+                              className="text-white/40 hover:text-red-400 p-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
+                              title="Delete Brand"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <div className="h-16 bg-black/40 rounded-lg flex items-center justify-center p-2 border border-white/5">
+                            {brand.logoUrl ? (
+                              <img
+                                src={brand.logoUrl}
+                                alt={brand.name}
+                                className="max-h-full max-w-full object-contain filter brightness-110"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80';
+                                }}
+                              />
+                            ) : (
+                              <ImageIcon className="w-6 h-6 text-white/20" />
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] text-white/60 block mb-1">Brand Name</label>
+                            <input
+                              type="text"
+                              value={brand.name}
+                              onChange={(e) => handleCentralBrandChange(bIdx, 'name', e.target.value)}
+                              placeholder="e.g. Aramco Ventures"
+                              className="w-full px-2.5 py-1.5 text-xs rounded bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+
+                          <div>
+                            <ImageUploadField
+                              label="Logo Image"
+                              compact
+                              folder="brands"
+                              value={brand.logoUrl}
+                              onChange={(url) => handleCentralBrandChange(bIdx, 'logoUrl', url)}
+                              placeholder="Logo URL or upload"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] text-white/60 block mb-1">Website URL (Optional)</label>
+                            <input
+                              type="text"
+                              value={brand.websiteUrl || ''}
+                              onChange={(e) => handleCentralBrandChange(bIdx, 'websiteUrl', e.target.value)}
+                              placeholder="https://example.com"
+                              className="w-full px-2.5 py-1.5 text-xs rounded bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                      <Button
+                        type="button"
+                        onClick={handleAddCentralBrand}
+                        className="bg-white/10 hover:bg-white/15 text-white text-xs px-4 py-2 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Add Another Brand
+                      </Button>
+
+                      <Button
+                        type="button"
+                        onClick={handleSaveBrandsData}
+                        disabled={saving}
+                        className="bg-[#F68E2D] hover:bg-[#e28124] text-white font-semibold text-xs px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-[#F68E2D]/20 cursor-pointer"
+                      >
+                        {saving ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Saving Brand Logos...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-3.5 h-3.5" /> Save Centralized Brand Logos
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
 
@@ -13948,119 +13983,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 2: BRAND LOGOS (IMAGE 1) */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-              2
-            </div>
-            <div>
-              <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <span>Section 2: Brand Logos</span>
-                <span className="text-xs text-white/50 font-normal">(القسم الثاني: شعارات العلامات التجارية)</span>
-              </CardTitle>
-              <p className="text-xs text-white/50">
-                Trusted brands and industry leaders carousel logos
-              </p>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleAddPIBrand}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Brand</span>
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title / Tagline</label>
-              <input
-                type="text"
-                value={projectsInnovatorData.brandsSection.title.en}
-                onChange={(e) => handlePIBrandsTitleChange('en', e.target.value)}
-                placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          ) : (
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم / الشعار بالعربية</label>
-              <input
-                type="text"
-                dir="rtl"
-                value={projectsInnovatorData.brandsSection.title.ar}
-                onChange={(e) => handlePIBrandsTitleChange('ar', e.target.value)}
-                placeholder="العلامات التجارية الموثوقة وقادة الصناعة"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Brands List */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-          {projectsInnovatorData.brandsSection.brands.map((b, idx) => (
-            <div
-              key={b.id || idx}
-              className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3 relative group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white/60">Brand #{idx + 1}</span>
-                <button
-                  type="button"
-                  onClick={() => handleDeletePIBrand(idx)}
-                  className="text-white/40 hover:text-red-400 p-1 transition-colors cursor-pointer"
-                  title="Delete brand"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Brand Name</label>
-                <input
-                  type="text"
-                  value={b.name}
-                  onChange={(e) => handlePIBrandItemChange(idx, 'name', e.target.value)}
-                  placeholder="Oracle"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-
-              <div>
-                <ImageUploadField
-                  label={activeLangTab === 'ar' ? 'شعار العلامة التجارية' : 'Brand Logo'}
-                  value={b.logoUrl}
-                  onChange={(url) => handlePIBrandItemChange(idx, 'logoUrl', url)}
-                  folder="projects-innovator"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 3: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
+    {/* SECTION 2: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
-            3
+            2
           </div>
           <div>
             <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 3: About Projects Innovator</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثالث: عن مبتكر المشاريع)</span>
+              <span>Section 2: About Projects Innovator</span>
+              <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن مبتكر المشاريع)</span>
             </CardTitle>
             <p className="text-xs text-white/50">
               Holding entity overview, sustainable platform narrative, and headquarters visual
@@ -14154,18 +14087,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 4: OUR BUSINESS AREAS (IMAGE 2) */}
+    {/* SECTION 3: OUR BUSINESS AREAS (IMAGE 2) */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 font-bold text-xs">
-              4
+              3
             </div>
             <div>
               <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <span>Section 4: Our Business Areas</span>
-                <span className="text-xs text-white/50 font-normal">(القسم الرابع: مجالات أعمالنا)</span>
+                <span>Section 3: Our Business Areas</span>
+                <span className="text-xs text-white/50 font-normal">(القسم الثالث: مجالات أعمالنا)</span>
               </CardTitle>
               <p className="text-xs text-white/50">
                 Medical & Lab Equipment, Supplies, and Healthcare Solutions cards
@@ -14342,17 +14275,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 5: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
+    {/* SECTION 4: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            5
+            4
           </div>
           <div>
             <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 5: Let's Work Together Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الخامس: بانر لنعمل معاً)</span>
+              <span>Section 4: Let's Work Together Banner</span>
+              <span className="text-xs text-white/50 font-normal">(القسم الرابع: بانر لنعمل معاً)</span>
             </CardTitle>
             <p className="text-xs text-white/50">
               High-impact crimson banner with proposal request and contact routing
@@ -14734,118 +14667,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 2: BRAND LOGOS */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-              2
-            </div>
-            <div>
-              <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <span>Section 2: Brand Logos</span>
-                <span className="text-xs text-white/50 font-normal">(القسم الثاني: شعارات العلامات التجارية)</span>
-              </CardTitle>
-              <p className="text-xs text-white/50">
-                Manage partner logos rendered in the brand strip
-              </p>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleAddAttBrand}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Add Brand
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title / Tagline</label>
-              <input
-                type="text"
-                value={attractiveData.brandsSection.title.en}
-                onChange={(e) => handleAttBrandsTitleChange('en', e.target.value)}
-                placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          ) : (
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم بالعربية</label>
-              <input
-                type="text"
-                dir="rtl"
-                value={attractiveData.brandsSection.title.ar}
-                onChange={(e) => handleAttBrandsTitleChange('ar', e.target.value)}
-                placeholder="العلامات التجارية الموثوقة ورواد الصناعة"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/5">
-          {attractiveData.brandsSection.brands.map((b, idx) => (
-            <div
-              key={b.id || idx}
-              className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3 relative group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white/70">
-                  Brand #{idx + 1}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteAttBrand(idx)}
-                  className="p-1 rounded-md text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Brand Name</label>
-                <input
-                  type="text"
-                  value={b.name}
-                  onChange={(e) => handleAttBrandItemChange(idx, 'name', e.target.value)}
-                  placeholder="Brand Name"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-
-              <div>
-                <ImageUploadField
-                  label={activeLangTab === 'ar' ? 'شعار العلامة التجارية' : 'Brand Logo'}
-                  value={b.logoUrl}
-                  onChange={(url) => handleAttBrandItemChange(idx, 'logoUrl', url)}
-                  folder="attractive"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 3: ABOUT */}
+    {/* SECTION 2: ABOUT ATTRACTIVE */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
-            3
+            2
           </div>
           <div>
             <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 3: About Attractive</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثالث: عن الشركة)</span>
+              <span>Section 2: About Attractive</span>
+              <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن الشركة)</span>
             </CardTitle>
             <p className="text-xs text-white/50">
               Company profile tagline, headline, narrative, and headquarters visual
@@ -14938,18 +14770,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 4: OUR PRODUCTS (IN PLACE OF OUR BUSINESS AREAS) */}
+    {/* SECTION 3: OUR PRODUCTS (IN PLACE OF OUR BUSINESS AREAS) */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-              4
+              3
             </div>
             <div>
               <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <span>Section 4: Our Products</span>
-                <span className="text-xs text-white/50 font-normal">(القسم الرابع: منتجاتنا)</span>
+                <span>Section 3: Our Products</span>
+                <span className="text-xs text-white/50 font-normal">(القسم الثالث: منتجاتنا)</span>
               </CardTitle>
               <p className="text-xs text-white/50">
                 Featured equipment, diagnostic systems, certification badges, and request quote CTA buttons
@@ -15282,17 +15114,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 5: LETS WORK TOGETHER BANNER */}
+    {/* SECTION 4: LETS WORK TOGETHER BANNER */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            5
+            4
           </div>
           <div>
             <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 5: Let's Work Together Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الخامس: بانر لنعمل معاً)</span>
+              <span>Section 4: Let's Work Together Banner</span>
+              <span className="text-xs text-white/50 font-normal">(القسم الرابع: بانر لنعمل معاً)</span>
             </CardTitle>
             <p className="text-xs text-white/50">
               Bottom partnership call-to-action banner with quote request & contact buttons
@@ -15674,118 +15506,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 2: BRAND LOGOS */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-              2
-            </div>
-            <div>
-              <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <span>Section 2: Brand Logos</span>
-                <span className="text-xs text-white/50 font-normal">(القسم الثاني: شعارات العلامات التجارية)</span>
-              </CardTitle>
-              <p className="text-xs text-white/50">
-                Manage partner logos rendered in the brand strip
-              </p>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleAddMIBrand}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Add Brand
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-white/70">🇬🇧 Section Title / Tagline</label>
-              <input
-                type="text"
-                value={medicsInnovatorData.brandsSection.title.en}
-                onChange={(e) => handleMIBrandsTitleChange('en', e.target.value)}
-                placeholder="TRUSTED BRANDS & INDUSTRY LEADERS"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          ) : (
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القسم بالعربية</label>
-              <input
-                type="text"
-                dir="rtl"
-                value={medicsInnovatorData.brandsSection.title.ar}
-                onChange={(e) => handleMIBrandsTitleChange('ar', e.target.value)}
-                placeholder="العلامات التجارية الموثوقة ورواد الصناعة"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/5">
-          {medicsInnovatorData.brandsSection.brands.map((b, idx) => (
-            <div
-              key={b.id || idx}
-              className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3 relative group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white/70">
-                  Brand #{idx + 1}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteMIBrand(idx)}
-                  className="p-1 rounded-md text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-white/60 mb-1">Brand Name</label>
-                <input
-                  type="text"
-                  value={b.name}
-                  onChange={(e) => handleMIBrandItemChange(idx, 'name', e.target.value)}
-                  placeholder="Brand Name"
-                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-
-              <div>
-                <ImageUploadField
-                  label={activeLangTab === 'ar' ? 'شعار العلامة التجارية' : 'Brand Logo'}
-                  value={b.logoUrl}
-                  onChange={(url) => handleMIBrandItemChange(idx, 'logoUrl', url)}
-                  folder="medics-innovator"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 3: ABOUT */}
+    {/* SECTION 2: ABOUT MEDICS INNOVATOR */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
-            3
+            2
           </div>
           <div>
             <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 3: About Medics Innovator</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثالث: عن الشركة)</span>
+              <span>Section 2: About Medics Innovator</span>
+              <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن الشركة)</span>
             </CardTitle>
             <p className="text-xs text-white/50">
               Company profile tagline, headline, narrative, and headquarters visual
@@ -15878,18 +15609,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 4: OUR PRODUCTS (IN PLACE OF OUR BUSINESS AREAS) */}
+    {/* SECTION 3: OUR PRODUCTS (IN PLACE OF OUR BUSINESS AREAS) */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-              4
+              3
             </div>
             <div>
               <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <span>Section 4: Our Products</span>
-                <span className="text-xs text-white/50 font-normal">(القسم الرابع: منتجاتنا)</span>
+                <span>Section 3: Our Products</span>
+                <span className="text-xs text-white/50 font-normal">(القسم الثالث: منتجاتنا)</span>
               </CardTitle>
               <p className="text-xs text-white/50">
                 Featured equipment, diagnostic systems, certification badges, and request quote CTA buttons
@@ -16222,17 +15953,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       </CardContent>
     </Card>
 
-    {/* SECTION 5: LETS WORK TOGETHER BANNER */}
+    {/* SECTION 4: LETS WORK TOGETHER BANNER */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            5
+            4
           </div>
           <div>
             <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 5: Let's Work Together Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الخامس: بانر لنعمل معاً)</span>
+              <span>Section 4: Let's Work Together Banner</span>
+              <span className="text-xs text-white/50 font-normal">(القسم الرابع: بانر لنعمل معاً)</span>
             </CardTitle>
             <p className="text-xs text-white/50">
               Bottom partnership call-to-action banner with quote request & contact buttons
@@ -17717,14 +17448,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <div />
     </div>
 
-    {/* SECTION 2: BRAND LOGOS (IMAGE 1) */}
+    {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
     <div className="space-y-4 py-4 border-y border-white/5 text-center">
       <p className="text-[11px] font-bold text-white/40 tracking-widest uppercase">
-        {projectsInnovatorData.brandsSection.title[previewLang] || 'TRUSTED BRANDS & INDUSTRY LEADERS'}
+        {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 py-4 px-6 bg-white/[0.02] rounded-2xl border border-white/5">
-        {projectsInnovatorData.brandsSection.brands.map((brand, idx) => (
+        {(brandsData.brands || []).map((brand, idx) => (
           <div
             key={brand.id || idx}
             className="flex items-center gap-2 group opacity-60 hover:opacity-100 transition-opacity"
@@ -17933,14 +17664,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <div />
     </div>
 
-    {/* SECTION 2: BRAND LOGOS */}
+    {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
     <div className="space-y-6 text-center">
       <p className="text-xs tracking-[0.2em] uppercase font-bold text-white/50">
-        {attractiveData.brandsSection.title[previewLang] || 'TRUSTED BRANDS & INDUSTRY LEADERS'}
+        {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 pt-2">
-        {attractiveData.brandsSection.brands.map((b, idx) => (
+        {(brandsData.brands || []).map((b, idx) => (
           <div
             key={b.id || idx}
             className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
@@ -18183,14 +17914,14 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <div />
     </div>
 
-    {/* SECTION 2: BRAND LOGOS */}
+    {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
     <div className="space-y-6 text-center">
       <p className="text-xs tracking-[0.2em] uppercase font-bold text-white/50">
-        {medicsInnovatorData.brandsSection.title[previewLang] || 'TRUSTED BRANDS & INDUSTRY LEADERS'}
+        {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 pt-2">
-        {medicsInnovatorData.brandsSection.brands.map((b, idx) => (
+        {(brandsData.brands || []).map((b, idx) => (
           <div
             key={b.id || idx}
             className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
@@ -18388,8 +18119,70 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
               )}
 
+              {/* ----------------- CENTRALIZED BRANDS PREVIEW ----------------- */}
+              {editingTabId === 'brands' && (
+                <div className="space-y-12 max-w-5xl mx-auto">
+                  <div className="text-center space-y-3">
+                    <div className="inline-block px-3 py-1 rounded-full bg-[#F68E2D]/10 border border-[#F68E2D]/30 text-[#F68E2D] text-xs font-semibold tracking-wide uppercase">
+                      {brandsData.tagline?.[previewLang] || (previewLang === 'ar' ? 'شركاء النجاح' : 'TRUSTED PARTNERS')}
+                    </div>
+                    <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
+                      {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات والشركاء المعتمدون' : 'Trusted Brands & Partners')}
+                    </h1>
+                    <p className="text-sm sm:text-base text-white/70 max-w-2xl mx-auto leading-relaxed">
+                      {brandsData.description?.[previewLang] || (previewLang === 'ar' ? 'شعارات العلامات التجارية وشركاء الاستثمار المعروضة عبر الموقع والمجموعات' : 'Partner and investor logos displayed across the platform and group companies')}
+                    </p>
+                  </div>
+
+                  {/* Logo Strip Showcase */}
+                  <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10 shadow-2xl">
+                    <p className="text-xs uppercase tracking-widest text-center text-white/40 font-bold mb-6">
+                      {previewLang === 'ar' ? 'الشعارات في شريط التمرير المباشر' : 'Live Slider & Grid Display'} ({brandsData.brands?.length || 0} {previewLang === 'ar' ? 'علامة' : 'Brands'})
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 items-center">
+                      {(brandsData.brands || []).map((b, i) => (
+                        <div
+                          key={b.id || i}
+                          className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-[#F68E2D]/40 transition-all text-center space-y-3 group"
+                        >
+                          <div className="w-full h-16 flex items-center justify-center p-2 rounded-xl bg-black/30 border border-white/5">
+                            {b.logoUrl ? (
+                              <img
+                                src={b.logoUrl}
+                                alt={b.name}
+                                className="max-h-12 max-w-full object-contain filter brightness-125 group-hover:scale-105 transition-transform"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=100&q=80';
+                                }}
+                              />
+                            ) : (
+                              <span className="text-xs text-white/40 italic">No logo</span>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-bold text-white text-xs group-hover:text-[#F68E2D] transition-colors">
+                              {b.name}
+                            </p>
+                            {b.websiteUrl && (
+                              <a
+                                href={b.websiteUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[10px] text-white/40 hover:text-white/70 truncate block max-w-[140px]"
+                              >
+                                {b.websiteUrl.replace(/^https?:\/\//, '')}
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* ----------------- HOME PAGE PREVIEW ----------------- */}
-              {editingTabId !== 'cta-banner' && editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && (
+              {editingTabId !== 'cta-banner' && editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && editingTabId !== 'brands' && (
                 <>
               {/* SECTION 1: HERO */}
               <div className="text-center max-w-3xl mx-auto space-y-4">
@@ -18426,10 +18219,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               {/* SECTION 2: BRANDS */}
               <div className="space-y-4 text-center">
                 <p className="text-xs uppercase tracking-widest text-white/40 font-semibold">
-                  {previewLang === 'ar' ? 'شركاؤنا والعلامات الموثوقة' : 'Trusted by Leading Global Innovators'}
+                  {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'شركاؤنا والعلامات الموثوقة' : 'Trusted by Leading Global Innovators')}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-8 py-4 px-6 bg-white/5 rounded-2xl border border-white/5">
-                  {data.trustedBrands.map((b, i) => (
+                  {(brandsData.brands || []).map((b, i) => (
                     <div key={i} className="flex items-center gap-2 group opacity-75 hover:opacity-100 transition-opacity">
                       {b.logoUrl && (
                         <img
