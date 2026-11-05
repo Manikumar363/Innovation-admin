@@ -6,6 +6,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { CmsHomePage } from "./pages/CmsHomePage";
 import { QuoteRequestsPage } from "./pages/QuoteRequestsPage";
+import { EnquiriesPage } from "./pages/EnquiriesPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { getAuthToken, getStoredUserData } from "./lib/api";
 
@@ -95,6 +96,22 @@ export const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <QuoteRequestsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/enquiries"
+          element={
+            <ProtectedRoute>
+              <EnquiriesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/enquiry"
+          element={
+            <ProtectedRoute>
+              <EnquiriesPage />
             </ProtectedRoute>
           }
         />

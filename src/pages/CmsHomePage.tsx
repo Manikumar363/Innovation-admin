@@ -3396,6 +3396,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   <FileText className="w-3.5 h-3.5 text-white" />
                   Quote Requests
                 </Link>
+                <Link
+                  to="/enquiries"
+                  className="px-3 py-2 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Mail className="w-3.5 h-3.5 text-[#F68E2D]" />
+                  Enquiries
+                </Link>
                 <Button
                   variant="outline"
                   onClick={() => setShowPreviewModal(true)}

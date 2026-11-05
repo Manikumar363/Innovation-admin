@@ -78,14 +78,34 @@ const QuotesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
+const EnquiriesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <line x1="8" y1="9" x2="16" y2="9" />
+    <line x1="8" y1="13" x2="14" y2="13" />
+  </svg>
+);
+
 const topNavigationItems: NavItem[] = [
   { icon: DashboardIcon, label: "Dashboard", href: "/dashboard" },
   { icon: CmsIcon, label: "CMS Portal", href: "/cms" },
   { icon: QuotesIcon, label: "Quote Requests", href: "/quotes" },
+  { icon: EnquiriesIcon, label: "Enquiries", href: "/enquiries" },
 ];
 
 const CMS_SEARCH_SECTIONS = [
   { name: "Quote Requests", path: "/quotes", desc: "Customer product quotation requests & leads" },
+  { name: "Customer Enquiries", path: "/enquiries", desc: "Customer questions, messages & enquiries" },
   { name: "Home Page", path: "/cms?tab=home", desc: "Hero, Brands, About, Divisions, Vision & Mission, Banner" },
   { name: "About Us", path: "/cms?tab=about", desc: "10 sections: Leadership, Heritage, Journey, Values, Purpose" },
   { name: "Company Profile", path: "/cms?tab=company", desc: "3 sections: Profile, Who We Are, What Guides Us" },
@@ -212,7 +232,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   pathname === "/agent/dashboard" ||
                   pathname === "/university/dashboard")) ||
               (item.href === "/cms" && pathname.includes("/cms")) ||
-              (item.href === "/quotes" && (pathname.includes("/quotes") || pathname.includes("/quote-requests")));
+              (item.href === "/quotes" && (pathname.includes("/quotes") || pathname.includes("/quote-requests"))) ||
+              (item.href === "/enquiries" && (pathname.includes("/enquiries") || pathname.includes("/enquiry")));
 
             return (
               <li key={item.label}>
