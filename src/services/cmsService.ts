@@ -83,6 +83,46 @@ export interface BannerSection {
   secondaryButtonUrl?: string;
 }
 
+// Centralized Call-To-Action Banner Interface
+export interface CmsCtaBannerData {
+  _id?: string;
+  tagline: BilingualText;
+  title: BilingualText;
+  description: BilingualText;
+  primaryButtonText: BilingualText;
+  primaryButtonUrl: string;
+  secondaryButtonText: BilingualText;
+  secondaryButtonUrl: string;
+  isActive?: boolean;
+  updatedAt?: string;
+}
+
+export const initialCmsCtaBannerData: CmsCtaBannerData = {
+  tagline: {
+    en: "LET'S WORK TOGETHER",
+    ar: 'لنعمل معاً',
+  },
+  title: {
+    en: "Let's Build Something That Moves Business Forward.",
+    ar: 'دعنا نبني شيئاً يدفع الأعمال إلى الأمام.',
+  },
+  description: {
+    en: 'Looking for medical products, equipment, pharmaceutical solutions, or business services? Our team is ready to help you find what you need.',
+    ar: 'هل تبحث عن منتجات طبية، أو معدات، أو حلول صيدلانية، أو خدمات أعمال؟ فريقنا مستعد لمساعدتك في العثور على ما تحتاجه.',
+  },
+  primaryButtonText: {
+    en: 'Get a Quote',
+    ar: 'احصل على عرض سعر',
+  },
+  primaryButtonUrl: '/quotes',
+  secondaryButtonText: {
+    en: 'Contact Us',
+    ar: 'اتصل بنا',
+  },
+  secondaryButtonUrl: '/contact',
+  isActive: true,
+};
+
 export interface CmsHomeData {
   _id?: string;
   hero: HeroSection;
@@ -2984,6 +3024,40 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     ],
   },
   {
+    id: 'cta-banner',
+    label: 'CTA Banner',
+    labelAr: 'بانر اتخاذ إجراء',
+    iconName: 'Zap',
+    description: 'Centralized Call-To-Action banner with title, tagline, description, and action buttons shared across all pages.',
+    groups: [
+      {
+        id: 'cta-banner-group',
+        title: { en: 'Centralized Call-To-Action Banner', ar: 'بانر اتخاذ إجراء الموحد' },
+        description: { en: 'Manage the global conversion banner used across Home and all subsidiary pages', ar: 'إدارة بانر التحويل الموحد المستخدم في الصفحة الرئيسية وكافة الصفحات التابعة' },
+        iconName: 'Zap',
+        accentColor: 'red',
+        items: [
+          {
+            id: 'cta-banner-content',
+            title: { en: 'Tagline, Main Title & Description', ar: 'الشعار، العنوان الرئيسي والوصف' },
+            subtitle: { en: 'Global headlines and copy displayed across every page banner', ar: 'العناوين والنصوص المعروضة في بانر كافة الصفحات' },
+            status: 'Active',
+            lastUpdated: '05 Nov 2026',
+            badgeColor: 'orange',
+          },
+          {
+            id: 'cta-banner-actions',
+            title: { en: 'Primary & Secondary Action Buttons', ar: 'أزرار الإجراء الرئيسية والفرعية' },
+            subtitle: { en: 'Button text labels, routes, and quote/contact triggers', ar: 'نصوص الأزرار والروابط وتوجيه طلبات الأسعار والتواصل' },
+            status: 'Active',
+            lastUpdated: '05 Nov 2026',
+            badgeColor: 'blue',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: 'about',
     label: 'About Us',
     labelAr: 'من نحن',
@@ -4100,11 +4174,72 @@ export const cmsService = {
     }
   },
 
+  async getCmsCtaBanner(): Promise<CmsCtaBannerData> {
+    const CTA_CACHE_KEY = 'cms_cta_banner_data';
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/cta-banner`);
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const data = await res.json();
+      if (data.success && data.data) {
+        localStorage.setItem(CTA_CACHE_KEY, JSON.stringify(data.data));
+        return data.data;
+      }
+    } catch (err) {
+      console.warn('Backend unavailable or error for CTA banner, reading from local cache:', err);
+    }
+
+    const cached = localStorage.getItem(CTA_CACHE_KEY);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        // ignore
+      }
+    }
+    return initialCmsCtaBannerData;
+  },
+
+  async updateCmsCtaBanner(payload: Partial<CmsCtaBannerData>): Promise<{ success: boolean; data?: CmsCtaBannerData; message?: string }> {
+    const CTA_CACHE_KEY = 'cms_cta_banner_data';
+    const merged = { ...initialCmsCtaBannerData, ...payload };
+    localStorage.setItem(CTA_CACHE_KEY, JSON.stringify(merged));
+
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/cta-banner`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(merged),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const result = await res.json();
+      return { success: true, data: result.data, message: result.message };
+    } catch (err) {
+      console.warn('Failed to save CTA banner to backend, saved to local cache:', err);
+      return {
+        success: true,
+        data: merged,
+        message: 'Saved locally in cache (backend offline)',
+      };
+    }
+  },
+
   getAllTabs(): CmsTabConfig[] {
     const cached = localStorage.getItem(TABS_CACHE_KEY);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed: CmsTabConfig[] = JSON.parse(cached);
+        const existingIds = new Set(parsed.map((t) => t.id));
+        const missingTabs = ALL_CMS_TABS.filter((t) => !existingIds.has(t.id));
+        if (missingTabs.length > 0) {
+          const merged = [...parsed, ...missingTabs];
+          localStorage.setItem(TABS_CACHE_KEY, JSON.stringify(merged));
+          return merged;
+        }
+        return parsed;
       } catch {
         // ignore
       }

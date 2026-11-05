@@ -111,7 +111,9 @@ import {
   type CmsAttractiveData,
   type CmsMedicsInnovatorData,
   initialCmsAttractiveData,
-  initialCmsMedicsInnovatorData
+  initialCmsMedicsInnovatorData,
+  type CmsCtaBannerData,
+  initialCmsCtaBannerData
 } from '../services/cmsService';
 import { API_BASE } from '../config/api';
 
@@ -121,6 +123,7 @@ interface CmsHomePageProps {
 
 export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [data, setData] = useState<CmsHomeData>(initialCmsHomeData);
+  const [ctaBannerData, setCtaBannerData] = useState<CmsCtaBannerData>(initialCmsCtaBannerData);
   const [aboutData, setAboutData] = useState<CmsAboutData>(initialCmsAboutData);
   const [companyData, setCompanyData] = useState<CmsCompanyData>(initialCmsCompanyData);
   const [servicesData, setServicesData] = useState<CmsServicesData>(initialCmsServicesData);
@@ -132,6 +135,19 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [projectsInnovatorData, setProjectsInnovatorData] = useState<CmsProjectsInnovatorData>(initialCmsProjectsInnovatorData);
   const [attractiveData, setAttractiveData] = useState<CmsAttractiveData>(initialCmsAttractiveData);
   const [medicsInnovatorData, setMedicsInnovatorData] = useState<CmsMedicsInnovatorData>(initialCmsMedicsInnovatorData);
+
+  const ensureCtaBannerDefaults = (res?: Partial<CmsCtaBannerData>): CmsCtaBannerData => ({
+    ...initialCmsCtaBannerData,
+    ...(res || {}),
+    tagline: { ...initialCmsCtaBannerData.tagline, ...(res?.tagline || {}) },
+    title: { ...initialCmsCtaBannerData.title, ...(res?.title || {}) },
+    description: { ...initialCmsCtaBannerData.description, ...(res?.description || {}) },
+    primaryButtonText: { ...initialCmsCtaBannerData.primaryButtonText, ...(res?.primaryButtonText || {}) },
+    primaryButtonUrl: res?.primaryButtonUrl || initialCmsCtaBannerData.primaryButtonUrl,
+    secondaryButtonText: { ...initialCmsCtaBannerData.secondaryButtonText, ...(res?.secondaryButtonText || {}) },
+    secondaryButtonUrl: res?.secondaryButtonUrl || initialCmsCtaBannerData.secondaryButtonUrl,
+    isActive: res?.isActive !== undefined ? res.isActive : true,
+  });
 
   const ensureAttractiveDefaults = (res: CmsAttractiveData): CmsAttractiveData => ({
     ...initialCmsAttractiveData,
@@ -488,8 +504,9 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [homeRes, aboutRes, companyRes, servicesRes, shopRes, projectsRes, partnersRes, contactRes, investmentRes, projectsInnovatorRes, attractiveRes, medicsInnovatorRes] = await Promise.all([
+      const [homeRes, ctaRes, aboutRes, companyRes, servicesRes, shopRes, projectsRes, partnersRes, contactRes, investmentRes, projectsInnovatorRes, attractiveRes, medicsInnovatorRes] = await Promise.all([
         cmsService.getCmsHome(),
+        cmsService.getCmsCtaBanner(),
         cmsService.getCmsAbout(),
         cmsService.getCmsCompany(),
         cmsService.getCmsServices(),
@@ -502,7 +519,21 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         cmsService.getCmsAttractive(),
         cmsService.getCmsMedicsInnovator(),
       ]);
-      setData(ensureHomeDefaults(homeRes));
+      const loadedHome = ensureHomeDefaults(homeRes);
+      if (ctaRes) {
+        const cleanedCta = ensureCtaBannerDefaults(ctaRes);
+        setCtaBannerData(cleanedCta);
+        loadedHome.bannerSection = {
+          tagline: cleanedCta.tagline,
+          title: cleanedCta.title,
+          description: cleanedCta.description,
+          primaryButtonText: cleanedCta.primaryButtonText,
+          primaryButtonUrl: cleanedCta.primaryButtonUrl,
+          secondaryButtonText: cleanedCta.secondaryButtonText,
+          secondaryButtonUrl: cleanedCta.secondaryButtonUrl,
+        };
+      }
+      setData(loadedHome);
       if (aboutRes) {
         setAboutData(ensureAboutDefaults(aboutRes));
       }
@@ -560,11 +591,60 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const handleSaveHomeData = async () => {
     try {
       setSaving(true);
-      await cmsService.updateCmsHome(data);
-      toast.success('Home page sections updated successfully!');
+      await Promise.all([
+        cmsService.updateCmsHome(data),
+        cmsService.updateCmsCtaBanner({
+          tagline: data.bannerSection.tagline,
+          title: data.bannerSection.title,
+          description: data.bannerSection.description,
+          primaryButtonText: data.bannerSection.primaryButtonText,
+          primaryButtonUrl: data.bannerSection.primaryButtonUrl || '/quotes',
+          secondaryButtonText: data.bannerSection.secondaryButtonText,
+          secondaryButtonUrl: data.bannerSection.secondaryButtonUrl || '/contact',
+        }),
+      ]);
+      setCtaBannerData((prev) => ({
+        ...prev,
+        tagline: data.bannerSection.tagline,
+        title: data.bannerSection.title,
+        description: data.bannerSection.description,
+        primaryButtonText: data.bannerSection.primaryButtonText,
+        primaryButtonUrl: data.bannerSection.primaryButtonUrl || '/quotes',
+        secondaryButtonText: data.bannerSection.secondaryButtonText,
+        secondaryButtonUrl: data.bannerSection.secondaryButtonUrl || '/contact',
+      }));
+      toast.success('Home page sections & CTA Banner updated successfully!');
     } catch (err) {
       console.error('Save error:', err);
       toast.error('Failed to save home page sections');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveCtaBannerData = async () => {
+    try {
+      setSaving(true);
+      const res = await cmsService.updateCmsCtaBanner(ctaBannerData);
+      if (res && res.data) {
+        setCtaBannerData(ensureCtaBannerDefaults(res.data));
+        setData((prev) => ({
+          ...prev,
+          bannerSection: {
+            tagline: res.data!.tagline,
+            title: res.data!.title,
+            description: res.data!.description,
+            primaryButtonText: res.data!.primaryButtonText,
+            primaryButtonUrl: res.data!.primaryButtonUrl,
+            secondaryButtonText: res.data!.secondaryButtonText,
+            secondaryButtonUrl: res.data!.secondaryButtonUrl,
+          },
+        }));
+      }
+      toast.success('Centralized CTA Banner updated successfully!');
+    } catch (err) {
+      console.error('Save CTA Banner error:', err);
+      toast.error('Failed to save CTA Banner');
     } finally {
       setSaving(false);
     }
@@ -3502,6 +3582,9 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
                           </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F68E2D]/20 text-[#F68E2D] border border-[#F68E2D]/30">
+                            Centralized
+                          </span>
                         </div>
                         <p className="text-[11px] text-white/50">
                           High-converting gradient banner with tagline, description & CTA actions
@@ -3509,6 +3592,75 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
+                  </div>
+                </div>
+              )}
+
+              {/* CARD: CTA BANNER (Centralized Global CTA) */}
+              {(selectedCategory === 'all' || selectedCategory === 'cta-banner') && (
+                <div className="bg-[#14112E] border border-red-500/20 hover:border-red-500/40 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
+                  {/* Card Header with Edit button in TOP RIGHT */}
+                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      {renderCardHeaderIcon('red', 'Zap')}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-rose-400">
+                            CTA Banner
+                          </h3>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F68E2D]/20 text-[#F68E2D] border border-[#F68E2D]/30">
+                            Centralized Global API
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/60 mt-0.5 leading-relaxed">
+                          Centralized Call-To-Action banner with title, tagline, description, and action buttons shared across all pages.
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenPageEditor('cta-banner')}
+                      className="p-2.5 rounded-xl border border-sky-500/30 text-sky-400 hover:text-white hover:bg-sky-500/20 transition-all cursor-pointer shrink-0 shadow-sm flex items-center justify-center group"
+                      title="Edit Entire CTA Banner"
+                    >
+                      <Edit3 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </button>
+                  </div>
+
+                  {/* Section Rows */}
+                  <div className="divide-y divide-white/5 flex-1 flex flex-col justify-start">
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-semibold text-white">
+                            Tagline & Headline: {activeLangTab === 'ar' ? (ctaBannerData.title?.ar || 'دعنا نبني شيئاً يدفع الأعمال إلى الأمام.') : (ctaBannerData.title?.en || "Let's Build Something That Moves Business Forward.")}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Tagline: {activeLangTab === 'ar' ? (ctaBannerData.tagline?.ar || 'لنعمل معاً') : (ctaBannerData.tagline?.en || "LET'S WORK TOGETHER")}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-semibold text-white">
+                            Action Buttons: {activeLangTab === 'ar' ? (ctaBannerData.primaryButtonText?.ar || 'احصل على عرض سعر') : (ctaBannerData.primaryButtonText?.en || 'Get a Quote')} & {activeLangTab === 'ar' ? (ctaBannerData.secondaryButtonText?.ar || 'اتصل بنا') : (ctaBannerData.secondaryButtonText?.en || 'Contact Us')}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                            Global
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Route 1: {ctaBannerData.primaryButtonUrl || '/quotes'} &bull; Route 2: {ctaBannerData.secondaryButtonUrl || '/contact'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -4622,7 +4774,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
               {/* OTHER CARDS: UNHANDLED TABS */}
               {filteredTabs
-                .filter((t) => t.id !== 'home' && t.id !== 'about' && t.id !== 'company' && t.id !== 'services' && t.id !== 'shop' && t.id !== 'projects' && t.id !== 'partners' && t.id !== 'contact' && t.id !== 'investment' && t.id !== 'projects-innovator' && t.id !== 'attractive' && t.id !== 'medics-innovator')
+                .filter((t) => t.id !== 'home' && t.id !== 'cta-banner' && t.id !== 'about' && t.id !== 'company' && t.id !== 'services' && t.id !== 'shop' && t.id !== 'projects' && t.id !== 'partners' && t.id !== 'contact' && t.id !== 'investment' && t.id !== 'projects-innovator' && t.id !== 'attractive' && t.id !== 'medics-innovator')
                 .map((tab) => {
                   let cardColor = 'green';
                   if (tab.id === 'company') cardColor = 'blue';
@@ -4748,7 +4900,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
 
                 <Button
-                  onClick={editingTabId === 'home' ? handleSaveHomeData : editingTabId === 'about' ? handleSaveAboutData : editingTabId === 'company' ? handleSaveCompanyData : editingTabId === 'services' ? handleSaveServicesData : editingTabId === 'shop' ? handleSaveShopData : editingTabId === 'projects' ? handleSaveProjectsData : editingTabId === 'partners' ? handleSavePartnersData : editingTabId === 'contact' ? handleSaveContactData : editingTabId === 'investment' ? handleSaveInvestmentData : editingTabId === 'projects-innovator' ? handleSaveProjectsInnovatorData : editingTabId === 'attractive' ? handleSaveAttractiveData : editingTabId === 'medics-innovator' ? handleSaveMedicsInnovatorData : () => handleSaveOtherPageData(editingTabId)}
+                  onClick={editingTabId === 'home' ? handleSaveHomeData : editingTabId === 'cta-banner' ? handleSaveCtaBannerData : editingTabId === 'about' ? handleSaveAboutData : editingTabId === 'company' ? handleSaveCompanyData : editingTabId === 'services' ? handleSaveServicesData : editingTabId === 'shop' ? handleSaveShopData : editingTabId === 'projects' ? handleSaveProjectsData : editingTabId === 'partners' ? handleSavePartnersData : editingTabId === 'contact' ? handleSaveContactData : editingTabId === 'investment' ? handleSaveInvestmentData : editingTabId === 'projects-innovator' ? handleSaveProjectsInnovatorData : editingTabId === 'attractive' ? handleSaveAttractiveData : editingTabId === 'medics-innovator' ? handleSaveMedicsInnovatorData : () => handleSaveOtherPageData(editingTabId)}
                   disabled={saving}
                   className="bg-[#F68E2D] hover:bg-[#e28124] text-white font-semibold text-xs px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-[#F68E2D]/20 cursor-pointer"
                 >
@@ -6143,6 +6295,23 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardHeader>
 
                   <CardContent className="p-6 space-y-6">
+                    {/* Centralized CTA Banner Notification Badge */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30">
+                      <div className="flex items-center gap-2.5">
+                        <Sparkles className="w-4 h-4 text-[#F68E2D] shrink-0" />
+                        <span className="text-xs text-orange-200">
+                          <strong>Centralized Global Section:</strong> This banner is synchronized with the dedicated <code className="px-1.5 py-0.5 rounded bg-black/30 font-mono text-[11px] text-white">CTA Banner</code> tab and API (<code className="px-1.5 py-0.5 rounded bg-black/30 font-mono text-[11px] text-white">/api/cms/cta-banner</code>).
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenPageEditor('cta-banner')}
+                        className="px-3 py-1.5 rounded-lg bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs font-semibold shrink-0 cursor-pointer transition-colors shadow-sm"
+                      >
+                        Open Dedicated CTA Tab &rarr;
+                      </button>
+                    </div>
+
                     {/* Banner Live Preview Box Matching User's Image */}
                     <div className="relative rounded-2xl overflow-hidden p-8 sm:p-12 text-center shadow-2xl bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/20 space-y-4">
                       <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/20 text-white/80 border border-white/15">
@@ -6298,91 +6467,481 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
                     {/* Button configurations */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10">
-                      <div>
-                        <label className="text-xs font-semibold text-white/80 block mb-1">
-                          Primary Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                        </label>
-                        {activeLangTab === 'en' && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-xs font-semibold text-white/80 block mb-1">
+                            Primary Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                          </label>
+                          {activeLangTab === 'en' && (
+                            <input
+                              type="text"
+                              value={data.bannerSection?.primaryButtonText?.en || ''}
+                              onChange={(e) =>
+                                setData({
+                                  ...data,
+                                  bannerSection: {
+                                    ...data.bannerSection,
+                                    primaryButtonText: { ...(data.bannerSection?.primaryButtonText || { en: '', ar: '' }), en: e.target.value },
+                                  },
+                                })
+                              }
+                              placeholder="Get a Quote"
+                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          )}
+                          {activeLangTab === 'ar' && (
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={data.bannerSection?.primaryButtonText?.ar || ''}
+                              onChange={(e) =>
+                                setData({
+                                  ...data,
+                                  bannerSection: {
+                                    ...data.bannerSection,
+                                    primaryButtonText: { ...(data.bannerSection?.primaryButtonText || { en: '', ar: '' }), ar: e.target.value },
+                                  },
+                                })
+                              }
+                              placeholder="احصل على عرض سعر"
+                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-white/80 block mb-1">
+                            Primary Button Target URL / Route
+                          </label>
                           <input
                             type="text"
-                            value={data.bannerSection?.primaryButtonText?.en || ''}
+                            value={data.bannerSection?.primaryButtonUrl || ''}
                             onChange={(e) =>
                               setData({
                                 ...data,
                                 bannerSection: {
                                   ...data.bannerSection,
-                                  primaryButtonText: { ...(data.bannerSection?.primaryButtonText || { en: '', ar: '' }), en: e.target.value },
+                                  primaryButtonUrl: e.target.value,
                                 },
                               })
                             }
-                            placeholder="Get a Quote"
+                            placeholder="/quotes or /contact"
                             className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                           />
-                        )}
-                        {activeLangTab === 'ar' && (
-                          <input
-                            type="text"
-                            dir="rtl"
-                            value={data.bannerSection?.primaryButtonText?.ar || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                bannerSection: {
-                                  ...data.bannerSection,
-                                  primaryButtonText: { ...(data.bannerSection?.primaryButtonText || { en: '', ar: '' }), ar: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="احصل على عرض سعر"
-                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                          />
-                        )}
+                        </div>
                       </div>
 
-                      <div>
-                        <label className="text-xs font-semibold text-white/80 block mb-1">
-                          Secondary Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                        </label>
-                        {activeLangTab === 'en' && (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-xs font-semibold text-white/80 block mb-1">
+                            Secondary Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                          </label>
+                          {activeLangTab === 'en' && (
+                            <input
+                              type="text"
+                              value={data.bannerSection?.secondaryButtonText?.en || ''}
+                              onChange={(e) =>
+                                setData({
+                                  ...data,
+                                  bannerSection: {
+                                    ...data.bannerSection,
+                                    secondaryButtonText: { ...(data.bannerSection?.secondaryButtonText || { en: '', ar: '' }), en: e.target.value },
+                                  },
+                                })
+                              }
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          )}
+                          {activeLangTab === 'ar' && (
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={data.bannerSection?.secondaryButtonText?.ar || ''}
+                              onChange={(e) =>
+                                setData({
+                                  ...data,
+                                  bannerSection: {
+                                    ...data.bannerSection,
+                                    secondaryButtonText: { ...(data.bannerSection?.secondaryButtonText || { en: '', ar: '' }), ar: e.target.value },
+                                  },
+                                })
+                              }
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-white/80 block mb-1">
+                            Secondary Button Target URL / Route
+                          </label>
                           <input
                             type="text"
-                            value={data.bannerSection?.secondaryButtonText?.en || ''}
+                            value={data.bannerSection?.secondaryButtonUrl || ''}
                             onChange={(e) =>
                               setData({
                                 ...data,
                                 bannerSection: {
                                   ...data.bannerSection,
-                                  secondaryButtonText: { ...(data.bannerSection?.secondaryButtonText || { en: '', ar: '' }), en: e.target.value },
+                                  secondaryButtonUrl: e.target.value,
                                 },
                               })
                             }
-                            placeholder="Contact Us"
+                            placeholder="/contact"
                             className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                           />
-                        )}
-                        {activeLangTab === 'ar' && (
-                          <input
-                            type="text"
-                            dir="rtl"
-                            value={data.bannerSection?.secondaryButtonText?.ar || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                bannerSection: {
-                                  ...data.bannerSection,
-                                  secondaryButtonText: { ...(data.bannerSection?.secondaryButtonText || { en: '', ar: '' }), ar: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="اتصل بنا"
-                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                          />
-                        )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
+              </div>
+            )}
+
+            {/* IF EDITING CTA BANNER (Dedicated Centralized Call-To-Action Banner) */}
+            {editingTabId === 'cta-banner' && (
+              <div className="space-y-8">
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-lg bg-red-500/20 text-rose-400 font-black text-sm flex items-center justify-center border border-red-500/30">
+                          <Zap className="w-5 h-5 text-rose-400" />
+                        </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <CardTitle className="text-base font-bold text-white">
+                              Centralized Call-To-Action Banner
+                            </CardTitle>
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F68E2D]/20 text-[#F68E2D] border border-[#F68E2D]/30">
+                              Global API
+                            </span>
+                          </div>
+                          <p className="text-xs text-white/50">
+                            Full-width gradient conversion banner with title, tagline, description, and action buttons. Shared globally across all pages.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-white/60">Status:</span>
+                        <button
+                          type="button"
+                          onClick={() => setCtaBannerData({ ...ctaBannerData, isActive: !ctaBannerData.isActive })}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                            ctaBannerData.isActive
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-white/10 text-white/40 border border-white/10'
+                          }`}
+                        >
+                          {ctaBannerData.isActive ? 'Active (Published)' : 'Inactive'}
+                        </button>
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-6 space-y-6">
+                    {/* Centralized API Info Box */}
+                    <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-start gap-3">
+                      <Sparkles className="w-5 h-5 text-[#F68E2D] shrink-0 mt-0.5" />
+                      <div className="text-xs text-orange-200/90 leading-relaxed">
+                        <p className="font-semibold text-orange-200 mb-0.5">Centralized Dynamic Component</p>
+                        This Call-To-Action Banner is a global centralized service. Any changes saved here or from Section VI of the Home Page editor are immediately synced to the backend at <code className="px-1.5 py-0.5 rounded bg-black/30 text-white font-mono text-[11px]">/api/cms/cta-banner</code> and reflected across the entire portal.
+                      </div>
+                    </div>
+
+                    {/* Live Gradient Preview Box Matching User's Image */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-white/80 uppercase tracking-wider flex items-center gap-1.5">
+                          <Eye className="w-3.5 h-3.5 text-[#F68E2D]" />
+                          Live Visual Preview ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </span>
+                        <span className="text-[11px] text-white/40">Real-time gradient render</span>
+                      </div>
+
+                      <div
+                        dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                        className="relative rounded-2xl overflow-hidden p-8 sm:p-12 text-center shadow-2xl bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/30 space-y-4"
+                      >
+                        <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/20 text-white/80 border border-white/15">
+                          {activeLangTab === 'ar' ? (ctaBannerData.tagline?.ar || 'لنعمل معاً') : (ctaBannerData.tagline?.en || "LET'S WORK TOGETHER")}
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white max-w-3xl mx-auto leading-tight">
+                          {activeLangTab === 'ar' ? (ctaBannerData.title?.ar || 'دعنا نبني شيئاً يدفع الأعمال إلى الأمام.') : (ctaBannerData.title?.en || "Let's Build Something That Moves Business Forward.")}
+                        </h2>
+                        <p className="text-xs sm:text-sm text-white/80 max-w-2xl mx-auto leading-relaxed">
+                          {activeLangTab === 'ar' ? (ctaBannerData.description?.ar || 'هل تبحث عن منتجات طبية، أو معدات، أو حلول صيدلانية، أو خدمات أعمال؟') : (ctaBannerData.description?.en || 'Looking for medical products, equipment, pharmaceutical solutions, or business services? Our team is ready to help you find what you need.')}
+                        </p>
+                        <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                          <span className="px-5 py-2.5 rounded-full text-xs font-bold bg-white text-[#701020] shadow-md flex items-center gap-1.5 cursor-pointer">
+                            {activeLangTab === 'ar' ? (ctaBannerData.primaryButtonText?.ar || 'احصل على عرض سعر') : (ctaBannerData.primaryButtonText?.en || 'Get a Quote')} &rarr;
+                          </span>
+                          <span className="px-5 py-2.5 rounded-full text-xs font-bold bg-transparent border border-white/40 text-white hover:bg-white/10 cursor-pointer">
+                            {activeLangTab === 'ar' ? (ctaBannerData.secondaryButtonText?.ar || 'اتصل بنا') : (ctaBannerData.secondaryButtonText?.en || 'Contact Us')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tagline Input */}
+                    <div>
+                      <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                        Banner Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                      </label>
+                      {activeLangTab === 'en' ? (
+                        <input
+                          type="text"
+                          value={ctaBannerData.tagline?.en || ''}
+                          onChange={(e) =>
+                            setCtaBannerData({
+                              ...ctaBannerData,
+                              tagline: { ...(ctaBannerData.tagline || { en: '', ar: '' }), en: e.target.value },
+                            })
+                          }
+                          placeholder="e.g. LET'S WORK TOGETHER"
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          dir="rtl"
+                          value={ctaBannerData.tagline?.ar || ''}
+                          onChange={(e) =>
+                            setCtaBannerData({
+                              ...ctaBannerData,
+                              tagline: { ...(ctaBannerData.tagline || { en: '', ar: '' }), ar: e.target.value },
+                            })
+                          }
+                          placeholder="مثال: لنعمل معاً"
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                        />
+                      )}
+                    </div>
+
+                    {/* Title Input */}
+                    <div>
+                      <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                        Banner Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                      </label>
+                      {activeLangTab === 'en' ? (
+                        <input
+                          type="text"
+                          value={ctaBannerData.title?.en || ''}
+                          onChange={(e) =>
+                            setCtaBannerData({
+                              ...ctaBannerData,
+                              title: { ...(ctaBannerData.title || { en: '', ar: '' }), en: e.target.value },
+                            })
+                          }
+                          placeholder="e.g. Let's Build Something That Moves Business Forward."
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          dir="rtl"
+                          value={ctaBannerData.title?.ar || ''}
+                          onChange={(e) =>
+                            setCtaBannerData({
+                              ...ctaBannerData,
+                              title: { ...(ctaBannerData.title || { en: '', ar: '' }), ar: e.target.value },
+                            })
+                          }
+                          placeholder="مثال: دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                        />
+                      )}
+                    </div>
+
+                    {/* Short Description */}
+                    <div>
+                      <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                        Banner Short Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                      </label>
+                      {activeLangTab === 'en' ? (
+                        <textarea
+                          rows={3}
+                          value={ctaBannerData.description?.en || ''}
+                          onChange={(e) =>
+                            setCtaBannerData({
+                              ...ctaBannerData,
+                              description: { ...(ctaBannerData.description || { en: '', ar: '' }), en: e.target.value },
+                            })
+                          }
+                          placeholder="Looking for medical products, equipment, pharmaceutical solutions, or business services? Our team is ready to help you find what you need."
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                        />
+                      ) : (
+                        <textarea
+                          rows={3}
+                          dir="rtl"
+                          value={ctaBannerData.description?.ar || ''}
+                          onChange={(e) =>
+                            setCtaBannerData({
+                              ...ctaBannerData,
+                              description: { ...(ctaBannerData.description || { en: '', ar: '' }), ar: e.target.value },
+                            })
+                          }
+                          placeholder="هل تبحث عن منتجات طبية، أو معدات، أو حلول صيدلانية، أو خدمات أعمال؟ فريقنا مستعد لمساعدتك في العثور على ما تحتاجه."
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                        />
+                      )}
+                    </div>
+
+                    {/* Buttons Configuration */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/10">
+                      {/* Primary Button */}
+                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-[#F68E2D]"></span>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                            Primary Button (Main Call To Action)
+                          </h4>
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-white/70 block mb-1">
+                            Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                          </label>
+                          {activeLangTab === 'en' ? (
+                            <input
+                              type="text"
+                              value={ctaBannerData.primaryButtonText?.en || ''}
+                              onChange={(e) =>
+                                setCtaBannerData({
+                                  ...ctaBannerData,
+                                  primaryButtonText: { ...(ctaBannerData.primaryButtonText || { en: '', ar: '' }), en: e.target.value },
+                                })
+                              }
+                              placeholder="Get a Quote"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={ctaBannerData.primaryButtonText?.ar || ''}
+                              onChange={(e) =>
+                                setCtaBannerData({
+                                  ...ctaBannerData,
+                                  primaryButtonText: { ...(ctaBannerData.primaryButtonText || { en: '', ar: '' }), ar: e.target.value },
+                                })
+                              }
+                              placeholder="احصل على عرض سعر"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-white/70 block mb-1">
+                            Target URL / Route
+                          </label>
+                          <input
+                            type="text"
+                            value={ctaBannerData.primaryButtonUrl || ''}
+                            onChange={(e) =>
+                              setCtaBannerData({
+                                ...ctaBannerData,
+                                primaryButtonUrl: e.target.value,
+                              })
+                            }
+                            placeholder="/quotes or /contact"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Secondary Button */}
+                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-white/50"></span>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                            Secondary Button (Alternative Action)
+                          </h4>
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-white/70 block mb-1">
+                            Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                          </label>
+                          {activeLangTab === 'en' ? (
+                            <input
+                              type="text"
+                              value={ctaBannerData.secondaryButtonText?.en || ''}
+                              onChange={(e) =>
+                                setCtaBannerData({
+                                  ...ctaBannerData,
+                                  secondaryButtonText: { ...(ctaBannerData.secondaryButtonText || { en: '', ar: '' }), en: e.target.value },
+                                })
+                              }
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={ctaBannerData.secondaryButtonText?.ar || ''}
+                              onChange={(e) =>
+                                setCtaBannerData({
+                                  ...ctaBannerData,
+                                  secondaryButtonText: { ...(ctaBannerData.secondaryButtonText || { en: '', ar: '' }), ar: e.target.value },
+                                })
+                              }
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-white/70 block mb-1">
+                            Target URL / Route
+                          </label>
+                          <input
+                            type="text"
+                            value={ctaBannerData.secondaryButtonUrl || ''}
+                            onChange={(e) =>
+                              setCtaBannerData({
+                                ...ctaBannerData,
+                                secondaryButtonUrl: e.target.value,
+                              })
+                            }
+                            placeholder="/contact"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Save Action */}
+                    <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="text-xs text-white/40">
+                        Clicking Save will update the centralized API and synchronize all pages across the portal.
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleSaveCtaBannerData}
+                        disabled={saving}
+                        className="bg-[#F68E2D] hover:bg-[#e28124] text-white font-semibold text-xs px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-[#F68E2D]/20 cursor-pointer"
+                      >
+                        {saving ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Saving CTA Banner...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-3.5 h-3.5" /> Save Centralized CTA Banner
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
 
@@ -15820,7 +16379,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
 
             {/* IF EDITING ANY OTHER TAB */}
-            {editingTabId !== 'home' && editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'investment' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && (
+            {editingTabId !== 'home' && editingTabId !== 'cta-banner' && editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'investment' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && (
               <div className="space-y-6">
                 {activeEditingTab.groups.map((group) => (
                   <Card key={group.id} className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
@@ -17794,8 +18353,36 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 )}
 
 
+              {/* ----------------- CTA BANNER PREVIEW IN MODAL ----------------- */}
+              {editingTabId === 'cta-banner' && (
+                <div className="py-8 max-w-4xl mx-auto">
+                  <div
+                    dir={previewLang === 'ar' ? 'rtl' : 'ltr'}
+                    className="relative rounded-2xl overflow-hidden p-8 sm:p-14 text-center shadow-2xl bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/30 space-y-4"
+                  >
+                    <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/20 text-white/80 border border-white/15">
+                      {ctaBannerData.tagline?.[previewLang] || "LET'S WORK TOGETHER"}
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white max-w-3xl mx-auto leading-tight">
+                      {ctaBannerData.title?.[previewLang] || "Let's Build Something That Moves Business Forward."}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-white/80 max-w-2xl mx-auto leading-relaxed">
+                      {ctaBannerData.description?.[previewLang] || 'Looking for medical products, equipment, pharmaceutical solutions, or business services? Our team is ready to help you find what you need.'}
+                    </p>
+                    <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+                      <span className="px-5 py-2.5 rounded-full text-xs font-bold bg-white text-[#701020] shadow-md flex items-center gap-1.5">
+                        {ctaBannerData.primaryButtonText?.[previewLang] || 'Get a Quote'} &rarr;
+                      </span>
+                      <span className="px-5 py-2.5 rounded-full text-xs font-bold bg-transparent border border-white/40 text-white">
+                        {ctaBannerData.secondaryButtonText?.[previewLang] || 'Contact Us'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* ----------------- HOME PAGE PREVIEW ----------------- */}
-              {editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && (
+              {editingTabId !== 'cta-banner' && editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && (
                 <>
               {/* SECTION 1: HERO */}
               <div className="text-center max-w-3xl mx-auto space-y-4">
