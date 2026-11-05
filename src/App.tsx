@@ -7,6 +7,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { CmsHomePage } from "./pages/CmsHomePage";
 import { QuoteRequestsPage } from "./pages/QuoteRequestsPage";
 import { EnquiriesPage } from "./pages/EnquiriesPage";
+import { OurCompaniesPage } from "./pages/OurCompaniesPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { getAuthToken, getStoredUserData } from "./lib/api";
 
@@ -114,6 +115,18 @@ export const App: React.FC = () => {
               <EnquiriesPage />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/our-companies"
+          element={
+            <ProtectedRoute>
+              <OurCompaniesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/companies"
+          element={<Navigate to="/our-companies" replace />}
         />
 
         {/* Backward Compatibility Fallback Routes */}

@@ -188,12 +188,100 @@ export const initialCmsBrandsData: CmsBrandsData = {
   isActive: true,
 };
 
+// ==================== CMS OUR COMPANIES INTERFACES ====================
+export interface OurCompanyItem {
+  id?: string;
+  name: BilingualText;
+  description: BilingualText;
+  logoUrl: string;
+  websiteUrl: string;
+  color?: string;
+  order?: number;
+  isActive?: boolean;
+}
+
+export interface CmsOurCompaniesData {
+  _id?: string;
+  tagline: BilingualText;
+  title: BilingualText;
+  description: BilingualText;
+  companies: OurCompanyItem[];
+  isActive?: boolean;
+  updatedAt?: string;
+}
+
+export const initialCmsOurCompaniesData: CmsOurCompaniesData = {
+  tagline: {
+    en: 'SPECIALIZED COMPANIES & DIVISIONS',
+    ar: 'الشركات والأقسام المتخصصة',
+  },
+  title: {
+    en: 'Our Companies',
+    ar: 'شركاتنا',
+  },
+  description: {
+    en: 'A diversified ecosystem of specialized entities driving excellence across infrastructure, medical technology, and trading.',
+    ar: 'منظومة متنوعة من الكيانات المتخصصة التي تقود التميز في البنية التحتية والتكنولوجيا الطبية والتجارة.',
+  },
+  companies: [
+    {
+      id: 'company-1',
+      name: {
+        en: 'Projects Innovator',
+        ar: 'مبتكر المشاريع',
+      },
+      description: {
+        en: 'Delivering innovative construction and infrastructure solutions that shape modern spaces and build a better future.',
+        ar: 'تقديم حلول البناء والبنية التحتية المبتكرة التي تشكل المساحات الحديثة وتبني مستقبلاً أفضل.',
+      },
+      logoUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186156f?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: '/projects-innovator',
+      color: 'red',
+      order: 1,
+      isActive: true,
+    },
+    {
+      id: 'company-2',
+      name: {
+        en: 'Attractive',
+        ar: 'أتراكتيف',
+      },
+      description: {
+        en: 'A diversified business group driving excellence across healthcare, construction, trading, and investment.',
+        ar: 'مجموعة أعمال متنوعة تقود التميز في قطاعات الرعاية الصحية والبناء والتجارة والاستثمار.',
+      },
+      logoUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: '/attractive',
+      color: 'blue',
+      order: 2,
+      isActive: true,
+    },
+    {
+      id: 'company-3',
+      name: {
+        en: 'Medics Innovator',
+        ar: 'ميديكس إنوفيتور',
+      },
+      description: {
+        en: 'Advancing healthcare through trusted medical solutions, quality healthcare products, and a commitment to better patient outcomes.',
+        ar: 'الارتقاء بالرعاية الصحية من خلال الحلول الطبية الموثوقة والمنتجات الصحية عالية الجودة والالتزام بتحسين نتائج المرضى.',
+      },
+      logoUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=300&q=80',
+      websiteUrl: '/medics-innovator',
+      color: 'blue',
+      order: 3,
+      isActive: true,
+    },
+  ],
+  isActive: true,
+};
+
 export interface CmsHomeData {
   _id?: string;
   hero: HeroSection;
   trustedBrands?: TrustedBrand[];
   aboutSectorsSection: AboutSectorsSection;
-  companiesSection: CompaniesSection;
+  companiesSection?: CompaniesSection;
   purposeSection: PurposeSection;
   bannerSection: BannerSection;
   updatedAt?: string;
@@ -3000,6 +3088,40 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     ],
   },
   {
+    id: 'our-companies',
+    label: 'Our Companies',
+    labelAr: 'شركاتنا المتخصصة',
+    iconName: 'Building2',
+    description: 'Specialized Companies & Divisions: Projects Innovator, Attractive, and Medics Innovator.',
+    groups: [
+      {
+        id: 'our-companies-group',
+        title: { en: 'Our Companies & Divisions', ar: 'الشركات والأقسام المتخصصة' },
+        description: { en: 'Interlinked group entities with logos, descriptions, color themes, and dedicated pages', ar: 'كيانات المجموعة المترابطة مع الشعارات والأوصاف وألوان الهوية والصفحات المخصصة' },
+        iconName: 'Building2',
+        accentColor: 'blue',
+        items: [
+          {
+            id: 'our-companies-header',
+            title: { en: 'Section Header & Tagline', ar: 'عنوان وقسم الترويسة' },
+            subtitle: { en: 'Section tagline, title, description, and status', ar: 'شعار القسم والعنوان والوصف وحالة النشر' },
+            status: 'Active',
+            lastUpdated: '05 Nov 2026',
+            badgeColor: 'blue',
+          },
+          {
+            id: 'our-companies-cards',
+            title: { en: 'Specialized Division Cards (3)', ar: 'بطاقات الشركات والأقسام (3)' },
+            subtitle: { en: 'Project Innovator, Attractive, Medics Innovator links & color styling', ar: 'روابط وشعارات مبتكر المشاريع وأتراكتيف وميديكس إنوفيتور' },
+            status: 'Active',
+            lastUpdated: '05 Nov 2026',
+            badgeColor: 'purple',
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: 'cta-banner',
     label: 'CTA Banner',
     labelAr: 'بانر اتخاذ إجراء',
@@ -4224,6 +4346,56 @@ export const cmsService = {
       return { success: true, data: result.data, message: result.message };
     } catch (err) {
       console.warn('Failed to save Brands to backend, saved to local cache:', err);
+      return {
+        success: true,
+        data: merged,
+        message: 'Saved locally in cache (backend offline)',
+      };
+    }
+  },
+
+  async getOurCompanies(): Promise<CmsOurCompaniesData> {
+    const OUR_COMPANIES_CACHE_KEY = 'cms_our_companies_data';
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/our-companies`);
+      const data = await res.json();
+      if (data.success && data.data) {
+        localStorage.setItem(OUR_COMPANIES_CACHE_KEY, JSON.stringify(data.data));
+        return data.data;
+      }
+    } catch (err) {
+      console.warn('Backend unavailable or error for Our Companies, reading from local cache:', err);
+    }
+
+    const cached = localStorage.getItem(OUR_COMPANIES_CACHE_KEY);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        // ignore
+      }
+    }
+    return initialCmsOurCompaniesData;
+  },
+
+  async updateOurCompanies(payload: Partial<CmsOurCompaniesData>): Promise<{ success: boolean; data?: CmsOurCompaniesData; message?: string }> {
+    const OUR_COMPANIES_CACHE_KEY = 'cms_our_companies_data';
+    const merged = { ...initialCmsOurCompaniesData, ...payload };
+    localStorage.setItem(OUR_COMPANIES_CACHE_KEY, JSON.stringify(merged));
+
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/our-companies`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(merged),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const result = await res.json();
+      return { success: true, data: result.data, message: result.message };
+    } catch (err) {
+      console.warn('Failed to save Our Companies to backend, saved to local cache:', err);
       return {
         success: true,
         data: merged,

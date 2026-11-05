@@ -25,7 +25,6 @@ import {
   SlidersHorizontal,
   Search,
   ArrowLeft,
-  Briefcase,
   Award,
   History,
   Target,
@@ -63,7 +62,6 @@ import {
   ALL_CMS_TABS,
   type CmsHomeData,
   type SectorItem,
-  type CompanyItem,
   type PurposeTag,
   type CmsTabConfig,
   type CmsAboutData,
@@ -430,14 +428,15 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       ...(res.aboutSectorsSection || {}),
       sectors: res.aboutSectorsSection?.sectors || initialCmsHomeData.aboutSectorsSection.sectors,
     },
-    companiesSection: {
-      ...initialCmsHomeData.companiesSection,
-      ...(res.companiesSection || {}),
-      companies: (res.companiesSection?.companies || initialCmsHomeData.companiesSection.companies).map((c, i) => ({
+    companiesSection: res.companiesSection ? {
+      tagline: res.companiesSection.tagline || { en: 'OUR COMPANIES', ar: 'شركاتنا المتخصصة' },
+      title: res.companiesSection.title || { en: 'Three Specialized Divisions. One Group', ar: 'ثلاثة أقسام متخصصة. مجموعة واحدة' },
+      description: res.companiesSection.description || { en: '', ar: '' },
+      companies: (res.companiesSection.companies || []).map((c, i) => ({
         ...c,
         color: c.color || (i === 0 ? 'red' : 'blue'),
       })),
-    },
+    } : undefined,
     purposeSection: {
       ...initialCmsHomeData.purposeSection,
       ...(res.purposeSection || {}),
@@ -3014,69 +3013,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     });
   };
 
-  // Section 4: Specialized Companies Management
-  const handleAddCompany = () => {
-    const newComp: CompanyItem = {
-      id: `comp-${Date.now()}`,
-      name: { en: '', ar: '' },
-      description: { en: '', ar: '' },
-      logoUrl: '',
-      websiteUrl: '',
-      color: 'blue',
-    };
-    setData((prev) => ({
-      ...prev,
-      companiesSection: {
-        ...prev.companiesSection,
-        companies: [...(prev.companiesSection?.companies || []), newComp],
-      },
-    }));
-    toast.success('New specialized company added');
-  };
-
-  const handleRemoveCompany = (index: number) => {
-    setData((prev) => ({
-      ...prev,
-      companiesSection: {
-        ...prev.companiesSection,
-        companies: prev.companiesSection.companies.filter((_, i) => i !== index),
-      },
-    }));
-  };
-
-  const handleCompanyChange = (
-    index: number,
-    field: 'name' | 'description' | 'logoUrl' | 'websiteUrl' | 'color',
-    langOrVal: string,
-    val?: string
-  ) => {
-    setData((prev) => {
-      const list = [...(prev.companiesSection?.companies || [])];
-      if (field === 'name' || field === 'description') {
-        list[index] = {
-          ...list[index],
-          [field]: {
-            ...list[index][field],
-            [langOrVal as 'en' | 'ar']: val || '',
-          },
-        };
-      } else {
-        list[index] = {
-          ...list[index],
-          [field]: langOrVal,
-        };
-      }
-      return {
-        ...prev,
-        companiesSection: {
-          ...prev.companiesSection,
-          companies: list,
-        },
-      };
-    });
-  };
-
-  // Section 5: Purpose Tags Management
+  // Section 3: Purpose Tags Management
   const handleAddPurposeTag = () => {
     const newTag: PurposeTag = {
       id: `tag-${Date.now()}`,
@@ -3263,6 +3200,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   <Mail className="w-3.5 h-3.5 text-[#F68E2D]" />
                   Enquiries
                 </Link>
+                <Link
+                  to="/our-companies"
+                  className="px-3 py-2 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Building2 className="w-3.5 h-3.5 text-blue-400" />
+                  Our Companies
+                </Link>
                 <Button
                   variant="outline"
                   onClick={() => setShowPreviewModal(true)}
@@ -3388,29 +3332,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    {/* Section III: Specialized Companies */}
+                    {/* Section III: Vision & Mission */}
                     <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section III: Specialized Companies & Divisions
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                            Active
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-white/50">
-                          Three specialized group entities with logos & descriptions ({data.companiesSection?.companies?.length || 0} companies)
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Section IV: Vision & Mission */}
-                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-semibold text-white">
-                            Section IV: Purpose, Vision & Mission
+                            Section III: Purpose, Vision & Mission
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -3422,12 +3349,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    {/* Section V: CTA Banner */}
+                    {/* Section IV: CTA Banner */}
                     <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-semibold text-white">
-                            Section V: Call-To-Action Banner
+                            Section IV: Call-To-Action Banner
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Active
@@ -5438,7 +5365,46 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
-                {/* SECTION 3: SPECIALIZED COMPANIES & DIVISIONS */}
+                {/* SPECIALIZED COMPANIES & DIVISIONS (SEPARATED INTO STANDALONE SECTION) */}
+                <Card className="bg-gradient-to-r from-[#0b1028] via-[#14112E] to-[#0b1028] border border-[#F68E2D]/30 shadow-xl overflow-hidden relative">
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-[#F68E2D]" />
+                  <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-[#F68E2D]/15 border border-[#F68E2D]/30 flex items-center justify-center shrink-0">
+                          <Building2 className="w-6 h-6 text-[#F68E2D]" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-[#F68E2D]/20 text-[#F68E2D] border border-[#F68E2D]/30">
+                              Independent CMS Section
+                            </span>
+                            <span className="text-xs text-white/50">• Located below Enquiries in sidebar</span>
+                          </div>
+                          <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                            Specialized Companies & Divisions (Our Companies)
+                          </h3>
+                          <p className="text-xs text-white/60 max-w-xl">
+                            This section is now independently managed outside the Homepage CMS. Configure the 3 interlinked projects (<span className="text-red-400 font-medium">Projects Innovator</span>, <span className="text-blue-400 font-medium">Attractive</span>, and <span className="text-blue-400 font-medium">Medics</span>) with dedicated routes, bilingual descriptions, and logos.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0">
+                        <Link
+                          to="/our-companies"
+                          className="bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs font-semibold py-2.5 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-lg shadow-[#F68E2D]/25 transition-all"
+                        >
+                          <Building2 className="w-4 h-4" />
+                          <span>Manage Our Companies</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 3: PURPOSE, VISION & MISSION */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -5448,348 +5414,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </span>
                         <div>
                           <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                            <Briefcase className="w-4 h-4 text-[#F68E2D]" />
-                            Section III: Specialized Companies & Divisions
-                          </CardTitle>
-                          <p className="text-xs text-white/50">
-                            Three specialized group divisions with company logo, name, description, and explore link ({data.companiesSection?.companies?.length || 0} companies)
-                          </p>
-                        </div>
-                      </div>
-
-                      <Button
-                        onClick={handleAddCompany}
-                        className="bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#F68E2D]/20 self-start sm:self-auto"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Add Company
-                      </Button>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-6 space-y-6">
-                    {/* Section Tagline */}
-                    <div>
-                      <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
-                        Section Tagline
-                      </label>
-                      <div className="w-full">
-                        {activeLangTab === 'en' && (
-                          <input
-                            type="text"
-                            value={data.companiesSection?.tagline?.en || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                companiesSection: {
-                                  ...data.companiesSection,
-                                  tagline: { ...(data.companiesSection?.tagline || { en: '', ar: '' }), en: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="e.g. OUR COMPANIES"
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                          />
-                        )}
-                        {activeLangTab === 'ar' && (
-                          <input
-                            type="text"
-                            dir="rtl"
-                            value={data.companiesSection?.tagline?.ar || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                companiesSection: {
-                                  ...data.companiesSection,
-                                  tagline: { ...(data.companiesSection?.tagline || { en: '', ar: '' }), ar: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="مثال: شركاتنا المتخصصة"
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                          />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Section Title */}
-                    <div>
-                      <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
-                        Main Section Title
-                      </label>
-                      <div className="w-full">
-                        {activeLangTab === 'en' && (
-                          <input
-                            type="text"
-                            value={data.companiesSection?.title?.en || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                companiesSection: {
-                                  ...data.companiesSection,
-                                  title: { ...(data.companiesSection?.title || { en: '', ar: '' }), en: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="e.g. Three Specialized Divisions. One Group"
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                          />
-                        )}
-                        {activeLangTab === 'ar' && (
-                          <input
-                            type="text"
-                            dir="rtl"
-                            value={data.companiesSection?.title?.ar || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                companiesSection: {
-                                  ...data.companiesSection,
-                                  title: { ...(data.companiesSection?.title || { en: '', ar: '' }), ar: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="مثال: ثلاثة أقسام متخصصة. مجموعة واحدة"
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                          />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Section Short Description */}
-                    <div>
-                      <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
-                        Section Short Description
-                      </label>
-                      <div className="w-full">
-                        {activeLangTab === 'en' && (
-                          <textarea
-                            rows={2}
-                            value={data.companiesSection?.description?.en || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                companiesSection: {
-                                  ...data.companiesSection,
-                                  description: { ...(data.companiesSection?.description || { en: '', ar: '' }), en: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="Discover the specialized companies driving innovation and excellence across our group."
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                          />
-                        )}
-                        {activeLangTab === 'ar' && (
-                          <textarea
-                            rows={2}
-                            dir="rtl"
-                            value={data.companiesSection?.description?.ar || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                companiesSection: {
-                                  ...data.companiesSection,
-                                  description: { ...(data.companiesSection?.description || { en: '', ar: '' }), ar: e.target.value },
-                                },
-                              })
-                            }
-                            placeholder="اكتشف الشركات المتخصصة التي تقود الابتكار والتميز عبر مجموعتنا."
-                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right resize-none"
-                          />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Companies Cards List */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                        Division Companies Cards ({data.companiesSection?.companies?.length || 0})
-                      </h4>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {(data.companiesSection?.companies || []).map((comp, cIdx) => (
-                          <div
-                            key={comp.id || cIdx}
-                            className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all group flex flex-col justify-between"
-                          >
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                                <span className="text-xs font-bold text-[#F68E2D]">
-                                  Company #{cIdx + 1}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveCompany(cIdx)}
-                                  className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                  title="Delete company"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-
-                              {/* Logo preview and URL */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Company Logo</label>
-                                <div className="h-16 bg-white/90 rounded-xl p-2 flex items-center justify-center border border-white/10 mb-2">
-                                  {comp.logoUrl ? (
-                                    <img
-                                      src={comp.logoUrl}
-                                      alt="Company logo"
-                                      className="max-h-full max-w-full object-contain"
-                                      onError={(e) => {
-                                        e.currentTarget.src = 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&q=80';
-                                      }}
-                                    />
-                                  ) : (
-                                    <ImageIcon className="w-6 h-6 text-black/30" />
-                                  )}
-                                </div>
-                                <ImageUploadField
-                                  compact
-                                  folder="companies"
-                                  value={comp.logoUrl}
-                                  onChange={(url) => handleCompanyChange(cIdx, 'logoUrl', url)}
-                                  placeholder="Logo URL or upload"
-                                />
-                              </div>
-
-                              {/* Company Name */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Company Name</label>
-                                {activeLangTab === 'en' && (
-                                  <input
-                                    type="text"
-                                    value={comp.name.en}
-                                    onChange={(e) => handleCompanyChange(cIdx, 'name', 'en', e.target.value)}
-                                    placeholder="e.g. Projects Innovator"
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                  />
-                                )}
-                                {activeLangTab === 'ar' && (
-                                  <input
-                                    type="text"
-                                    dir="rtl"
-                                    value={comp.name.ar}
-                                    onChange={(e) => handleCompanyChange(cIdx, 'name', 'ar', e.target.value)}
-                                    placeholder="مثال: مبتكر المشاريع"
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                  />
-                                )}
-                              </div>
-
-                              {/* Company Description */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Description</label>
-                                {activeLangTab === 'en' && (
-                                  <textarea
-                                    rows={3}
-                                    value={comp.description.en}
-                                    onChange={(e) => handleCompanyChange(cIdx, 'description', 'en', e.target.value)}
-                                    placeholder="Delivering innovative construction and infrastructure solutions..."
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                                  />
-                                )}
-                                {activeLangTab === 'ar' && (
-                                  <textarea
-                                    rows={3}
-                                    dir="rtl"
-                                    value={comp.description.ar}
-                                    onChange={(e) => handleCompanyChange(cIdx, 'description', 'ar', e.target.value)}
-                                    placeholder="تقديم حلول بناء وبنية تحتية مبتكرة..."
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right resize-none"
-                                  />
-                                )}
-                              </div>
-
-                              {/* Website / Explore URL */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Explore URL / Route</label>
-                                <input
-                                  type="text"
-                                  value={comp.websiteUrl || ''}
-                                  onChange={(e) => handleCompanyChange(cIdx, 'websiteUrl', e.target.value)}
-                                  placeholder="/projects-innovator"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              </div>
-
-                              {/* Card Color (Red / Blue) */}
-                              <div>
-                                <div className="flex items-center justify-between mb-1">
-                                  <label className="text-[11px] text-white/60 block">
-                                    {activeLangTab === 'ar' ? 'لون البطاقة (Color)' : 'Card Color'}
-                                  </label>
-                                  <span
-                                    className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full flex items-center gap-1.5 transition-all"
-                                    style={{
-                                      backgroundColor: (comp.color || 'blue').toLowerCase() === 'red' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)',
-                                      color: (comp.color || 'blue').toLowerCase() === 'red' ? '#f87171' : '#60a5fa',
-                                      border: `1px solid ${(comp.color || 'blue').toLowerCase() === 'red' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
-                                    }}
-                                  >
-                                    <span
-                                      className="w-1.5 h-1.5 rounded-full"
-                                      style={{
-                                        backgroundColor: (comp.color || 'blue').toLowerCase() === 'red' ? '#ef4444' : '#3b82f6',
-                                      }}
-                                    />
-                                    {(comp.color || 'blue').toUpperCase()}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <select
-                                    value={comp.color || 'blue'}
-                                    onChange={(e) => handleCompanyChange(cIdx, 'color', e.target.value)}
-                                    className="flex-1 px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] cursor-pointer"
-                                  >
-                                    <option value="red" className="bg-[#14112E] text-red-400">🔴 Red {activeLangTab === 'ar' ? '(أحمر)' : ''}</option>
-                                    <option value="blue" className="bg-[#14112E] text-blue-400">🔵 Blue {activeLangTab === 'ar' ? '(أزرق)' : ''}</option>
-                                  </select>
-                                  <div className="flex items-center gap-1">
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCompanyChange(cIdx, 'color', 'red')}
-                                      className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all cursor-pointer ${
-                                        (comp.color || 'blue').toLowerCase() === 'red'
-                                          ? 'bg-red-600/90 text-white border-red-500 shadow-md shadow-red-500/30'
-                                          : 'bg-white/5 text-white/50 border-white/10 hover:text-white hover:bg-white/10'
-                                      }`}
-                                    >
-                                      Red
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCompanyChange(cIdx, 'color', 'blue')}
-                                      className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all cursor-pointer ${
-                                        (comp.color || 'blue').toLowerCase() === 'blue'
-                                          ? 'bg-blue-600/90 text-white border-blue-500 shadow-md shadow-blue-500/30'
-                                          : 'bg-white/5 text-white/50 border-white/10 hover:text-white hover:bg-white/10'
-                                      }`}
-                                    >
-                                      Blue
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 4: PURPOSE, VISION & MISSION */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                          4
-                        </span>
-                        <div>
-                          <CardTitle className="text-base font-bold text-white flex items-center gap-2">
                             <Target className="w-4 h-4 text-[#F68E2D]" />
-                            Section IV: Purpose, Vision & Mission
+                            Section III: Purpose, Vision & Mission
                           </CardTitle>
                           <p className="text-xs text-white/50">
                             Core strategic purpose, vision & mission cards, and guiding principles infographic image
@@ -6058,17 +5684,17 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </CardContent>
                 </Card>
 
-                {/* SECTION 5: CTA BANNER */}
+                {/* SECTION 4: CTA BANNER */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
                     <div className="flex items-center gap-3">
                       <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-black text-sm flex items-center justify-center border border-[#F68E2D]/30">
-                        5
+                        4
                       </span>
                       <div>
                         <CardTitle className="text-base font-bold text-white flex items-center gap-2">
                           <Zap className="w-4 h-4 text-[#F68E2D]" />
-                          Section V: Call-To-Action Banner
+                          Section IV: Call-To-Action Banner
                         </CardTitle>
                         <p className="text-xs text-white/50">
                           Full-width gradient conversion banner with title, tagline, description, and action buttons

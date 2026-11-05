@@ -96,16 +96,44 @@ const EnquiriesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
+const CompaniesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+    <path d="M9 22v-4h6v4" />
+    <path d="M8 6h.01" />
+    <path d="M16 6h.01" />
+    <path d="M12 6h.01" />
+    <path d="M12 10h.01" />
+    <path d="M12 14h.01" />
+    <path d="M16 10h.01" />
+    <path d="M16 14h.01" />
+    <path d="M8 10h.01" />
+    <path d="M8 14h.01" />
+  </svg>
+);
+
 const topNavigationItems: NavItem[] = [
   { icon: DashboardIcon, label: "Dashboard", href: "/dashboard" },
   { icon: CmsIcon, label: "CMS Portal", href: "/cms" },
   { icon: QuotesIcon, label: "Quote Requests", href: "/quotes" },
   { icon: EnquiriesIcon, label: "Enquiries", href: "/enquiries" },
+  { icon: CompaniesIcon, label: "Our Companies", href: "/our-companies" },
 ];
 
 const CMS_SEARCH_SECTIONS = [
   { name: "Quote Requests", path: "/quotes", desc: "Customer product quotation requests & leads" },
   { name: "Customer Enquiries", path: "/enquiries", desc: "Customer questions, messages & enquiries" },
+  { name: "Our Companies", path: "/our-companies", desc: "Specialized Companies: Project Innovator, Attractive, Medics" },
   { name: "Home Page", path: "/cms?tab=home", desc: "Hero, Brands, About, Divisions, Vision & Mission, Banner" },
   { name: "About Us", path: "/cms?tab=about", desc: "10 sections: Leadership, Heritage, Journey, Values, Purpose" },
   { name: "Company Profile", path: "/cms?tab=company", desc: "3 sections: Profile, Who We Are, What Guides Us" },
@@ -233,7 +261,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   pathname === "/university/dashboard")) ||
               (item.href === "/cms" && pathname.includes("/cms")) ||
               (item.href === "/quotes" && (pathname.includes("/quotes") || pathname.includes("/quote-requests"))) ||
-              (item.href === "/enquiries" && (pathname.includes("/enquiries") || pathname.includes("/enquiry")));
+              (item.href === "/enquiries" && (pathname.includes("/enquiries") || pathname.includes("/enquiry"))) ||
+              (item.href === "/our-companies" && (pathname.includes("/our-companies") || pathname.includes("/companies")));
 
             return (
               <li key={item.label}>
