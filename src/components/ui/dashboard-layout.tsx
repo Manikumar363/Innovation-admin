@@ -122,22 +122,42 @@ const CompaniesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
+const ServicesIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z" />
+    <path d="M10 6a2 2 0 0 1 4 0v2h-4V6z" />
+    <path d="M12 13v4" />
+    <path d="M10 15h4" />
+  </svg>
+);
+
 const topNavigationItems: NavItem[] = [
   { icon: DashboardIcon, label: "Dashboard", href: "/dashboard" },
   { icon: CmsIcon, label: "CMS Portal", href: "/cms" },
   { icon: QuotesIcon, label: "Quote Requests", href: "/quotes" },
   { icon: EnquiriesIcon, label: "Enquiries", href: "/enquiries" },
   { icon: CompaniesIcon, label: "Our Companies", href: "/our-companies" },
+  { icon: ServicesIcon, label: "Services", href: "/services" },
 ];
 
 const CMS_SEARCH_SECTIONS = [
   { name: "Quote Requests", path: "/quotes", desc: "Customer product quotation requests & leads" },
   { name: "Customer Enquiries", path: "/enquiries", desc: "Customer questions, messages & enquiries" },
   { name: "Our Companies", path: "/our-companies", desc: "Specialized Companies: Project Innovator, Attractive, Medics" },
+  { name: "Services", path: "/services", desc: "4 Service Pages: Medical Equipment, Lab Supplies, Healthcare Solutions, Standards" },
   { name: "Home Page", path: "/cms?tab=home", desc: "Hero, Brands, About, Divisions, Vision & Mission, Banner" },
   { name: "About Us", path: "/cms?tab=about", desc: "10 sections: Leadership, Heritage, Journey, Values, Purpose" },
   { name: "Company Profile", path: "/cms?tab=company", desc: "3 sections: Profile, Who We Are, What Guides Us" },
-  { name: "Services", path: "/cms?tab=services", desc: "Our Services & Business Areas" },
   { name: "Products / Shop", path: "/cms?tab=shop", desc: "Medical Equipment & Catalog" },
   { name: "Projects", path: "/cms?tab=projects", desc: "Our Projects & Work Together Banner" },
   { name: "Partners", path: "/cms?tab=partners", desc: "Technology, Cloud & Strategic Partners" },
@@ -259,10 +279,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 (pathname === "/" ||
                   pathname === "/agent/dashboard" ||
                   pathname === "/university/dashboard")) ||
-              (item.href === "/cms" && pathname.includes("/cms")) ||
+              (item.href === "/cms" && pathname.includes("/cms") && !pathname.includes("/services")) ||
               (item.href === "/quotes" && (pathname.includes("/quotes") || pathname.includes("/quote-requests"))) ||
               (item.href === "/enquiries" && (pathname.includes("/enquiries") || pathname.includes("/enquiry"))) ||
-              (item.href === "/our-companies" && (pathname.includes("/our-companies") || pathname.includes("/companies")));
+              (item.href === "/our-companies" && (pathname.includes("/our-companies") || pathname.includes("/companies"))) ||
+              (item.href === "/services" && (pathname.includes("/services") || pathname.includes("/business-areas")));
 
             return (
               <li key={item.label}>

@@ -3814,14 +3814,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleOpenPageEditor('services')}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                    <Link
+                      to="/services"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      Edit Page
-                    </button>
+                      <Layers className="w-3.5 h-3.5" />
+                      Manage 4 Service Pages
+                    </Link>
                   </div>
 
                   {/* Section List Inside Card */}
@@ -5397,6 +5396,45 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         >
                           <Building2 className="w-4 h-4" />
                           <span>Manage Our Companies</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SERVICES & BUSINESS AREAS (PLACED UNDER OUR COMPANIES ON HOMEPAGE) */}
+                <Card className="bg-gradient-to-r from-[#0b1028] via-[#170e2b] to-[#0b1028] border border-purple-500/30 shadow-xl overflow-hidden relative">
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-purple-500" />
+                  <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0">
+                          <Layers className="w-6 h-6 text-purple-400" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                              Placed Under Our Companies on Homepage
+                            </span>
+                            <span className="text-xs text-white/50">• Located below Our Companies in sidebar</span>
+                          </div>
+                          <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                            Services & Business Areas (4 Reusable Service Pages)
+                          </h3>
+                          <p className="text-xs text-white/60 max-w-xl">
+                            Positioned directly under Our Companies on the homepage. Manage the 4 independent service pages (<span className="text-purple-300 font-medium">Medical & Laboratory Equipment</span>, <span className="text-purple-300 font-medium">Laboratory Supplies</span>, <span className="text-purple-300 font-medium">Healthcare Solutions</span>, <span className="text-purple-300 font-medium">Quality & Safety Standards</span>) sharing the verified common layout.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0">
+                        <Link
+                          to="/services"
+                          className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold py-2.5 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-lg shadow-purple-600/25 transition-all"
+                        >
+                          <Layers className="w-4 h-4" />
+                          <span>Manage Services</span>
                           <ArrowUpRight className="w-4 h-4" />
                         </Link>
                       </div>
@@ -10013,6 +10051,34 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             {/* IF EDITING SERVICES (2 SECTIONS MATCHING REFERENCE IMAGES) */}
             {editingTabId === 'services' && (
               <div className="space-y-8">
+                {/* DEDICATED SERVICES MANAGEMENT BANNER */}
+                <Card className="bg-gradient-to-r from-purple-950/60 via-[#14112E] to-purple-950/60 border border-purple-500/40 p-4 shadow-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center justify-center shrink-0">
+                        <Layers className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                          <span>Dedicated Services & Business Areas CMS</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200">
+                            4 Reusable Service Pages
+                          </span>
+                        </h4>
+                        <p className="text-xs text-white/60">
+                          Now placed under Our Companies in sidebar. Manage the 4 individual service pages (Medical Equipment, Lab Supplies, Healthcare Solutions, Standards) with live preview and &quot;Add New&quot; CMS functionality.
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/services"
+                      className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-md shadow-purple-600/30"
+                    >
+                      <span>Open Dedicated Services CMS</span>
+                      <ArrowUpRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </Card>
                 {/* SECTION 1: OUR SERVICES (IMAGE 1) */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
