@@ -10,7 +10,6 @@ import {
   RefreshCw,
   Plus,
   Trash2,
-  ExternalLink,
   X,
   CheckCircle2,
   Layers,
@@ -29,6 +28,7 @@ import {
   Building2,
   Truck,
   FileCheck,
+  Code2,
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
@@ -37,12 +37,17 @@ import {
   cmsService,
   type ServicePageData,
   defaultServicePagesData,
+  initialCmsServicesData,
+  type CmsServicesData,
+  type ServiceFeatureCard,
 } from '../services/cmsService';
-import { API_BASE } from '../config/api';
 
 // Lucide icon helper mapping
 const ICON_COMPONENTS: Record<string, React.FC<{ className?: string }>> = {
   Microscope,
+  Code2,
+  Code: Code2,
+  Handshake: HeartHandshake,
   FlaskConical,
   Stethoscope,
   ShieldCheck,
@@ -65,16 +70,17 @@ const ICON_COMPONENTS: Record<string, React.FC<{ className?: string }>> = {
 
 const AVAILABLE_ICONS = [
   'Microscope',
+  'Code2',
+  'ShieldCheck',
+  'HeartHandshake',
   'FlaskConical',
   'Stethoscope',
-  'ShieldCheck',
   'Crosshair',
   'Target',
   'Cpu',
   'Headphones',
   'Award',
   'CheckCheck',
-  'HeartHandshake',
   'Activity',
   'Users',
   'Building2',
@@ -88,6 +94,8 @@ export const ServicesPage: React.FC = () => {
   const [activeLangTab, setActiveLangTab] = useState<'en' | 'ar'>('en');
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
+  const [savingHeader, setSavingHeader] = useState<boolean>(false);
+  const [landingHeaderData, setLandingHeaderData] = useState<CmsServicesData>(initialCmsServicesData);
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
   const [previewLang, setPreviewLang] = useState<'en' | 'ar'>('en');
@@ -128,19 +136,27 @@ export const ServicesPage: React.FC = () => {
     },
   });
 
-  // Load all services on mount
+  // Load all services and landing header on mount
   useEffect(() => {
     let isMounted = true;
     (async () => {
       try {
         setLoading(true);
-        const data = await cmsService.getAllServices();
-        if (isMounted && Array.isArray(data) && data.length > 0) {
-          setServices(data);
-          setActiveSlug((prev) => (data.some((s) => s.slug === prev) ? prev : data[0].slug));
+        const [servicesData, headerCmsData] = await Promise.all([
+          cmsService.getAllServices(),
+          cmsService.getCmsServices(),
+        ]);
+        if (isMounted) {
+          if (Array.isArray(servicesData) && servicesData.length > 0) {
+            setServices(servicesData);
+            setActiveSlug((prev) => (servicesData.some((s) => s.slug === prev) ? prev : servicesData[0].slug));
+          }
+          if (headerCmsData && headerCmsData.headerSection) {
+            setLandingHeaderData(headerCmsData);
+          }
         }
       } catch (err) {
-        console.error('Failed to load services:', err);
+        console.error('Failed to load services data:', err);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -160,15 +176,92 @@ export const ServicesPage: React.FC = () => {
     );
   };
 
-  // Save current active service
+  // Save Services Landing Header & Featured Solutions
+  const handleSaveLandingHeader = async () => {
+    try {
+      setSavingHeader(true);
+      await cmsService.updateCmsServices(landingHeaderData);
+      toast.success('Services Landing Header & Featured Solutions saved successfully!');
+    } catch (err: any) {
+      console.error('Failed to save services landing header:', err);
+      toast.error('Failed to save landing header: ' + (err.message || 'Unknown error'));
+    } finally {
+      setSavingHeader(false);
+    }
+  };
+
+  // Add solution card to landing section
+  const handleAddLandingCard = () => {
+    const newCard: ServiceFeatureCard = {
+      id: `card-service-${Date.now()}`,
+      icon: 'ShieldCheck',
+      title: { en: 'New Solution Feature', ar: 'ميزة حل جديدة' },
+      description: {
+        en: 'Description of the healthcare and laboratory service provided.',
+        ar: 'وصف للخدمة الصحية والمخبرية المقدمة.',
+      },
+    };
+    setLandingHeaderData((prev) => ({
+      ...prev,
+      headerSection: {
+        ...prev.headerSection,
+        cards: [...(prev.headerSection?.cards || []), newCard],
+      },
+    }));
+  };
+
+  // Delete solution card from landing section
+  const handleDeleteLandingCard = (cardId?: string) => {
+    setLandingHeaderData((prev) => ({
+      ...prev,
+      headerSection: {
+        ...prev.headerSection,
+        cards: (prev.headerSection?.cards || []).filter((c) => c.id !== cardId),
+      },
+    }));
+  };
+
+  // Update card field in landing section
+  const handleUpdateLandingCard = (
+    index: number,
+    field: 'icon' | 'title' | 'description',
+    value: string
+  ) => {
+    setLandingHeaderData((prev) => {
+      const cards = [...(prev.headerSection?.cards || [])];
+      if (!cards[index]) return prev;
+      if (field === 'icon') {
+        cards[index] = { ...cards[index], icon: value };
+      } else {
+        cards[index] = {
+          ...cards[index],
+          [field]: {
+            ...cards[index][field],
+            [activeLangTab]: value,
+          },
+        };
+      }
+      return {
+        ...prev,
+        headerSection: {
+          ...prev.headerSection,
+          cards,
+        },
+      };
+    });
+  };
+
+  // Save current active service & landing header
   const handleSaveCurrentService = async () => {
     if (!currentService) return;
     try {
       setSaving(true);
       const targetId = currentService._id || currentService.slug;
       const res = await cmsService.updateServicePage(targetId, currentService);
+      // Also persist landing header
+      await cmsService.updateCmsServices(landingHeaderData);
       if (res.success) {
-        toast.success(`"${currentService.title[activeLangTab] || currentService.title.en}" saved successfully!`);
+        toast.success(`"${currentService.title[activeLangTab] || currentService.title.en}" & landing section saved!`);
       } else {
         toast.warn(res.message || 'Saved locally');
       }
@@ -418,6 +511,189 @@ export const ServicesPage: React.FC = () => {
           </div>
         </div>
 
+        {/* SECTION: SERVICES LANDING HEADER & 4 FEATURED SOLUTIONS (Main section on Homepage / Services) */}
+        <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden mb-6">
+          <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-lg bg-[#F68E2D]/20 text-[#F68E2D] font-bold text-xs flex items-center justify-center border border-[#F68E2D]/30">
+                ★
+              </span>
+              <div>
+                <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                  <span>Our Services — Landing Header & Featured Solutions</span>
+                </CardTitle>
+                <p className="text-xs text-white/50">
+                  Main introductory header and the 4 featured solution cards displayed at the top of the Services section.
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              onClick={handleSaveLandingHeader}
+              disabled={savingHeader}
+              size="sm"
+              className="bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#F68E2D]/20"
+            >
+              <Save className="w-3.5 h-3.5" />
+              {savingHeader ? 'Saving...' : 'Save Section Header'}
+            </Button>
+          </CardHeader>
+
+          <CardContent className="p-6 space-y-6">
+            {/* Header Title & Subtitle */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                  Main Section Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                </label>
+                <input
+                  type="text"
+                  dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                  value={landingHeaderData.headerSection?.title?.[activeLangTab] || ''}
+                  onChange={(e) =>
+                    setLandingHeaderData((prev) => ({
+                      ...prev,
+                      headerSection: {
+                        ...prev.headerSection,
+                        title: {
+                          ...prev.headerSection?.title,
+                          [activeLangTab]: e.target.value,
+                        },
+                      },
+                    }))
+                  }
+                  placeholder="e.g. Our Services"
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                  Main Section Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                </label>
+                <textarea
+                  rows={2}
+                  dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                  value={landingHeaderData.headerSection?.description?.[activeLangTab] || ''}
+                  onChange={(e) =>
+                    setLandingHeaderData((prev) => ({
+                      ...prev,
+                      headerSection: {
+                        ...prev.headerSection,
+                        description: {
+                          ...prev.headerSection?.description,
+                          [activeLangTab]: e.target.value,
+                        },
+                      },
+                    }))
+                  }
+                  placeholder="Discover our medical equipment, laboratory supplies..."
+                  className="w-full px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+            </div>
+
+            {/* 4 Featured Solution Cards */}
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#F68E2D]" />
+                  Featured Solution Cards ({landingHeaderData.headerSection?.cards?.length || 0} Cards)
+                </span>
+                <Button
+                  type="button"
+                  onClick={handleAddLandingCard}
+                  variant="outline"
+                  size="sm"
+                  className="border-white/10 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add Card
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(landingHeaderData.headerSection?.cards || []).map((card, idx) => (
+                  <div
+                    key={card.id || idx}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-3"
+                  >
+                    <div className="flex items-center justify-between pb-2 border-b border-white/5">
+                      <span className="text-[11px] font-bold text-[#F68E2D]">
+                        Card #{idx + 1}
+                      </span>
+                      {(landingHeaderData.headerSection?.cards?.length || 0) > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteLandingCard(card.id)}
+                          className="text-white/30 hover:text-red-400 p-1 rounded transition-colors"
+                          title="Delete Card"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Icon Selector */}
+                    <div>
+                      <label className="block text-[10px] font-semibold text-white/60 uppercase mb-1">
+                        Icon
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-red-950/80 border border-red-500/40 text-red-500 flex items-center justify-center shrink-0">
+                          {renderIcon(card.icon, 'w-4 h-4')}
+                        </div>
+                        <select
+                          value={card.icon || 'Microscope'}
+                          onChange={(e) => handleUpdateLandingCard(idx, 'icon', e.target.value)}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-[#F68E2D]"
+                        >
+                          {AVAILABLE_ICONS.map((ic) => (
+                            <option key={ic} value={ic} className="bg-[#14112E] text-white">
+                              {ic}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <label className="block text-[10px] font-semibold text-white/60 uppercase mb-1">
+                        Card Title ({activeLangTab === 'en' ? 'EN' : 'AR'})
+                      </label>
+                      <input
+                        type="text"
+                        dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                        value={card.title?.[activeLangTab] || ''}
+                        onChange={(e) => handleUpdateLandingCard(idx, 'title', e.target.value)}
+                        placeholder="Solution Title"
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#F68E2D]"
+                      />
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <label className="block text-[10px] font-semibold text-white/60 uppercase mb-1">
+                        Card Description ({activeLangTab === 'en' ? 'EN' : 'AR'})
+                      </label>
+                      <textarea
+                        rows={3}
+                        dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                        value={card.description?.[activeLangTab] || ''}
+                        onChange={(e) => handleUpdateLandingCard(idx, 'description', e.target.value)}
+                        placeholder="Solution Description"
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#F68E2D]"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* 4 SERVICE SELECTOR TABS (Matching the 4 specified in prompt) */}
         <div className="bg-[#0b1028] p-3 rounded-2xl border border-white/10 shadow-lg">
           <div className="flex items-center justify-between px-3 py-2 border-b border-white/5 mb-3">
@@ -426,7 +702,7 @@ export const ServicesPage: React.FC = () => {
               Select Service Page to Edit ({services.length} Total Services)
             </span>
             <span className="text-[11px] text-white/40">
-              Active endpoint: <code className="text-purple-300 font-mono">/services/{currentService?.slug}</code>
+              Select a service page to customize its content
             </span>
           </div>
 
@@ -462,8 +738,8 @@ export const ServicesPage: React.FC = () => {
                         >
                           {srv.title[activeLangTab] || srv.title.en}
                         </h4>
-                        <span className="text-[10px] text-white/40 font-mono block mt-0.5 truncate max-w-[150px]">
-                          /{srv.slug}
+                        <span className="text-[10px] text-white/40 block mt-0.5 truncate max-w-[150px]">
+                          Service #{idx + 1}
                         </span>
                       </div>
                     </div>
@@ -532,16 +808,16 @@ export const ServicesPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <a
-                    href={`${API_BASE}/services/${currentService.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono bg-sky-950/40 px-2.5 py-1 rounded-lg border border-sky-500/30"
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-xs px-2.5 py-1 rounded-lg font-semibold border ${
+                      currentService.isActive
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        : 'bg-white/10 text-white/40 border-white/10'
+                    }`}
                   >
-                    <span>Test API: /services/{currentService.slug}</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+                    {currentService.isActive ? 'Active Page' : 'Draft'}
+                  </span>
                 </div>
               </CardHeader>
 
@@ -1476,8 +1752,8 @@ export const ServicesPage: React.FC = () => {
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   <span>Frontend Reusable Service Page Live Preview</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">
-                    /{currentService.slug}
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-medium">
+                    {currentService.title[previewLang] || currentService.title.en}
                   </span>
                 </h3>
               </div>
@@ -1548,6 +1824,46 @@ export const ServicesPage: React.FC = () => {
                 previewDevice === 'mobile' ? 'max-w-md bg-[#05070f] p-6 rounded-2xl border border-white/10' : 'max-w-6xl'
               }`}
             >
+              {/* TOP: SERVICES LANDING SECTION */}
+              <div className="mb-16 pb-12 border-b border-white/10">
+                <div className="mb-8">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+                    {landingHeaderData.headerSection?.title?.[previewLang] || landingHeaderData.headerSection?.title?.en}
+                  </h1>
+                  <p className="text-sm sm:text-base text-white/70 max-w-2xl leading-relaxed">
+                    {landingHeaderData.headerSection?.description?.[previewLang] || landingHeaderData.headerSection?.description?.en}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {(landingHeaderData.headerSection?.cards || []).map((card, idx) => (
+                    <div
+                      key={card.id || idx}
+                      className="p-6 rounded-2xl bg-[#0f1422] border border-white/10 flex flex-col justify-between space-y-4 hover:border-red-500/40 transition-colors"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-500/30 flex items-center justify-center text-red-500">
+                        {renderIcon(card.icon, 'w-5 h-5')}
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white mb-2 leading-snug">
+                          {card.title?.[previewLang] || card.title?.en}
+                        </h4>
+                        <p className="text-xs text-white/60 leading-relaxed">
+                          {card.description?.[previewLang] || card.description?.en}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SERVICE PAGE DETAIL DIVIDER */}
+              <div className="flex items-center gap-3 mb-10">
+                <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">
+                  Individual Service Detail Page
+                </span>
+                <div className="h-[1px] flex-1 bg-white/10" />
+              </div>
               {/* 1. HERO BANNER */}
               <div className="mb-14">
                 <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
