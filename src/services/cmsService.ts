@@ -1569,6 +1569,7 @@ export interface ProjectsInnovatorWorkTogetherSection {
 
 export interface CmsProjectsInnovatorData {
   _id?: string;
+  colorTheme?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
   brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
@@ -1605,6 +1606,7 @@ export interface EntityProductsSection {
 
 export interface CmsAttractiveData {
   _id?: string;
+  colorTheme?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
   brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
@@ -1615,6 +1617,7 @@ export interface CmsAttractiveData {
 
 export interface CmsMedicsInnovatorData {
   _id?: string;
+  colorTheme?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
   brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
@@ -2561,6 +2564,7 @@ export const initialCmsContactData: CmsContactData = {
 };
 
 export const initialCmsProjectsInnovatorData: CmsProjectsInnovatorData = {
+  colorTheme: 'red',
   heroBannerSection: {
     logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80',
     logoText: {
@@ -2684,6 +2688,7 @@ export const initialCmsProjectsInnovatorData: CmsProjectsInnovatorData = {
 };
 
 export const initialCmsAttractiveData: CmsAttractiveData = {
+  colorTheme: 'blue',
   heroBannerSection: {
     logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80',
     logoText: {
@@ -2822,6 +2827,7 @@ export const initialCmsAttractiveData: CmsAttractiveData = {
 };
 
 export const initialCmsMedicsInnovatorData: CmsMedicsInnovatorData = {
+  colorTheme: 'red',
   heroBannerSection: {
     logoUrl: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=150&q=80',
     logoText: {

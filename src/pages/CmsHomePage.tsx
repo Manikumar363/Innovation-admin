@@ -36,7 +36,8 @@ import {
   Upload,
   ArrowUpRight,
   Stethoscope,
-  Phone
+  Phone,
+  Palette
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -116,6 +117,193 @@ import {
 } from '../services/cmsService';
 import { API_BASE } from '../config/api';
 
+const SECTION_COLOR_PRESETS = [
+  {
+    value: 'red',
+    label: 'Red',
+    hex: '#E53E3E',
+    cardBorder: 'border-red-500/30 hover:border-red-500/50',
+    cardHeaderBg: 'bg-red-500/[0.04]',
+    iconBox: 'border-red-500/30 bg-red-500/10 text-red-400',
+    titleText: 'text-red-400',
+    subText: 'text-red-400/70',
+    accentText: 'text-red-500',
+    primaryBtn: 'bg-red-600 hover:bg-red-700',
+    primaryBtnShadow: 'bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/30',
+    hoverBorder: 'hover:border-red-500/50',
+    hoverText: 'group-hover:text-red-400',
+    badgeBox: 'bg-red-500/10 border-red-500/20 text-red-500',
+    bannerWrap: 'border-red-500/30 bg-gradient-to-br from-[#70101d] via-[#851624] to-[#4e0912]',
+    bannerBtn: 'bg-white text-[#851624] hover:bg-white/95',
+    darkBannerWrap: 'border-red-500/30 bg-gradient-to-r from-red-950/60 via-red-900/40 to-slate-900/80',
+  },
+  {
+    value: 'blue',
+    label: 'Blue',
+    hex: '#3182CE',
+    cardBorder: 'border-blue-500/30 hover:border-blue-500/50',
+    cardHeaderBg: 'bg-blue-500/[0.04]',
+    iconBox: 'border-blue-500/30 bg-blue-500/10 text-blue-400',
+    titleText: 'text-blue-400',
+    subText: 'text-blue-400/70',
+    accentText: 'text-blue-500',
+    primaryBtn: 'bg-blue-600 hover:bg-blue-700',
+    primaryBtnShadow: 'bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/30',
+    hoverBorder: 'hover:border-blue-500/50',
+    hoverText: 'group-hover:text-blue-400',
+    badgeBox: 'bg-blue-500/10 border-blue-500/20 text-blue-500',
+    bannerWrap: 'border-blue-500/30 bg-gradient-to-br from-[#0f294a] via-[#153a66] to-[#0a1b33]',
+    bannerBtn: 'bg-white text-[#153a66] hover:bg-white/95',
+    darkBannerWrap: 'border-blue-500/30 bg-gradient-to-r from-blue-950/60 via-blue-900/40 to-slate-900/80',
+  },
+  {
+    value: 'emerald',
+    label: 'Emerald',
+    hex: '#10B981',
+    cardBorder: 'border-emerald-500/30 hover:border-emerald-500/50',
+    cardHeaderBg: 'bg-emerald-500/[0.04]',
+    iconBox: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400',
+    titleText: 'text-emerald-400',
+    subText: 'text-emerald-400/70',
+    accentText: 'text-emerald-500',
+    primaryBtn: 'bg-emerald-600 hover:bg-emerald-700',
+    primaryBtnShadow: 'bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/30',
+    hoverBorder: 'hover:border-emerald-500/50',
+    hoverText: 'group-hover:text-emerald-400',
+    badgeBox: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500',
+    bannerWrap: 'border-emerald-500/30 bg-gradient-to-br from-[#093d2d] via-[#0d543e] to-[#06291e]',
+    bannerBtn: 'bg-white text-[#0d543e] hover:bg-white/95',
+    darkBannerWrap: 'border-emerald-500/30 bg-gradient-to-r from-emerald-950/60 via-emerald-900/40 to-slate-900/80',
+  },
+  {
+    value: 'purple',
+    label: 'Purple',
+    hex: '#805AD5',
+    cardBorder: 'border-purple-500/30 hover:border-purple-500/50',
+    cardHeaderBg: 'bg-purple-500/[0.04]',
+    iconBox: 'border-purple-500/30 bg-purple-500/10 text-purple-400',
+    titleText: 'text-purple-400',
+    subText: 'text-purple-400/70',
+    accentText: 'text-purple-500',
+    primaryBtn: 'bg-purple-600 hover:bg-purple-700',
+    primaryBtnShadow: 'bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/30',
+    hoverBorder: 'hover:border-purple-500/50',
+    hoverText: 'group-hover:text-purple-400',
+    badgeBox: 'bg-purple-500/10 border-purple-500/20 text-purple-500',
+    bannerWrap: 'border-purple-500/30 bg-gradient-to-br from-[#2d1659] via-[#3c1f75] to-[#1d0d3d]',
+    bannerBtn: 'bg-white text-[#3c1f75] hover:bg-white/95',
+    darkBannerWrap: 'border-purple-500/30 bg-gradient-to-r from-purple-950/60 via-purple-900/40 to-slate-900/80',
+  },
+  {
+    value: 'amber',
+    label: 'Amber',
+    hex: '#F68E2D',
+    cardBorder: 'border-amber-500/30 hover:border-amber-500/50',
+    cardHeaderBg: 'bg-amber-500/[0.04]',
+    iconBox: 'border-amber-500/30 bg-amber-500/10 text-[#F68E2D]',
+    titleText: 'text-[#F68E2D]',
+    subText: 'text-[#F68E2D]/70',
+    accentText: 'text-[#F68E2D]',
+    primaryBtn: 'bg-[#F68E2D] hover:bg-[#e07d20]',
+    primaryBtnShadow: 'bg-[#F68E2D] hover:bg-[#e07d20] shadow-lg shadow-[#F68E2D]/30',
+    hoverBorder: 'hover:border-amber-500/50',
+    hoverText: 'group-hover:text-[#F68E2D]',
+    badgeBox: 'bg-[#F68E2D]/10 border-[#F68E2D]/20 text-[#F68E2D]',
+    bannerWrap: 'border-amber-500/30 bg-gradient-to-br from-[#5c2c08] via-[#783b0c] to-[#3d1c05]',
+    bannerBtn: 'bg-white text-[#783b0c] hover:bg-white/95',
+    darkBannerWrap: 'border-amber-500/30 bg-gradient-to-r from-amber-950/60 via-orange-900/40 to-slate-900/80',
+  },
+] as const;
+
+const getSectionColorTheme = (color?: string, fallback: 'red' | 'blue' = 'blue') =>
+  SECTION_COLOR_PRESETS.find((p) => p.value === (color || '').toLowerCase()) ||
+  SECTION_COLOR_PRESETS.find((p) => p.value === fallback)!;
+
+interface ColorThemeSelectorProps {
+  value?: string;
+  fallback?: 'red' | 'blue';
+  label?: string;
+  onChange: (color: string) => void;
+}
+
+const ColorThemeSelector: React.FC<ColorThemeSelectorProps> = ({
+  value,
+  fallback = 'blue',
+  label = 'Card Color Theme',
+  onChange,
+}) => {
+  const activeColor = (value || fallback).toLowerCase();
+  return (
+    <div className="space-y-2.5">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-semibold text-white/60 flex items-center gap-1.5">
+          <Palette className="w-3.5 h-3.5 text-white/50" />
+          {label}
+        </span>
+        <span className="text-[10px] text-white/40 uppercase font-mono">
+          {activeColor}
+        </span>
+      </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        {SECTION_COLOR_PRESETS.map((preset) => {
+          const isSelected = activeColor === preset.value;
+          return (
+            <button
+              key={preset.value}
+              type="button"
+              onClick={() => onChange(preset.value)}
+              className={`w-7 h-7 rounded-full transition-all flex items-center justify-center cursor-pointer ${
+                isSelected
+                  ? 'ring-2 ring-white ring-offset-2 ring-offset-[#14112E] scale-110 shadow-lg'
+                  : 'opacity-65 hover:opacity-100 hover:scale-105'
+              }`}
+              style={{ backgroundColor: preset.hex }}
+              title={preset.label}
+              aria-label={`Select ${preset.label} color theme`}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+interface ColorThemeEditorCardProps {
+  value?: string;
+  fallback?: 'red' | 'blue';
+  theme: ReturnType<typeof getSectionColorTheme>;
+  onChange: (color: string) => void;
+}
+
+const ColorThemeEditorCard: React.FC<ColorThemeEditorCardProps> = ({
+  value,
+  fallback = 'blue',
+  theme,
+  onChange,
+}) => (
+  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+    <CardHeader className="bg-white/[0.02] border-b border-white/5 py-4 flex flex-row items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className={`w-8 h-8 rounded-lg border flex items-center justify-center ${theme.iconBox}`}>
+          <Palette className="w-4 h-4" />
+        </div>
+        <div>
+          <CardTitle className="text-sm font-bold text-white">Page Color Theme</CardTitle>
+          <p className="text-[11px] text-white/50">Select the signature accent color theme used for this section</p>
+        </div>
+      </div>
+    </CardHeader>
+    <CardContent className="p-6">
+      <ColorThemeSelector
+        value={value}
+        fallback={fallback}
+        label="Section Color Theme"
+        onChange={onChange}
+      />
+    </CardContent>
+  </Card>
+);
+
 interface CmsHomePageProps {
   role?: string;
 }
@@ -162,6 +350,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const ensureAttractiveDefaults = (res: CmsAttractiveData): CmsAttractiveData => ({
     ...initialCmsAttractiveData,
     ...res,
+    colorTheme: res.colorTheme || initialCmsAttractiveData.colorTheme,
     heroBannerSection: {
       ...initialCmsAttractiveData.heroBannerSection,
       ...(res?.heroBannerSection || {}),
@@ -186,6 +375,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const ensureMedicsInnovatorDefaults = (res: CmsMedicsInnovatorData): CmsMedicsInnovatorData => ({
     ...initialCmsMedicsInnovatorData,
     ...res,
+    colorTheme: res.colorTheme || initialCmsMedicsInnovatorData.colorTheme,
     heroBannerSection: {
       ...initialCmsMedicsInnovatorData.heroBannerSection,
       ...(res?.heroBannerSection || {}),
@@ -210,6 +400,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const ensureProjectsInnovatorDefaults = (res: CmsProjectsInnovatorData): CmsProjectsInnovatorData => ({
     ...initialCmsProjectsInnovatorData,
     ...res,
+    colorTheme: res.colorTheme || initialCmsProjectsInnovatorData.colorTheme,
     heroBannerSection: {
       ...initialCmsProjectsInnovatorData.heroBannerSection,
       ...(res?.heroBannerSection || {}),
@@ -1197,6 +1388,28 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     } catch (err) {
       console.error('Save error:', err);
       toast.error('Failed to save Investment sections');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ==================== SHARED COLOR THEME HANDLER ====================
+  const handleQuickColorThemeChange = async <T extends { colorTheme?: string }>(
+    label: string,
+    current: T,
+    setter: React.Dispatch<React.SetStateAction<T>>,
+    persistFn: (payload: T) => Promise<T>,
+    color: string
+  ) => {
+    const updated = { ...current, colorTheme: color };
+    setter(updated);
+    try {
+      setSaving(true);
+      await persistFn(updated);
+      toast.success(`${label} color theme updated to ${color.toUpperCase()}`);
+    } catch (err) {
+      console.error('Color theme update error:', err);
+      toast.error(`Failed to update ${label} color theme`);
     } finally {
       setSaving(false);
     }
@@ -3161,6 +3374,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     );
   }
 
+  const piTheme = getSectionColorTheme(projectsInnovatorData.colorTheme, 'red');
+  const attTheme = getSectionColorTheme(attractiveData.colorTheme, 'blue');
+  const miTheme = getSectionColorTheme(medicsInnovatorData.colorTheme, 'red');
+
   return (
     <DashboardLayout role={role}>
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
@@ -4339,19 +4556,19 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
                             {/* CARD 10: PROJECTS INNOVATOR (Dedicated 5 Sections Matching Reference Images) */}
               {filteredTabs.some((t) => t.id === 'projects-innovator') && (
-                <div className="bg-[#14112E] border border-red-500/30 hover:border-red-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
+                <div className={`bg-[#14112E] border ${piTheme.cardBorder} rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between`}>
                   {/* Card Header with Edit button in TOP RIGHT */}
-                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 bg-red-500/[0.04]">
+                  <div className={`p-6 border-b border-white/5 flex items-start justify-between gap-4 ${piTheme.cardHeaderBg}`}>
                     <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 flex items-center justify-center shrink-0">
+                      <div className={`w-11 h-11 rounded-xl border ${piTheme.iconBox} flex items-center justify-center shrink-0`}>
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-red-400">
+                          <h3 className={`text-base font-bold ${piTheme.titleText}`}>
                             Projects Innovator
                           </h3>
-                          <span className="text-xs text-red-400/70 font-normal">
+                          <span className={`text-xs ${piTheme.subText} font-normal`}>
                             (مبتكر المشاريع)
                           </span>
                         </div>
@@ -4364,7 +4581,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     <button
                       type="button"
                       onClick={() => handleOpenPageEditor('projects-innovator')}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold ${piTheme.primaryBtn} text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0`}
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       Edit Page
@@ -4437,23 +4654,39 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
                   </div>
+                  <div className="px-6 py-4 border-t border-white/5 bg-white/[0.01]">
+                    <ColorThemeSelector
+                      value={projectsInnovatorData.colorTheme}
+                      fallback="red"
+                      label="Card Color Theme"
+                      onChange={(color) =>
+                        handleQuickColorThemeChange(
+                          'Projects Innovator',
+                          projectsInnovatorData,
+                          setProjectsInnovatorData,
+                          cmsService.updateCmsProjectsInnovator.bind(cmsService),
+                          color
+                        )
+                      }
+                    />
+                  </div>
                 </div>
               )}
 
               {/* CARD 11: ATTRACTIVE */}
               {filteredTabs.some((t) => t.id === 'attractive') && (
-                <div className="bg-[#14112E] border border-blue-500/30 hover:border-blue-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
-                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 bg-blue-500/[0.04]">
+                <div className={`bg-[#14112E] border ${attTheme.cardBorder} rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between`}>
+                  <div className={`p-6 border-b border-white/5 flex items-start justify-between gap-4 ${attTheme.cardHeaderBg}`}>
                     <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                      <div className={`w-11 h-11 rounded-xl border ${attTheme.iconBox} flex items-center justify-center shrink-0`}>
                         <Sparkles className="w-5 h-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-blue-400">
+                          <h3 className={`text-base font-bold ${attTheme.titleText}`}>
                             Attractive
                           </h3>
-                          <span className="text-xs text-blue-400/70 font-normal">
+                          <span className={`text-xs ${attTheme.subText} font-normal`}>
                             (أتراكتيف)
                           </span>
                         </div>
@@ -4466,7 +4699,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     <button
                       type="button"
                       onClick={() => handleOpenPageEditor('attractive')}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold ${attTheme.primaryBtn} text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0`}
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       Edit Page
@@ -4538,23 +4771,39 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
                   </div>
+                  <div className="px-6 py-4 border-t border-white/5 bg-white/[0.01]">
+                    <ColorThemeSelector
+                      value={attractiveData.colorTheme}
+                      fallback="blue"
+                      label="Card Color Theme"
+                      onChange={(color) =>
+                        handleQuickColorThemeChange(
+                          'Attractive',
+                          attractiveData,
+                          setAttractiveData,
+                          cmsService.updateCmsAttractive.bind(cmsService),
+                          color
+                        )
+                      }
+                    />
+                  </div>
                 </div>
               )}
 
               {/* CARD 12: MEDICS INNOVATOR */}
               {filteredTabs.some((t) => t.id === 'medics-innovator') && (
-                <div className="bg-[#14112E] border border-blue-500/30 hover:border-blue-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
-                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 bg-blue-500/[0.04]">
+                <div className={`bg-[#14112E] border ${miTheme.cardBorder} rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between`}>
+                  <div className={`p-6 border-b border-white/5 flex items-start justify-between gap-4 ${miTheme.cardHeaderBg}`}>
                     <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                      <div className={`w-11 h-11 rounded-xl border ${miTheme.iconBox} flex items-center justify-center shrink-0`}>
                         <Stethoscope className="w-5 h-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-blue-400">
+                          <h3 className={`text-base font-bold ${miTheme.titleText}`}>
                             Medics Innovator
                           </h3>
-                          <span className="text-xs text-blue-400/70 font-normal">
+                          <span className={`text-xs ${miTheme.subText} font-normal`}>
                             (ميديكس إنوفيتور)
                           </span>
                         </div>
@@ -4567,7 +4816,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     <button
                       type="button"
                       onClick={() => handleOpenPageEditor('medics-innovator')}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold ${miTheme.primaryBtn} text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0`}
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       Edit Page
@@ -4638,6 +4887,22 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </p>
                       </div>
                     </div>
+                  </div>
+                  <div className="px-6 py-4 border-t border-white/5 bg-white/[0.01]">
+                    <ColorThemeSelector
+                      value={medicsInnovatorData.colorTheme}
+                      fallback="red"
+                      label="Card Color Theme"
+                      onChange={(color) =>
+                        handleQuickColorThemeChange(
+                          'Medics Innovator',
+                          medicsInnovatorData,
+                          setMedicsInnovatorData,
+                          cmsService.updateCmsMedicsInnovator.bind(cmsService),
+                          color
+                        )
+                      }
+                    />
                   </div>
                 </div>
               )}
@@ -13522,6 +13787,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             {/* IF EDITING PROJECTS INNOVATOR PAGE (SECTIONS 1 TO 5) */}
 {editingTabId === 'projects-innovator' && (
   <div className="space-y-8">
+    {/* SECTION 0: PAGE COLOR THEME */}
+    <ColorThemeEditorCard
+      value={projectsInnovatorData.colorTheme}
+      fallback="red"
+      theme={piTheme}
+      onChange={(color) =>
+        setProjectsInnovatorData((prev) => ({ ...prev, colorTheme: color }))
+      }
+    />
+
     {/* SECTION 1: HERO BANNER (IMAGE 1) */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
@@ -14206,6 +14481,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 {/* IF EDITING ATTRACTIVE PAGE (SECTIONS 1 TO 5) */}
 {editingTabId === 'attractive' && (
   <div className="space-y-8">
+    {/* SECTION 0: PAGE COLOR THEME */}
+    <ColorThemeEditorCard
+      value={attractiveData.colorTheme}
+      fallback="blue"
+      theme={attTheme}
+      onChange={(color) =>
+        setAttractiveData((prev) => ({ ...prev, colorTheme: color }))
+      }
+    />
+
     {/* SECTION 1: HERO BANNER */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
@@ -15045,6 +15330,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 {/* IF EDITING MEDICS INNOVATOR PAGE (SECTIONS 1 TO 5) */}
 {editingTabId === 'medics-innovator' && (
   <div className="space-y-8">
+    {/* SECTION 0: PAGE COLOR THEME */}
+    <ColorThemeEditorCard
+      value={medicsInnovatorData.colorTheme}
+      fallback="red"
+      theme={miTheme}
+      onChange={(color) =>
+        setMedicsInnovatorData((prev) => ({ ...prev, colorTheme: color }))
+      }
+    />
+
     {/* SECTION 1: HERO BANNER */}
     <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
       <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
@@ -17164,7 +17459,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             className="h-10 w-auto object-contain brightness-125"
           />
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center text-white font-black text-sm">
+          <div className={`w-9 h-9 rounded-lg ${piTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
             P
           </div>
         )}
@@ -17182,7 +17477,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       <div className="max-w-2xl space-y-5 my-8">
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight">
           {projectsInnovatorData.heroBannerSection.title[previewLang]}{' '}
-          <span className="text-red-500">
+          <span className={piTheme.accentText}>
             {projectsInnovatorData.heroBannerSection.titleHighlight[previewLang]}
           </span>
         </h1>
@@ -17195,7 +17490,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         <div className="pt-4 flex flex-wrap items-center gap-3">
           <a
             href={projectsInnovatorData.heroBannerSection.primaryButtonUrl || '#'}
-            className="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer"
+            className={`px-6 py-3 rounded-full ${piTheme.primaryBtn} text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer`}
           >
             <span>{projectsInnovatorData.heroBannerSection.primaryButtonText[previewLang] || 'Explore Our Services'}</span>
             <ArrowUpRight className="w-4 h-4" />
@@ -17242,7 +17537,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     {/* SECTION 3: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
       <div className="lg:col-span-7 space-y-4">
-        <p className="text-xs font-bold text-red-500 tracking-widest uppercase">
+        <p className={`text-xs font-bold ${piTheme.accentText} tracking-widest uppercase`}>
           {projectsInnovatorData.aboutSection.tagline[previewLang] || 'ABOUT PROJECTS INNOVATOR'}
         </p>
 
@@ -17286,7 +17581,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
+                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${piTheme.badgeBox}`}>
                   <LucideIcon name={area.icon} className="w-5 h-5" />
                 </div>
 
@@ -17299,7 +17594,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </a>
               </div>
 
-              <h3 className="text-base font-bold text-white group-hover:text-red-400 transition-colors mb-2">
+              <h3 className={`text-base font-bold text-white ${piTheme.hoverText} transition-colors mb-2`}>
                 {area.title[previewLang]}
               </h3>
 
@@ -17313,8 +17608,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     </div>
 
     {/* SECTION 5: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
-    <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-red-500/30 text-center p-8 sm:p-14 bg-gradient-to-br from-[#70101d] via-[#851624] to-[#4e0912]">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-500/20 via-transparent to-transparent pointer-events-none" />
+    <div className={`relative rounded-3xl overflow-hidden shadow-2xl border text-center p-8 sm:p-14 ${piTheme.bannerWrap}`}>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none" />
 
       <div className="relative z-10 max-w-3xl mx-auto space-y-4">
         {/* Tagline */}
@@ -17336,7 +17631,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
           <a
             href={projectsInnovatorData.workTogetherSection.primaryButtonUrl || '#'}
-            className="px-7 py-3 rounded-full bg-white text-[#851624] hover:bg-white/95 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer"
+            className={`px-7 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer ${piTheme.bannerBtn}`}
           >
             <span>{projectsInnovatorData.workTogetherSection.primaryButtonText[previewLang] || 'Get a Quote'}</span>
             <ArrowUpRight className="w-4 h-4" />
@@ -17375,7 +17670,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             className="h-10 w-auto object-contain brightness-125"
           />
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black text-sm">
+          <div className={`w-9 h-9 rounded-lg ${attTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
             A
           </div>
         )}
@@ -17394,7 +17689,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
           {attractiveData.heroBannerSection.title[previewLang] || 'Building Tomorrow'}
           {attractiveData.heroBannerSection.titleHighlight[previewLang] && (
-            <span className="block text-blue-500 mt-2">
+            <span className={`block ${attTheme.accentText} mt-2`}>
               {attractiveData.heroBannerSection.titleHighlight[previewLang]}
             </span>
           )}
@@ -17409,7 +17704,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           {attractiveData.heroBannerSection.primaryButtonText[previewLang] && (
             <a
               href={attractiveData.heroBannerSection.primaryButtonUrl || '#'}
-              className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2"
+              className={`px-6 py-3 rounded-full ${attTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-2`}
             >
               <span>{attractiveData.heroBannerSection.primaryButtonText[previewLang]}</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -17460,7 +17755,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     {/* SECTION 3: ABOUT */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
       <div className="space-y-6">
-        <div className="inline-block text-xs font-bold tracking-wider text-blue-400 uppercase">
+        <div className={`inline-block text-xs font-bold tracking-wider ${attTheme.titleText} uppercase`}>
           {attractiveData.aboutSection.tagline[previewLang] || 'ABOUT ATTRACTIVE'}
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
@@ -17484,7 +17779,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     {/* SECTION 4: OUR PRODUCTS (MATCHING REFERENCE IMAGE) */}
     <div className="space-y-10">
       <div className="text-center space-y-3">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-blue-500 tracking-tight">
+        <h2 className={`text-3xl md:text-4xl font-extrabold ${attTheme.accentText} tracking-tight`}>
           {attractiveData.productsSection.title[previewLang] || 'Our Products'}
         </h2>
         <p className="text-sm md:text-base text-white/70 max-w-2xl mx-auto leading-relaxed">
@@ -17497,7 +17792,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         {attractiveData.productsSection.products.map((prod, idx) => (
           <div
             key={prod.id || idx}
-            className="bg-[#121829] border border-white/10 hover:border-blue-500/50 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl transition-all duration-300 group"
+            className={`bg-[#121829] border border-white/10 ${attTheme.hoverBorder} rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl transition-all duration-300 group`}
           >
             {/* Top Product Image */}
             <div className="relative aspect-[16/10] bg-black/40 overflow-hidden">
@@ -17520,7 +17815,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 <span className="text-xs font-semibold text-white/50 tracking-wider uppercase block">
                   {prod.brand[previewLang] || 'MedTech'}
                 </span>
-                <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
+                <h3 className={`text-lg font-bold text-white ${attTheme.hoverText} transition-colors`}>
                   {prod.name[previewLang]}
                 </h3>
                 <p className="text-xs text-white/70 leading-relaxed line-clamp-3">
@@ -17543,10 +17838,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </div>
                 )}
 
-                {/* Blue Request Quote Button */}
+                {/* Request Quote Button */}
                 <a
                   href={prod.buttonUrl || '/contact'}
-                  className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-1.5"
+                  className={`w-full py-2.5 px-4 rounded-xl ${attTheme.primaryBtnShadow} text-white font-semibold text-xs tracking-wide transition-all flex items-center justify-center gap-1.5`}
                 >
                   <span>{prod.buttonText[previewLang] || 'Request a Quote ↗'}</span>
                 </a>
@@ -17568,8 +17863,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     </div>
 
     {/* SECTION 5: LETS WORK TOGETHER BANNER */}
-    <div className="relative rounded-3xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-blue-950/60 via-blue-900/40 to-slate-900/80 p-8 sm:p-12 text-center shadow-2xl space-y-6">
-      <p className="text-xs font-bold tracking-[0.25em] text-blue-400 uppercase">
+    <div className={`relative rounded-3xl overflow-hidden border ${attTheme.darkBannerWrap} p-8 sm:p-12 text-center shadow-2xl space-y-6`}>
+      <p className={`text-xs font-bold tracking-[0.25em] ${attTheme.titleText} uppercase`}>
         {attractiveData.workTogetherSection.tagline[previewLang] || "— LET'S WORK TOGETHER —"}
       </p>
 
@@ -17585,7 +17880,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         {attractiveData.workTogetherSection.primaryButtonText[previewLang] && (
           <a
             href={attractiveData.workTogetherSection.primaryButtonUrl || '#'}
-            className="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-lg shadow-blue-600/30 flex items-center gap-1.5"
+            className={`px-6 py-2.5 rounded-full ${attTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-1.5`}
           >
             <span>{attractiveData.workTogetherSection.primaryButtonText[previewLang]}</span>
             <ArrowUpRight className="w-4 h-4" />
@@ -17625,7 +17920,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             className="h-10 w-auto object-contain brightness-125"
           />
         ) : (
-          <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black text-sm">
+          <div className={`w-9 h-9 rounded-lg ${miTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
             M
           </div>
         )}
@@ -17644,7 +17939,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
           {medicsInnovatorData.heroBannerSection.title[previewLang] || 'Building Tomorrow'}
           {medicsInnovatorData.heroBannerSection.titleHighlight[previewLang] && (
-            <span className="block text-blue-500 mt-2">
+            <span className={`block ${miTheme.accentText} mt-2`}>
               {medicsInnovatorData.heroBannerSection.titleHighlight[previewLang]}
             </span>
           )}
@@ -17659,7 +17954,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           {medicsInnovatorData.heroBannerSection.primaryButtonText[previewLang] && (
             <a
               href={medicsInnovatorData.heroBannerSection.primaryButtonUrl || '#'}
-              className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-lg shadow-blue-600/30 flex items-center gap-2"
+              className={`px-6 py-3 rounded-full ${miTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-2`}
             >
               <span>{medicsInnovatorData.heroBannerSection.primaryButtonText[previewLang]}</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -17710,7 +18005,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     {/* SECTION 3: ABOUT */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
       <div className="space-y-6">
-        <div className="inline-block text-xs font-bold tracking-wider text-blue-400 uppercase">
+        <div className={`inline-block text-xs font-bold tracking-wider ${miTheme.titleText} uppercase`}>
           {medicsInnovatorData.aboutSection.tagline[previewLang] || 'ABOUT MEDICS INNOVATOR'}
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
@@ -17734,7 +18029,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     {/* SECTION 4: OUR PRODUCTS (MATCHING REFERENCE IMAGE) */}
     <div className="space-y-10">
       <div className="text-center space-y-3">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-blue-500 tracking-tight">
+        <h2 className={`text-3xl md:text-4xl font-extrabold ${miTheme.accentText} tracking-tight`}>
           {medicsInnovatorData.productsSection.title[previewLang] || 'Our Products'}
         </h2>
         <p className="text-sm md:text-base text-white/70 max-w-2xl mx-auto leading-relaxed">
@@ -17747,7 +18042,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         {medicsInnovatorData.productsSection.products.map((prod, idx) => (
           <div
             key={prod.id || idx}
-            className="bg-[#121829] border border-white/10 hover:border-blue-500/50 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl transition-all duration-300 group"
+            className={`bg-[#121829] border border-white/10 ${miTheme.hoverBorder} rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl transition-all duration-300 group`}
           >
             {/* Top Product Image */}
             <div className="relative aspect-[16/10] bg-black/40 overflow-hidden">
@@ -17770,7 +18065,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 <span className="text-xs font-semibold text-white/50 tracking-wider uppercase block">
                   {prod.brand[previewLang] || 'MedTech'}
                 </span>
-                <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
+                <h3 className={`text-lg font-bold text-white ${miTheme.hoverText} transition-colors`}>
                   {prod.name[previewLang]}
                 </h3>
                 <p className="text-xs text-white/70 leading-relaxed line-clamp-3">
@@ -17793,10 +18088,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   </div>
                 )}
 
-                {/* Blue Request Quote Button */}
+                {/* Request Quote Button */}
                 <a
                   href={prod.buttonUrl || '/contact'}
-                  className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs tracking-wide transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-1.5"
+                  className={`w-full py-2.5 px-4 rounded-xl ${miTheme.primaryBtnShadow} text-white font-semibold text-xs tracking-wide transition-all flex items-center justify-center gap-1.5`}
                 >
                   <span>{prod.buttonText[previewLang] || 'Request a Quote ↗'}</span>
                 </a>
@@ -17818,8 +18113,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     </div>
 
     {/* SECTION 5: LETS WORK TOGETHER BANNER */}
-    <div className="relative rounded-3xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-blue-950/60 via-blue-900/40 to-slate-900/80 p-8 sm:p-12 text-center shadow-2xl space-y-6">
-      <p className="text-xs font-bold tracking-[0.25em] text-blue-400 uppercase">
+    <div className={`relative rounded-3xl overflow-hidden border ${miTheme.darkBannerWrap} p-8 sm:p-12 text-center shadow-2xl space-y-6`}>
+      <p className={`text-xs font-bold tracking-[0.25em] ${miTheme.titleText} uppercase`}>
         {medicsInnovatorData.workTogetherSection.tagline[previewLang] || "— LET'S WORK TOGETHER —"}
       </p>
 
@@ -17835,7 +18130,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         {medicsInnovatorData.workTogetherSection.primaryButtonText[previewLang] && (
           <a
             href={medicsInnovatorData.workTogetherSection.primaryButtonUrl || '#'}
-            className="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-lg shadow-blue-600/30 flex items-center gap-1.5"
+            className={`px-6 py-2.5 rounded-full ${miTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-1.5`}
           >
             <span>{medicsInnovatorData.workTogetherSection.primaryButtonText[previewLang]}</span>
             <ArrowUpRight className="w-4 h-4" />
