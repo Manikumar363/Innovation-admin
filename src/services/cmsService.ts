@@ -1518,14 +1518,6 @@ export interface BrandLogoItem {
   logoUrl: string;
 }
 
-export interface ProjectsInnovatorAreaItem {
-  id: string;
-  icon: string;
-  title: BilingualText;
-  description: BilingualText;
-  linkUrl: string;
-}
-
 export interface ProjectsInnovatorHeroBannerSection {
   logoUrl: string;
   logoText: BilingualText;
@@ -1551,12 +1543,6 @@ export interface ProjectsInnovatorAboutSection {
   imageUrl: string;
 }
 
-export interface ProjectsInnovatorBusinessAreasSection {
-  title: BilingualText;
-  description: BilingualText;
-  areas: ProjectsInnovatorAreaItem[];
-}
-
 export interface ProjectsInnovatorWorkTogetherSection {
   tagline: BilingualText;
   title: BilingualText;
@@ -1573,44 +1559,17 @@ export interface CmsProjectsInnovatorData {
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
   brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
-  businessAreasSection: ProjectsInnovatorBusinessAreasSection;
   workTogetherSection: ProjectsInnovatorWorkTogetherSection;
   updatedAt?: string;
 }
 
 // ==================== ATTRACTIVE & MEDICS INNOVATOR INTERFACES ====================
-export interface ProductBadgeItem {
-  id?: string;
-  en: string;
-  ar: string;
-}
-
-export interface EntityProductItem {
-  id: string;
-  image: string;
-  brand: BilingualText;
-  name: BilingualText;
-  description: BilingualText;
-  badges: ProductBadgeItem[];
-  buttonText: BilingualText;
-  buttonUrl: string;
-}
-
-export interface EntityProductsSection {
-  title: BilingualText;
-  description: BilingualText;
-  products: EntityProductItem[];
-  viewAllButtonText: BilingualText;
-  viewAllButtonUrl: string;
-}
-
 export interface CmsAttractiveData {
   _id?: string;
   colorTheme?: string;
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
   brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
-  productsSection: EntityProductsSection;
   workTogetherSection: ProjectsInnovatorWorkTogetherSection;
   updatedAt?: string;
 }
@@ -1621,7 +1580,6 @@ export interface CmsMedicsInnovatorData {
   heroBannerSection: ProjectsInnovatorHeroBannerSection;
   brandsSection?: ProjectsInnovatorBrandsSection;
   aboutSection: ProjectsInnovatorAboutSection;
-  productsSection: EntityProductsSection;
   workTogetherSection: ProjectsInnovatorWorkTogetherSection;
   updatedAt?: string;
 }
@@ -2610,57 +2568,6 @@ export const initialCmsProjectsInnovatorData: CmsProjectsInnovatorData = {
     },
     imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
   },
-  businessAreasSection: {
-    title: {
-      en: 'Our Business Areas',
-      ar: 'مجالات أعمالنا',
-    },
-    description: {
-      en: 'Explore the sectors and services that form the Projects Innovator group.',
-      ar: 'استكشف القطاعات والخدمات التي تشكل مجموعة مبتكر المشاريع.',
-    },
-    areas: [
-      {
-        id: 'area-1',
-        icon: 'microscope',
-        title: {
-          en: 'Medical & Laboratory Equipment',
-          ar: 'الأجهزة الطبية والمخبرية',
-        },
-        description: {
-          en: 'Comprehensive medical device solutions and laboratory testing equipment.',
-          ar: 'حلول شاملة للأجهزة الطبية ومعدات الاختبارات المختبرية.',
-        },
-        linkUrl: '/services',
-      },
-      {
-        id: 'area-2',
-        icon: 'flask',
-        title: {
-          en: 'Laboratory Supplies',
-          ar: 'المستلزمات المختبرية',
-        },
-        description: {
-          en: 'Reliable laboratory supplies and essential equipment for research, testing, and diagnostic facilities.',
-          ar: 'مستلزمات مخبرية موثوقة ومعدات أساسية لمنشآت البحث والاختبار والتشخيص.',
-        },
-        linkUrl: '/services',
-      },
-      {
-        id: 'area-3',
-        icon: 'heart',
-        title: {
-          en: 'Healthcare Solutions',
-          ar: 'حلول الرعاية الصحية',
-        },
-        description: {
-          en: 'Quality healthcare products and solutions designed to support medical professionals and healthcare facilities.',
-          ar: 'منتجات وحلول رعاية صحية عالية الجودة لدعم الكوادر والمنشآت الطبية.',
-        },
-        linkUrl: '/services',
-      },
-    ],
-  },
   workTogetherSection: {
     tagline: {
       en: "LET'S WORK TOGETHER",
@@ -2734,72 +2641,6 @@ export const initialCmsAttractiveData: CmsAttractiveData = {
     },
     imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
   },
-  productsSection: {
-    title: {
-      en: 'Our Products',
-      ar: 'منتجاتنا',
-    },
-    description: {
-      en: 'Explore our range of high-quality medical equipment and solutions designed to meet your needs.',
-      ar: 'استكشف مجموعتنا من المعدات والحلول الطبية عالية الجودة والمصممة لتلبية احتياجاتك.',
-    },
-    products: [
-      {
-        id: 'prod-1',
-        image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80',
-        brand: { en: 'MedTech', ar: 'ميدتيك' },
-        name: { en: 'Patient Monitor', ar: 'شاشة مراقبة المريض' },
-        description: {
-          en: 'A medical monitoring device designed to track vital signs and support patient observation in clinical environments.',
-          ar: 'جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية ودعم مراقبة المرضى في البيئات السريرية.',
-        },
-        badges: [
-          { id: 'b1', en: 'CE Certified', ar: 'معتمد من CE' },
-          { id: 'b2', en: 'FDA Registered', ar: 'مسجل لدى FDA' },
-          { id: 'b3', en: 'ISO Certified', ar: 'معتمد من ISO' },
-        ],
-        buttonText: { en: 'Request a Quote ↗', ar: 'طلب عرض أسعار ↗' },
-        buttonUrl: '/contact',
-      },
-      {
-        id: 'prod-2',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80',
-        brand: { en: 'SonoCare', ar: 'سونوكير' },
-        name: { en: 'Digital Ultrasound System', ar: 'نظام الموجات فوق الصوتية الرقمي' },
-        description: {
-          en: 'An ultrasound imaging system designed to support diagnostic examinations in hospitals and healthcare facilities.',
-          ar: 'نظام تصوير بالموجات فوق الصوتية مصمم لدعم الفحوصات التشخيصية في المستشفيات والمرافق الصحية.',
-        },
-        badges: [
-          { id: 'b4', en: 'CE Certified', ar: 'معتمد من CE' },
-          { id: 'b5', en: 'ISO Certified', ar: 'معتمد من ISO' },
-        ],
-        buttonText: { en: 'Request a Quote ↗', ar: 'طلب عرض أسعار ↗' },
-        buttonUrl: '/contact',
-      },
-      {
-        id: 'prod-3',
-        image: 'https://images.unsplash.com/photo-1583912267670-6575ad3726f9?auto=format&fit=crop&w=600&q=80',
-        brand: { en: 'CareFlow', ar: 'كيرفلو' },
-        name: { en: 'Infusion Pump', ar: 'مضخة التسريب الوريدي' },
-        description: {
-          en: 'A medical device designed for the controlled delivery of fluids and medications in clinical settings.',
-          ar: 'جهاز طبي مصمم للتحكم الدقيق في توصيل السوائل والأدوية في البيئات السريرية.',
-        },
-        badges: [
-          { id: 'b6', en: 'CE Certified', ar: 'معتمد من CE' },
-          { id: 'b7', en: 'FDA Registered', ar: 'مسجل لدى FDA' },
-        ],
-        buttonText: { en: 'Request a Quote ↗', ar: 'طلب عرض أسعار ↗' },
-        buttonUrl: '/contact',
-      },
-    ],
-    viewAllButtonText: {
-      en: 'View All Products',
-      ar: 'عرض جميع المنتجات',
-    },
-    viewAllButtonUrl: '/shop',
-  },
   workTogetherSection: {
     tagline: {
       en: "— LET'S WORK TOGETHER —",
@@ -2872,72 +2713,6 @@ export const initialCmsMedicsInnovatorData: CmsMedicsInnovatorData = {
       ar: 'تتخصص ميديكس إنوفيتور في تقديم المعدات الطبية المعتمدة والأجهزة السريرية وحلول البنية التحتية للمستشفيات. نعمل مباشرة مع كبرى الشركات المصنعة عالمياً لضمان تحقيق مقدمي الرعاية لأعلى مستويات الدقة وسلامة المرضى.',
     },
     imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80',
-  },
-  productsSection: {
-    title: {
-      en: 'Our Products',
-      ar: 'منتجاتنا',
-    },
-    description: {
-      en: 'Explore our range of high-quality medical equipment and solutions designed to meet your needs.',
-      ar: 'استكشف مجموعتنا من المعدات والحلول الطبية عالية الجودة والمصممة لتلبية احتياجاتك.',
-    },
-    products: [
-      {
-        id: 'prod-1',
-        image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80',
-        brand: { en: 'MedTech', ar: 'ميدتيك' },
-        name: { en: 'Patient Monitor', ar: 'شاشة مراقبة المريض' },
-        description: {
-          en: 'A medical monitoring device designed to track vital signs and support patient observation in clinical environments.',
-          ar: 'جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية ودعم مراقبة المرضى في البيئات السريرية.',
-        },
-        badges: [
-          { id: 'b1', en: 'CE Certified', ar: 'معتمد من CE' },
-          { id: 'b2', en: 'FDA Registered', ar: 'مسجل لدى FDA' },
-          { id: 'b3', en: 'ISO Certified', ar: 'معتمد من ISO' },
-        ],
-        buttonText: { en: 'Request a Quote ↗', ar: 'طلب عرض أسعار ↗' },
-        buttonUrl: '/contact',
-      },
-      {
-        id: 'prod-2',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80',
-        brand: { en: 'SonoCare', ar: 'سونوكير' },
-        name: { en: 'Digital Ultrasound System', ar: 'نظام الموجات فوق الصوتية الرقمي' },
-        description: {
-          en: 'An ultrasound imaging system designed to support diagnostic examinations in hospitals and healthcare facilities.',
-          ar: 'نظام تصوير بالموجات فوق الصوتية مصمم لدعم الفحوصات التشخيصية في المستشفيات والمرافق الصحية.',
-        },
-        badges: [
-          { id: 'b4', en: 'CE Certified', ar: 'معتمد من CE' },
-          { id: 'b5', en: 'ISO Certified', ar: 'معتمد من ISO' },
-        ],
-        buttonText: { en: 'Request a Quote ↗', ar: 'طلب عرض أسعار ↗' },
-        buttonUrl: '/contact',
-      },
-      {
-        id: 'prod-3',
-        image: 'https://images.unsplash.com/photo-1583912267670-6575ad3726f9?auto=format&fit=crop&w=600&q=80',
-        brand: { en: 'CareFlow', ar: 'كيرفلو' },
-        name: { en: 'Infusion Pump', ar: 'مضخة التسريب الوريدي' },
-        description: {
-          en: 'A medical device designed for the controlled delivery of fluids and medications in clinical settings.',
-          ar: 'جهاز طبي مصمم للتحكم الدقيق في توصيل السوائل والأدوية في البيئات السريرية.',
-        },
-        badges: [
-          { id: 'b6', en: 'CE Certified', ar: 'معتمد من CE' },
-          { id: 'b7', en: 'FDA Registered', ar: 'مسجل لدى FDA' },
-        ],
-        buttonText: { en: 'Request a Quote ↗', ar: 'طلب عرض أسعار ↗' },
-        buttonUrl: '/contact',
-      },
-    ],
-    viewAllButtonText: {
-      en: 'View All Products',
-      ar: 'عرض جميع المنتجات',
-    },
-    viewAllButtonUrl: '/shop',
   },
   workTogetherSection: {
     tagline: {
@@ -4304,12 +4079,12 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Projects Innovator',
     labelAr: 'مبتكر المشاريع',
     iconName: 'Building2',
-    description: 'Holding entity banner, about profile, business areas, and work together banner.',
+    description: 'Holding entity banner, about profile, and work together banner.',
     groups: [
       {
         id: 'pi-overview',
         title: { en: 'Projects Innovator Division', ar: 'قسم مبتكر المشاريع' },
-        description: { en: 'Manage public holding entity landing page and business sectors', ar: 'إدارة صفحة الكيان القابض وقطاعات الأعمال' },
+        description: { en: 'Manage public holding entity landing page sections', ar: 'إدارة أقسام صفحة الكيان القابض' },
         iconName: 'Building2',
         accentColor: 'red',
         items: [
@@ -4330,16 +4105,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             badgeColor: 'purple',
           },
           {
-            id: 'pi-business-areas',
-            title: { en: 'Section 3: Our Business Areas', ar: 'القسم الثالث: مجالات أعمالنا' },
-            subtitle: { en: 'Medical & Lab Equipment, Supplies, and Healthcare Solutions', ar: 'الأجهزة الطبية، المستلزمات المخبرية، وحلول الرعاية' },
-            status: 'Active',
-            lastUpdated: '02 Nov 2026',
-            badgeColor: 'orange',
-          },
-          {
             id: 'pi-banner-cta',
-            title: { en: 'Section 4: Let\'s Work Together Banner', ar: 'القسم الرابع: بانر لنعمل معاً' },
+            title: { en: 'Section 3: Let\'s Work Together Banner', ar: 'القسم الثالث: بانر لنعمل معاً' },
             subtitle: { en: 'Call-to-action banner, quotes, and enquiries', ar: 'بانر الحث على اتخاذ إجراء وطلب عروض الأسعار' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -4354,12 +4121,12 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Attractive',
     labelAr: 'أتراكتيف',
     iconName: 'Sparkles',
-    description: 'Attractive company hero banner, about profile, products catalog showcase, and partnership banner.',
+    description: 'Attractive company hero banner, about profile, and partnership banner.',
     groups: [
       {
         id: 'att-overview',
         title: { en: 'Attractive Division', ar: 'قسم شركة أتراكتيف' },
-        description: { en: 'Manage Attractive company hero, profile, and products', ar: 'إدارة واجهة أتراكتيف والملف التعريفي والمنتجات' },
+        description: { en: 'Manage Attractive company hero, profile, and partnership banner', ar: 'إدارة واجهة أتراكتيف والملف التعريفي وبانر الشراكة' },
         iconName: 'Sparkles',
         accentColor: 'blue',
         items: [
@@ -4380,16 +4147,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             badgeColor: 'purple',
           },
           {
-            id: 'att-products',
-            title: { en: 'Section 3: Our Products', ar: 'القسم الثالث: منتجاتنا' },
-            subtitle: { en: 'Patient Monitor, Ultrasound, Infusion Pump, CE/FDA/ISO badges', ar: 'شاشات المراقبة والموجات فوق الصوتية والمضخات والشهادات' },
-            status: 'Active',
-            lastUpdated: '02 Nov 2026',
-            badgeColor: 'blue',
-          },
-          {
             id: 'att-cta',
-            title: { en: 'Section 4: Let\'s Work Together Banner', ar: 'القسم الرابع: بانر لنعمل معاً' },
+            title: { en: 'Section 3: Let\'s Work Together Banner', ar: 'القسم الثالث: بانر لنعمل معاً' },
             subtitle: { en: 'Bottom partnership call-to-action and quote triggers', ar: 'دعوة الشراكة السفلية وطلب عروض الأسعار' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
@@ -4404,12 +4163,12 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
     label: 'Medics Innovator',
     labelAr: 'ميديكس إنوفيتور',
     iconName: 'Stethoscope',
-    description: 'Medics Innovator medical division hero, clinical profile, healthcare products, and consultation banner.',
+    description: 'Medics Innovator medical division hero, clinical profile, and consultation banner.',
     groups: [
       {
         id: 'mi-overview',
         title: { en: 'Medics Innovator Division', ar: 'قسم ميديكس إنوفيتور' },
-        description: { en: 'Manage clinical technologies landing page, diagnostics, and medical equipment', ar: 'إدارة صفحة التقنيات السريرية والتشخيصية والمعدات الطبية' },
+        description: { en: 'Manage clinical technologies landing page hero, profile, and banner', ar: 'إدارة صفحة التقنيات السريرية والملف التعريفي وبانر الشراكة' },
         iconName: 'Stethoscope',
         accentColor: 'blue',
         items: [
@@ -4430,16 +4189,8 @@ export const ALL_CMS_TABS: CmsTabConfig[] = [
             badgeColor: 'purple',
           },
           {
-            id: 'mi-products',
-            title: { en: 'Section 3: Our Products', ar: 'القسم الثالث: منتجاتنا' },
-            subtitle: { en: 'Featured equipment, certifications, specs, and quote actions', ar: 'الأجهزة المميزة والشهادات والمواصفات وطلب عروض الأسعار' },
-            status: 'Active',
-            lastUpdated: '02 Nov 2026',
-            badgeColor: 'blue',
-          },
-          {
             id: 'mi-cta',
-            title: { en: 'Section 4: Let\'s Work Together Banner', ar: 'القسم الرابع: بانر لنعمل معاً' },
+            title: { en: 'Section 3: Let\'s Work Together Banner', ar: 'القسم الثالث: بانر لنعمل معاً' },
             subtitle: { en: 'Healthcare partnership call-to-action and clinical consultations', ar: 'دعوة الشراكة الطبية والاستشارات السريرية' },
             status: 'Active',
             lastUpdated: '02 Nov 2026',
