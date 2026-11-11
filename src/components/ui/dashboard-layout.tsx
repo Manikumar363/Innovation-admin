@@ -141,6 +141,24 @@ const ServicesIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const FounderIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <polyline points="16 11 18 13 22 9" />
+  </svg>
+);
+
 const topNavigationItems: NavItem[] = [
   { icon: DashboardIcon, label: "Dashboard", href: "/dashboard" },
   { icon: CmsIcon, label: "CMS Portal", href: "/cms" },
@@ -148,6 +166,7 @@ const topNavigationItems: NavItem[] = [
   { icon: EnquiriesIcon, label: "Enquiries", href: "/enquiries" },
   { icon: CompaniesIcon, label: "Our Companies", href: "/our-companies" },
   { icon: ServicesIcon, label: "Services", href: "/services" },
+  { icon: FounderIcon, label: "Founder", href: "/founder" },
 ];
 
 const CMS_SEARCH_SECTIONS = [
@@ -155,6 +174,7 @@ const CMS_SEARCH_SECTIONS = [
   { name: "Customer Enquiries", path: "/enquiries", desc: "Customer questions, messages & enquiries" },
   { name: "Our Companies", path: "/our-companies", desc: "Specialized Companies: Project Innovator, Attractive, Medics" },
   { name: "Services", path: "/services", desc: "4 Service Pages: Medical Equipment, Lab Supplies, Healthcare Solutions, Standards" },
+  { name: "Founder Message", path: "/founder", desc: "Founder profile, message from founder, group companies & commitment card" },
   { name: "Home Page", path: "/cms?tab=home", desc: "Hero, Brands, About, Divisions, Vision & Mission, Banner" },
   { name: "About Us", path: "/cms?tab=about", desc: "10 sections: Leadership, Heritage, Journey, Values, Purpose" },
   { name: "Company Profile", path: "/cms?tab=company", desc: "3 sections: Profile, Who We Are, What Guides Us" },

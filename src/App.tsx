@@ -9,6 +9,7 @@ import { QuoteRequestsPage } from "./pages/QuoteRequestsPage";
 import { EnquiriesPage } from "./pages/EnquiriesPage";
 import { OurCompaniesPage } from "./pages/OurCompaniesPage";
 import { ServicesPage } from "./pages/ServicesPage";
+import { FounderPage } from "./pages/FounderPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { getAuthToken, getStoredUserData } from "./lib/api";
 
@@ -152,6 +153,22 @@ export const App: React.FC = () => {
         <Route
           path="/cms/services"
           element={<Navigate to="/services" replace />}
+        />
+        <Route
+          path="/founder"
+          element={
+            <ProtectedRoute>
+              <FounderPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/founder-message"
+          element={<Navigate to="/founder" replace />}
+        />
+        <Route
+          path="/cms/founder"
+          element={<Navigate to="/founder" replace />}
         />
 
         {/* Backward Compatibility Fallback Routes */}

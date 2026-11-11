@@ -3207,6 +3207,13 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   <Building2 className="w-3.5 h-3.5 text-blue-400" />
                   Our Companies
                 </Link>
+                <Link
+                  to="/founder"
+                  className="px-3 py-2 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <User className="w-3.5 h-3.5 text-rose-400" />
+                  Founder Section
+                </Link>
                 <Button
                   variant="outline"
                   onClick={() => setShowPreviewModal(true)}
@@ -3504,6 +3511,72 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
                         <p className="text-[11px] text-white/50">
                           Shared dynamically across Home, Projects Innovator, Attractive, and Medics Innovator
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* CARD: FOUNDER & EXECUTIVE MESSAGE (Standalone Section) */}
+              {selectedCategory === 'all' && (
+                <div className="bg-[#14112E] border border-rose-500/30 hover:border-rose-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
+                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 bg-rose-500/[0.04]">
+                    <div className="flex items-start gap-4">
+                      {renderCardHeaderIcon('red', 'User')}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-rose-400">
+                            Founder &amp; Message
+                          </h3>
+                          <span className="text-xs text-rose-400/70 font-normal">
+                            (كلمة المؤسس)
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/60 mt-0.5 leading-relaxed">
+                          Dr. Ahmed Dhahir profile, executive message, group of companies &amp; commitment highlight card.
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link
+                      to="/founder"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      Manage Founder
+                    </Link>
+                  </div>
+
+                  <div className="divide-y divide-white/5 flex-1 flex flex-col justify-start">
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-semibold text-white">
+                            Founder Profile &amp; Executive Letter
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Portrait image, role badge, opening narrative, numbered 3-company group spotlight &amp; signature
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-semibold text-white">
+                            Leadership Showcase &amp; Commitment Card
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Architectural visual showcase, overlay headline, &quot;Long-Term Value&quot; card &amp; bottom tagline
                         </p>
                       </div>
                     </div>
