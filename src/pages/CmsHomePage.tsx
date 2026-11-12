@@ -37,13 +37,19 @@ import {
   ArrowUpRight,
   Stethoscope,
   Phone,
-  Palette
+  Palette,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { toast } from 'react-toastify';
 import { ImageUploadField } from '../components/ui/ImageUploadField';
+import { MultiImageGalleryField } from '../components/ui/MultiImageGalleryField';
+import { HtmlContentEditor } from '../components/ui/HtmlContentEditor';
 import {
   LucideIconSelect,
   LucideIcon,
@@ -85,6 +91,7 @@ import {
   type CmsShopData,
   type ShopProductCard,
   type ShopProductBadge,
+  type ShopProductSpecification,
   initialCmsShopData,
   type CmsProjectsData,
   type ProjectCard,
@@ -451,9 +458,28 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     headerSection: {
       ...initialCmsShopData.headerSection,
       ...(res?.headerSection || {}),
-      products: res?.headerSection?.products && res.headerSection.products.length > 0
-        ? res.headerSection.products
-        : initialCmsShopData.headerSection.products,
+      products: (
+        res?.headerSection?.products && res.headerSection.products.length > 0
+          ? res.headerSection.products
+          : initialCmsShopData.headerSection.products
+      ).map((prod) => {
+        const imgs = Array.isArray(prod.images) && prod.images.length > 0
+          ? prod.images
+          : prod.image
+            ? [prod.image]
+            : [];
+        return {
+          ...prod,
+          slug: prod.slug || '',
+          image: imgs[0] || prod.image || '',
+          images: imgs,
+          productDescription: prod.productDescription || {
+            en: prod.description?.en ? `<p>${prod.description.en}</p>` : '',
+            ar: prod.description?.ar ? `<p>${prod.description.ar}</p>` : '',
+          },
+          specifications: Array.isArray(prod.specifications) ? prod.specifications : [],
+        };
+      }),
     },
   });
 
@@ -508,6 +534,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [activeLangTab, setActiveLangTab] = useState<'en' | 'ar'>('en');
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [previewLang, setPreviewLang] = useState<'en' | 'ar'>('en');
+  const [previewShopProductIndex, setPreviewShopProductIndex] = useState<number | null>(null);
+  const [previewShopGalleryIndex, setPreviewShopGalleryIndex] = useState<number>(0);
 
   // Navigation mode: 'grid' (overview cards) or 'editor' (editing entire page)
   const [viewMode, setViewMode] = useState<'grid' | 'editor'>('grid');
@@ -984,10 +1012,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const handleAddProduct = () => {
     const newProduct: ShopProductCard = {
       id: `prod-${Date.now()}`,
+      slug: '',
       image: '',
+      images: [],
       brand: { en: '', ar: '' },
       name: { en: '', ar: '' },
       description: { en: '', ar: '' },
+      productDescription: { en: '', ar: '' },
+      specifications: [
+        { id: `spec-${Date.now()}-1`, label: { en: '', ar: '' }, value: { en: '', ar: '' } },
+      ],
       badges: [{ id: `badge-${Date.now()}-1`, en: 'CE Certified', ar: 'معتمد من CE' }],
       buttonText: { en: 'Request a Quote', ar: 'طلب عرض أسعار' },
       buttonUrl: '/contact',
@@ -1014,17 +1048,23 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
   const handleProductChange = (
     index: number,
-    field: 'image' | 'buttonUrl' | 'brand' | 'name' | 'description' | 'buttonText',
+    field: 'slug' | 'image' | 'buttonUrl' | 'brand' | 'name' | 'description' | 'productDescription' | 'buttonText',
     langOrVal: string,
     val?: string
   ) => {
     setShopData((prev) => {
       const list = [...(prev.headerSection?.products || [])];
-      if (field === 'brand' || field === 'name' || field === 'description' || field === 'buttonText') {
+      if (
+        field === 'brand' ||
+        field === 'name' ||
+        field === 'description' ||
+        field === 'productDescription' ||
+        field === 'buttonText'
+      ) {
         list[index] = {
           ...list[index],
           [field]: {
-            ...list[index][field],
+            ...(list[index][field] || { en: '', ar: '' }),
             [langOrVal as 'en' | 'ar']: val || '',
           },
         };
@@ -1034,6 +1074,116 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           [field]: langOrVal,
         };
       }
+      return {
+        ...prev,
+        headerSection: {
+          ...prev.headerSection,
+          products: list,
+        },
+      };
+    });
+  };
+
+  const handleProductImagesChange = (prodIndex: number, nextImages: string[]) => {
+    setShopData((prev) => {
+      const list = [...(prev.headerSection?.products || [])];
+      list[prodIndex] = {
+        ...list[prodIndex],
+        images: nextImages,
+        image: nextImages[0] || '',
+      };
+      return {
+        ...prev,
+        headerSection: {
+          ...prev.headerSection,
+          products: list,
+        },
+      };
+    });
+  };
+
+  // Product Key Specifications Handlers
+  const handleAddProductSpecification = (prodIndex: number) => {
+    const newSpec: ShopProductSpecification = {
+      id: `spec-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      label: { en: '', ar: '' },
+      value: { en: '', ar: '' },
+    };
+    setShopData((prev) => {
+      const list = [...(prev.headerSection?.products || [])];
+      list[prodIndex] = {
+        ...list[prodIndex],
+        specifications: [...(list[prodIndex].specifications || []), newSpec],
+      };
+      return {
+        ...prev,
+        headerSection: {
+          ...prev.headerSection,
+          products: list,
+        },
+      };
+    });
+  };
+
+  const handleRemoveProductSpecification = (prodIndex: number, specIndex: number) => {
+    setShopData((prev) => {
+      const list = [...(prev.headerSection?.products || [])];
+      list[prodIndex] = {
+        ...list[prodIndex],
+        specifications: (list[prodIndex].specifications || []).filter((_, i) => i !== specIndex),
+      };
+      return {
+        ...prev,
+        headerSection: {
+          ...prev.headerSection,
+          products: list,
+        },
+      };
+    });
+  };
+
+  const handleMoveProductSpecification = (prodIndex: number, specIndex: number, dir: -1 | 1) => {
+    setShopData((prev) => {
+      const list = [...(prev.headerSection?.products || [])];
+      const specs = [...(list[prodIndex].specifications || [])];
+      const targetIndex = specIndex + dir;
+      if (targetIndex < 0 || targetIndex >= specs.length) return prev;
+      [specs[specIndex], specs[targetIndex]] = [specs[targetIndex], specs[specIndex]];
+      list[prodIndex] = {
+        ...list[prodIndex],
+        specifications: specs,
+      };
+      return {
+        ...prev,
+        headerSection: {
+          ...prev.headerSection,
+          products: list,
+        },
+      };
+    });
+  };
+
+  const handleProductSpecificationChange = (
+    prodIndex: number,
+    specIndex: number,
+    key: 'label' | 'value',
+    lang: 'en' | 'ar',
+    val: string
+  ) => {
+    setShopData((prev) => {
+      const list = [...(prev.headerSection?.products || [])];
+      const specs = [...(list[prodIndex].specifications || [])];
+      specs[specIndex] = {
+        ...specs[specIndex],
+        [key]: {
+          ...(specs[specIndex]?.[key] || { en: '', ar: '' }),
+          [lang]: val,
+        },
+      };
+      list[prodIndex] = {
+        ...list[prodIndex],
+        specifications: specs,
+      };
       return {
         ...prev,
         headerSection: {
@@ -3752,7 +3902,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           </span>
                         </div>
                         <p className="text-[11px] text-white/50">
-                          Main page title, introductory narrative & {shopData.headerSection.products.length} products with certifications and quote CTAs
+                          Main page title, narrative & {shopData.headerSection.products.length} products with image galleries, HTML descriptions & key specifications
                         </p>
                       </div>
                     </div>
@@ -10512,20 +10662,22 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               </button>
                             </div>
 
-                            {/* Product Image Upload */}
-                            <div className="space-y-1.5">
-                              <ImageUploadField
-                                label="Product Image"
-                                compact
-                                folder="shop"
-                                value={product.image || ''}
-                                onChange={(url) => handleProductChange(pIdx, 'image', url)}
-                                placeholder="Paste image URL or upload device photo..."
-                              />
-                            </div>
+                            {/* Multiple Product Images Gallery */}
+                            <MultiImageGalleryField
+                              label="Product Images Gallery (Multiple Images)"
+                              folder="shop"
+                              images={
+                                Array.isArray(product.images) && product.images.length > 0
+                                  ? product.images
+                                  : product.image
+                                    ? [product.image]
+                                    : []
+                              }
+                              onChange={(urls) => handleProductImagesChange(pIdx, urls)}
+                            />
 
-                            {/* Brand & Name */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Brand, Name & URL Slug */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               {activeLangTab === 'en' ? (
                                 <>
                                   <div className="space-y-1.5">
@@ -10544,7 +10696,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                       type="text"
                                       value={product.name?.en || ''}
                                       onChange={(e) => handleProductChange(pIdx, 'name', 'en', e.target.value)}
-                                      placeholder="e.g. Patient Monitor, Digital Ultrasound System"
+                                      placeholder="e.g. Philips IntelliVue MX550 Patient Monitor"
                                       className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                                     />
                                   </div>
@@ -10575,33 +10727,182 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                   </div>
                                 </>
                               )}
+                              <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-white/70">Product URL Slug</label>
+                                <input
+                                  type="text"
+                                  value={product.slug || ''}
+                                  onChange={(e) => handleProductChange(pIdx, 'slug', e.target.value)}
+                                  placeholder="auto-generated from product name"
+                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] font-mono"
+                                />
+                              </div>
                             </div>
 
-                            {/* Description */}
+                            {/* Short Summary (Catalog Card) */}
                             <div className="space-y-1.5">
                               {activeLangTab === 'en' ? (
                                 <>
-                                  <label className="text-xs font-semibold text-white/70">🇬🇧 Product Description</label>
+                                  <label className="text-xs font-semibold text-white/70">🇬🇧 Short Summary (Catalog Card)</label>
                                   <textarea
                                     rows={2}
                                     value={product.description?.en || ''}
                                     onChange={(e) => handleProductChange(pIdx, 'description', 'en', e.target.value)}
-                                    placeholder="A medical monitoring device designed to track vital signs..."
+                                    placeholder="Brief 1-2 line summary shown on the shop listing card..."
                                     className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
                                   />
                                 </>
                               ) : (
                                 <>
-                                  <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف المنتج بالعربية</label>
+                                  <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 ملخص قصير (بطاقة المتجر)</label>
                                   <textarea
                                     rows={2}
                                     dir="rtl"
                                     value={product.description?.ar || ''}
                                     onChange={(e) => handleProductChange(pIdx, 'description', 'ar', e.target.value)}
-                                    placeholder="جهاز مراقبة طبي مصمم لتتبع العلامات الحيوية ودعم الملاحظة السريرية..."
+                                    placeholder="ملخص قصير يظهر على بطاقة المنتج في صفحة المتجر..."
                                     className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right resize-none"
                                   />
                                 </>
+                              )}
+                            </div>
+
+                            {/* Rich HTML Product Description */}
+                            <div>
+                              {activeLangTab === 'en' ? (
+                                <HtmlContentEditor
+                                  key={`prod-desc-en-${product.id || pIdx}`}
+                                  label="🇬🇧 Product Description (HTML Content)"
+                                  dir="ltr"
+                                  value={product.productDescription?.en || ''}
+                                  onChange={(html) => handleProductChange(pIdx, 'productDescription', 'en', html)}
+                                  placeholder="Write formatted overview & bullet points, or switch to HTML Code mode..."
+                                  helperText="Saved as HTML (e.g. paragraphs, bullet lists, bold text) for the Product Details page."
+                                />
+                              ) : (
+                                <HtmlContentEditor
+                                  key={`prod-desc-ar-${product.id || pIdx}`}
+                                  label="🇸🇦 وصف المنتج التفصيلي (محتوى HTML بالعربية)"
+                                  dir="rtl"
+                                  value={product.productDescription?.ar || ''}
+                                  onChange={(html) => handleProductChange(pIdx, 'productDescription', 'ar', html)}
+                                  placeholder="اكتب الوصف التفصيلي والبنود المنسقة أو انتقل إلى وضع HTML..."
+                                  helperText="يُحفظ بصيغة HTML لعرضه في صفحة تفاصيل المنتج."
+                                />
+                              )}
+                            </div>
+
+                            {/* Key Specifications Manager */}
+                            <div className="p-3.5 bg-black/20 rounded-lg border border-white/5 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-white/85 flex items-center gap-2">
+                                  <span>Key Specifications</span>
+                                  <span className="text-[11px] text-white/40">
+                                    ({product.specifications?.length || 0} specs)
+                                  </span>
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddProductSpecification(pIdx)}
+                                  className="px-2.5 py-1 text-[11px] rounded bg-[#F68E2D]/20 hover:bg-[#F68E2D] text-[#F68E2D] hover:text-white border border-[#F68E2D]/40 transition-all flex items-center gap-1 cursor-pointer font-semibold"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                  Add Specification
+                                </button>
+                              </div>
+
+                              {(!product.specifications || product.specifications.length === 0) ? (
+                                <p className="text-[11px] text-white/40 text-center py-3 border border-dashed border-white/10 rounded-lg">
+                                  No key specifications added yet (e.g. Display, Parameters, Power Supply, Dimensions, Weight).
+                                </p>
+                              ) : (
+                                <div className="space-y-2">
+                                  {product.specifications.map((spec, sIdx) => (
+                                    <div
+                                      key={spec.id || `spec-${sIdx}`}
+                                      className="flex flex-col sm:flex-row sm:items-center gap-2 p-2.5 rounded-lg bg-white/[0.04] border border-white/10"
+                                    >
+                                      <span className="text-[10px] font-bold text-white/40 w-5 shrink-0 text-center">
+                                        #{sIdx + 1}
+                                      </span>
+
+                                      {activeLangTab === 'en' ? (
+                                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                          <input
+                                            type="text"
+                                            value={spec.label?.en || ''}
+                                            onChange={(e) =>
+                                              handleProductSpecificationChange(pIdx, sIdx, 'label', 'en', e.target.value)
+                                            }
+                                            placeholder="Spec Label (e.g. Display)"
+                                            className="w-full px-2.5 py-1.5 text-xs rounded bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={spec.value?.en || ''}
+                                            onChange={(e) =>
+                                              handleProductSpecificationChange(pIdx, sIdx, 'value', 'en', e.target.value)
+                                            }
+                                            placeholder='Spec Value (e.g. 15.6" TFT LCD)'
+                                            className="w-full px-2.5 py-1.5 text-xs rounded bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                          />
+                                        </div>
+                                      ) : (
+                                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                          <input
+                                            type="text"
+                                            dir="rtl"
+                                            value={spec.label?.ar || ''}
+                                            onChange={(e) =>
+                                              handleProductSpecificationChange(pIdx, sIdx, 'label', 'ar', e.target.value)
+                                            }
+                                            placeholder="اسم المواصفة (مثال: الشاشة)"
+                                            className="w-full px-2.5 py-1.5 text-xs rounded bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                          />
+                                          <input
+                                            type="text"
+                                            dir="rtl"
+                                            value={spec.value?.ar || ''}
+                                            onChange={(e) =>
+                                              handleProductSpecificationChange(pIdx, sIdx, 'value', 'ar', e.target.value)
+                                            }
+                                            placeholder="القيمة (مثال: 15.6 بوصة TFT LCD)"
+                                            className="w-full px-2.5 py-1.5 text-xs rounded bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                          />
+                                        </div>
+                                      )}
+
+                                      <div className="flex items-center gap-1 self-end sm:self-center shrink-0">
+                                        <button
+                                          type="button"
+                                          onClick={() => handleMoveProductSpecification(pIdx, sIdx, -1)}
+                                          disabled={sIdx === 0}
+                                          className="p-1 text-white/50 hover:text-white disabled:opacity-25 rounded hover:bg-white/10 transition-colors cursor-pointer"
+                                          title="Move Up"
+                                        >
+                                          <ArrowUp className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleMoveProductSpecification(pIdx, sIdx, 1)}
+                                          disabled={sIdx === (product.specifications?.length || 0) - 1}
+                                          className="p-1 text-white/50 hover:text-white disabled:opacity-25 rounded hover:bg-white/10 transition-colors cursor-pointer"
+                                          title="Move Down"
+                                        >
+                                          <ArrowDown className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleRemoveProductSpecification(pIdx, sIdx)}
+                                          className="p-1 text-red-400 hover:text-red-300 rounded hover:bg-red-500/10 transition-colors cursor-pointer"
+                                          title="Remove Specification"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               )}
                             </div>
 
@@ -15574,87 +15875,252 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
               )}
 
-              {/* ----------------- SHOP PREVIEW (MATCHING REFERENCE IMAGE) ----------------- */}
+              {/* ----------------- SHOP PREVIEW (CATALOG & PRODUCT DETAIL GALLERY/SPECS) ----------------- */}
               {editingTabId === 'shop' && (
                 <div className="space-y-10 max-w-6xl mx-auto">
-                  {/* SECTION 1: OUR PRODUCTS */}
-                  <div className="space-y-3">
-                    <p className="text-xs text-white/40 tracking-wider">
-                      {previewLang === 'ar' ? 'الرئيسية / المتجر' : 'Home / Shop'}
-                    </p>
-                    <h1 className="text-3xl sm:text-5xl font-black text-white">
-                      {shopData.headerSection.title[previewLang] || 'Our Products'}
-                    </h1>
-                    <p className="text-xs sm:text-sm text-white/70 max-w-3xl leading-relaxed">
-                      {shopData.headerSection.description[previewLang]}
-                    </p>
+                  {previewShopProductIndex !== null && shopData.headerSection.products[previewShopProductIndex] ? (
+                    (() => {
+                      const prod = shopData.headerSection.products[previewShopProductIndex];
+                      const gallery =
+                        Array.isArray(prod.images) && prod.images.length > 0
+                          ? prod.images
+                          : prod.image
+                            ? [prod.image]
+                            : [];
+                      const activeImgIdx = Math.min(previewShopGalleryIndex, Math.max(0, gallery.length - 1));
+                      const activeImg = gallery[activeImgIdx] || '';
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
-                      {shopData.headerSection.products.map((product, idx) => (
-                        <div
-                          key={product.id || idx}
-                          className="rounded-2xl bg-[#121624] border border-white/10 hover:border-red-500/30 transition-all p-5 flex flex-col justify-between shadow-2xl group overflow-hidden"
-                        >
-                          <div>
-                            {/* Product Image */}
-                            <div className="relative w-full h-52 rounded-xl overflow-hidden bg-black/40 mb-4 border border-white/5">
-                              {product.image ? (
-                                <img
-                                  src={product.image}
-                                  alt={product.name[previewLang]}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-white/30 text-xs">
-                                  No Image Uploaded
-                                </div>
-                              )}
-                            </div>
+                      return (
+                        <div className="space-y-8">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <p className="text-xs text-white/50">
+                              {previewLang === 'ar'
+                                ? `الرئيسية › المتجر › ${prod.name?.[previewLang] || ''}`
+                                : `Home › Shop › ${prod.name?.[previewLang] || ''}`}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setPreviewShopProductIndex(null);
+                                setPreviewShopGalleryIndex(0);
+                              }}
+                              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 text-white flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <ChevronLeft className="w-3.5 h-3.5" />
+                              Back to All Products
+                            </button>
+                          </div>
 
-                            {/* Brand & Name */}
-                            <div className="space-y-1.5">
-                              {product.brand[previewLang] && (
-                                <span className="text-xs font-semibold text-white/50 tracking-wider block">
-                                  {product.brand[previewLang]}
-                                </span>
-                              )}
-                              <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors">
-                                {product.name[previewLang]}
-                              </h3>
-                              <p className="text-xs text-white/60 leading-relaxed line-clamp-3">
-                                {product.description[previewLang]}
-                              </p>
-                            </div>
-
-                            {/* Badge Pills */}
-                            {product.badges && product.badges.length > 0 && (
-                              <div className="flex flex-wrap gap-2 pt-4">
-                                {product.badges.map((badge, bIdx) => (
-                                  <span
-                                    key={badge.id || bIdx}
-                                    className="px-3 py-1 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-white/80"
+                          {/* Multi-Image Gallery */}
+                          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                            {gallery.length > 0 && (
+                              <div className="md:col-span-2 flex md:flex-col gap-2.5 overflow-x-auto">
+                                {gallery.slice(0, 3).map((thumbUrl, tIdx) => (
+                                  <button
+                                    key={`thumb-${tIdx}`}
+                                    type="button"
+                                    onClick={() => setPreviewShopGalleryIndex(tIdx)}
+                                    className={`relative w-20 h-20 md:w-full md:h-24 rounded-xl overflow-hidden border transition-all shrink-0 cursor-pointer ${
+                                      activeImgIdx === tIdx
+                                        ? 'border-[#E51E25] ring-2 ring-[#E51E25]/40'
+                                        : 'border-white/15 opacity-70 hover:opacity-100'
+                                    }`}
                                   >
-                                    {badge[previewLang]}
-                                  </span>
+                                    <img
+                                      src={thumbUrl}
+                                      alt={`Thumbnail ${tIdx + 1}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                    {tIdx === 2 && gallery.length > 3 && (
+                                      <div className="absolute inset-0 bg-black/65 flex items-center justify-center text-white font-bold text-sm">
+                                        +{gallery.length - 3}
+                                      </div>
+                                    )}
+                                  </button>
                                 ))}
                               </div>
                             )}
+
+                            <div className={`${gallery.length > 0 ? 'md:col-span-10' : 'md:col-span-12'} relative h-72 sm:h-96 rounded-2xl overflow-hidden bg-black/40 border border-white/10`}>
+                              {activeImg ? (
+                                <img
+                                  src={activeImg}
+                                  alt={prod.name?.[previewLang] || 'Product'}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-white/30 text-xs">
+                                  No Product Images
+                                </div>
+                              )}
+                              {gallery.length > 1 && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setPreviewShopGalleryIndex((prev) => (prev - 1 + gallery.length) % gallery.length)
+                                    }
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer"
+                                  >
+                                    <ChevronLeft className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setPreviewShopGalleryIndex((prev) => (prev + 1) % gallery.length)
+                                    }
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer"
+                                  >
+                                    <ChevronRight className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           </div>
 
-                          {/* Action Button */}
-                          <div className="pt-6 mt-4 border-t border-white/5">
-                            <a
-                              href={product.buttonUrl || '#'}
-                              className="w-full py-2.5 px-4 rounded-xl bg-[#E51E25] hover:bg-red-700 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-red-900/20"
-                            >
-                              <span>{product.buttonText[previewLang] || (previewLang === 'ar' ? 'طلب عرض أسعار' : 'Request a Quote')}</span>
-                              <ArrowUpRight className="w-4 h-4" />
-                            </a>
+                          {/* Product Description (HTML) */}
+                          <div className="space-y-3">
+                            <h2 className="text-xl font-bold text-white">
+                              {previewLang === 'ar' ? 'وصف المنتج' : 'Product Description'}
+                            </h2>
+                            <div
+                              className="text-xs sm:text-sm text-white/75 leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-white [&_a]:text-[#F68E2D] [&_a]:underline"
+                              dangerouslySetInnerHTML={{
+                                __html:
+                                  prod.productDescription?.[previewLang] ||
+                                  (prod.description?.[previewLang] ? `<p>${prod.description[previewLang]}</p>` : ''),
+                              }}
+                            />
                           </div>
+
+                          {/* Key Specifications */}
+                          {prod.specifications && prod.specifications.length > 0 && (
+                            <div className="rounded-2xl bg-[#121624] border border-white/10 p-5 space-y-3">
+                              <h3 className="text-base font-bold text-white">
+                                {previewLang === 'ar' ? 'المواصفات الرئيسية' : 'Key Specifications'}
+                              </h3>
+                              <div className="divide-y divide-white/10">
+                                {prod.specifications.map((spec, sIdx) => (
+                                  <div
+                                    key={spec.id || `prev-spec-${sIdx}`}
+                                    className="py-2.5 flex items-center justify-between gap-4 text-xs"
+                                  >
+                                    <span className="text-white/55">{spec.label?.[previewLang]}</span>
+                                    <span className="font-semibold text-white text-right">
+                                      {spec.value?.[previewLang]}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      ))}
+                      );
+                    })()
+                  ) : (
+                    /* SECTION 1: OUR PRODUCTS CATALOG GRID */
+                    <div className="space-y-3">
+                      <p className="text-xs text-white/40 tracking-wider">
+                        {previewLang === 'ar' ? 'الرئيسية / المتجر' : 'Home / Shop'}
+                      </p>
+                      <h1 className="text-3xl sm:text-5xl font-black text-white">
+                        {shopData.headerSection.title[previewLang] || 'Our Products'}
+                      </h1>
+                      <p className="text-xs sm:text-sm text-white/70 max-w-3xl leading-relaxed">
+                        {shopData.headerSection.description[previewLang]}
+                      </p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
+                        {shopData.headerSection.products.map((product, idx) => {
+                          const galleryCount =
+                            Array.isArray(product.images) && product.images.length > 0
+                              ? product.images.length
+                              : product.image
+                                ? 1
+                                : 0;
+                          return (
+                            <div
+                              key={product.id || idx}
+                              className="rounded-2xl bg-[#121624] border border-white/10 hover:border-red-500/30 transition-all p-5 flex flex-col justify-between shadow-2xl group overflow-hidden"
+                            >
+                              <div>
+                                {/* Product Image */}
+                                <div className="relative w-full h-52 rounded-xl overflow-hidden bg-black/40 mb-4 border border-white/5">
+                                  {product.image || product.images?.[0] ? (
+                                    <img
+                                      src={product.images?.[0] || product.image}
+                                      alt={product.name[previewLang]}
+                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-white/30 text-xs">
+                                      No Image Uploaded
+                                    </div>
+                                  )}
+                                  {galleryCount > 1 && (
+                                    <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/75 text-white border border-white/15">
+                                      {galleryCount} photos
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Brand & Name */}
+                                <div className="space-y-1.5">
+                                  {product.brand[previewLang] && (
+                                    <span className="text-xs font-semibold text-white/50 tracking-wider block">
+                                      {product.brand[previewLang]}
+                                    </span>
+                                  )}
+                                  <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors">
+                                    {product.name[previewLang]}
+                                  </h3>
+                                  <p className="text-xs text-white/60 leading-relaxed line-clamp-3">
+                                    {product.description[previewLang]}
+                                  </p>
+                                </div>
+
+                                {/* Badge Pills */}
+                                {product.badges && product.badges.length > 0 && (
+                                  <div className="flex flex-wrap gap-2 pt-4">
+                                    {product.badges.map((badge, bIdx) => (
+                                      <span
+                                        key={badge.id || bIdx}
+                                        className="px-3 py-1 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-white/80"
+                                      >
+                                        {badge[previewLang]}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="pt-5 mt-4 border-t border-white/5 space-y-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setPreviewShopProductIndex(idx);
+                                    setPreviewShopGalleryIndex(0);
+                                  }}
+                                  className="w-full py-2 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Preview Details, Gallery & Specs ({product.specifications?.length || 0})
+                                </button>
+                                <a
+                                  href={product.buttonUrl || '#'}
+                                  className="w-full py-2.5 px-4 rounded-xl bg-[#E51E25] hover:bg-red-700 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-red-900/20"
+                                >
+                                  <span>{product.buttonText[previewLang] || (previewLang === 'ar' ? 'طلب عرض أسعار' : 'Request a Quote')}</span>
+                                  <ArrowUpRight className="w-4 h-4" />
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 
