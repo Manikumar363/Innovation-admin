@@ -159,6 +159,26 @@ const FounderIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const ExcelSheetIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <path d="M8 13h8" />
+    <path d="M8 17h8" />
+    <line x1="12" y1="10" x2="12" y2="20" />
+  </svg>
+);
+
 const topNavigationItems: NavItem[] = [
   { icon: DashboardIcon, label: "Dashboard", href: "/dashboard" },
   { icon: CmsIcon, label: "CMS Portal", href: "/cms" },
@@ -167,9 +187,11 @@ const topNavigationItems: NavItem[] = [
   { icon: CompaniesIcon, label: "Our Companies", href: "/our-companies" },
   { icon: ServicesIcon, label: "Services", href: "/services" },
   { icon: FounderIcon, label: "Founder", href: "/founder" },
+  { icon: ExcelSheetIcon, label: "Excel / CSV Sheet", href: "/excel-sheet" },
 ];
 
 const CMS_SEARCH_SECTIONS = [
+  { name: "Excel / CSV Sheet", path: "/excel-sheet", desc: "Download Excel templates, upload sheets, validate & bulk import products" },
   { name: "Quote Requests", path: "/quotes", desc: "Customer product quotation requests & leads" },
   { name: "Customer Enquiries", path: "/enquiries", desc: "Customer questions, messages & enquiries" },
   { name: "Our Companies", path: "/our-companies", desc: "Specialized Companies: Project Innovator, Attractive, Medics" },

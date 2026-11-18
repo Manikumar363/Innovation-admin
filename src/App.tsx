@@ -10,6 +10,7 @@ import { EnquiriesPage } from "./pages/EnquiriesPage";
 import { OurCompaniesPage } from "./pages/OurCompaniesPage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { FounderPage } from "./pages/FounderPage";
+import { ExcelSheetPage } from "./pages/ExcelSheetPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { getAuthToken, getStoredUserData } from "./lib/api";
 
@@ -169,6 +170,32 @@ export const App: React.FC = () => {
         <Route
           path="/cms/founder"
           element={<Navigate to="/founder" replace />}
+        />
+
+        {/* Excel / CSV Sheet Section */}
+        <Route
+          path="/excel-sheet"
+          element={
+            <ProtectedRoute>
+              <ExcelSheetPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/excel-import"
+          element={<Navigate to="/excel-sheet" replace />}
+        />
+        <Route
+          path="/bulk-import"
+          element={<Navigate to="/excel-sheet" replace />}
+        />
+        <Route
+          path="/cms/excel"
+          element={<Navigate to="/excel-sheet" replace />}
+        />
+        <Route
+          path="/cms/excel-sheet"
+          element={<Navigate to="/excel-sheet" replace />}
         />
 
         {/* Backward Compatibility Fallback Routes */}
