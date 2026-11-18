@@ -4702,6 +4702,26 @@ export const cmsService = {
     }
   },
 
+  async bulkImportShopProducts(
+    payload: { products: ShopProductCard[]; mode?: 'append' | 'replace' } | FormData
+  ): Promise<{ success: boolean; message: string; count: number; data: CmsShopData }> {
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+    const res = await cmsFetch(`${API_BASE}/api/cms/shop/bulk-import`, {
+      method: 'POST',
+      headers: isFormData ? undefined : { 'Content-Type': 'application/json' },
+      body: isFormData ? payload : JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `Bulk import failed with status ${res.status}`);
+    }
+    const result = await res.json();
+    if (result && result.success && result.data) {
+      localStorage.setItem(SHOP_CACHE_KEY, JSON.stringify(result.data));
+    }
+    return result;
+  },
+
   // CMS Services
   async getCmsServices(): Promise<CmsServicesData> {
     try {

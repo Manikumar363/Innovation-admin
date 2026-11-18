@@ -41,7 +41,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  FileSpreadsheet,
+  FileDown
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -50,6 +52,8 @@ import { toast } from 'react-toastify';
 import { ImageUploadField } from '../components/ui/ImageUploadField';
 import { MultiImageGalleryField } from '../components/ui/MultiImageGalleryField';
 import { HtmlContentEditor } from '../components/ui/HtmlContentEditor';
+import { ExcelBulkImportModal } from '../components/shop/ExcelBulkImportModal';
+import { downloadShopProductsExcelTemplate } from '../services/excelShopImportService';
 import {
   LucideIconSelect,
   LucideIcon,
@@ -536,6 +540,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [previewLang, setPreviewLang] = useState<'en' | 'ar'>('en');
   const [previewShopProductIndex, setPreviewShopProductIndex] = useState<number | null>(null);
   const [previewShopGalleryIndex, setPreviewShopGalleryIndex] = useState<number>(0);
+  const [isExcelImportModalOpen, setIsExcelImportModalOpen] = useState<boolean>(false);
 
   // Navigation mode: 'grid' (overview cards) or 'editor' (editing entire page)
   const [viewMode, setViewMode] = useState<'grid' | 'editor'>('grid');
@@ -3879,14 +3884,29 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleOpenPageEditor('shop')}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      Edit Page
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingTabId('shop');
+                          setViewMode('editor');
+                          setIsExcelImportModalOpen(true);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        title="Bulk import products from Excel into Shop"
+                      >
+                        <FileSpreadsheet className="w-3.5 h-3.5" />
+                        Excel Import
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenPageEditor('shop')}
+                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        Edit Page
+                      </button>
+                    </div>
                   </div>
 
                   {/* Section List Inside Card */}
@@ -10612,7 +10632,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
                     {/* Products Grid Manager */}
                     <div className="pt-4 border-t border-white/10">
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-semibold text-white">
                             Products Catalog ({shopData.headerSection.products.length} Items)
@@ -10621,14 +10641,34 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                             Cards matching medical products reference
                           </span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={handleAddProduct}
-                          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Add Product
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => downloadShopProductsExcelTemplate({ withSampleData: true })}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 text-white/90 border border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                            title="Download Excel Template with all required fields and column headers"
+                          >
+                            <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+                            Download Excel Template
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsExcelImportModalOpen(true)}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                            title="Upload completed Excel sheet and bulk import products"
+                          >
+                            <FileSpreadsheet className="w-3.5 h-3.5" />
+                            Import Excel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleAddProduct}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            Add Product
+                          </button>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 gap-6">
@@ -17354,6 +17394,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           </div>
         </div>
       )}
+
+      {/* EXCEL BULK IMPORT MODAL */}
+      <ExcelBulkImportModal
+        isOpen={isExcelImportModalOpen}
+        onClose={() => setIsExcelImportModalOpen(false)}
+        currentProducts={shopData.headerSection?.products || []}
+        onImportSuccess={(updatedShopData) => {
+          setShopData(ensureShopDefaults(updatedShopData));
+        }}
+      />
     </DashboardLayout>
   );
 };
