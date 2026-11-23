@@ -14,6 +14,7 @@ import {
   Layers,
   X,
   Palette,
+  Lock,
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
@@ -682,14 +683,18 @@ export const OurCompaniesPage: React.FC = () => {
                     <div className="space-y-1.5 pt-2 border-t border-white/5">
                       <label className="text-[11px] font-semibold text-white/60 flex items-center justify-between">
                         <span>Explore URL / Route</span>
-                        <span className="text-white/40 text-[10px]">(Dedicated Page)</span>
+                        <span className="text-white/40 text-[10px] flex items-center gap-1 font-normal">
+                          <Lock className="w-2.5 h-2.5 text-white/40" />
+                          Fixed Route
+                        </span>
                       </label>
                       <input
                         type="text"
+                        readOnly
+                        disabled
                         value={comp.websiteUrl || ''}
-                        onChange={(e) => handleCompanyItemChange(cIdx, 'websiteUrl', e.target.value)}
-                        placeholder="/projects-innovator"
-                        className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-mono focus:outline-none focus:border-[#F68E2D]"
+                        title="Target URL is fixed by system navigation and cannot be edited"
+                        className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 font-mono cursor-not-allowed select-none"
                       />
                     </div>
 

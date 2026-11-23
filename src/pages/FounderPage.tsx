@@ -15,6 +15,7 @@ import {
   ArrowUpRight,
   Monitor,
   Smartphone,
+  Lock,
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
@@ -797,17 +798,20 @@ export const FounderPage: React.FC = () => {
                         </div>
 
                         <div className="md:col-span-5">
-                          <label className="block text-[11px] font-semibold text-white/60 uppercase mb-1">
-                            Target Link URL
+                          <label className="block text-[11px] font-semibold text-white/60 uppercase mb-1 flex items-center justify-between">
+                            <span>Target Link URL</span>
+                            <span className="text-[10px] text-white/40 font-normal normal-case flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
                           </label>
                           <input
                             type="text"
+                            readOnly
+                            disabled
                             value={comp.linkUrl || ''}
-                            onChange={(e) =>
-                              handleCompanyFieldChange(idx, 'linkUrl', e.target.value)
-                            }
-                            placeholder="/projects-innovator"
-                            className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white/80 text-sm focus:outline-none focus:border-purple-500"
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/5 text-white/40 text-sm cursor-not-allowed select-none"
                           />
                         </div>
 

@@ -33,6 +33,7 @@ import {
   Save,
   Download,
   FileText,
+  Lock,
   Upload,
   ArrowUpRight,
   Stethoscope,
@@ -113,7 +114,6 @@ import {
   type CmsProjectsInnovatorData,
   type ProjectsInnovatorHeroBannerSection,
   type ProjectsInnovatorAboutSection,
-  type ProjectsInnovatorWorkTogetherSection,
   initialCmsProjectsInnovatorData,
   type CmsAttractiveData,
   type CmsMedicsInnovatorData,
@@ -262,11 +262,10 @@ const ColorThemeSelector: React.FC<ColorThemeSelectorProps> = ({
               key={preset.value}
               type="button"
               onClick={() => onChange(preset.value)}
-              className={`w-7 h-7 rounded-full transition-all flex items-center justify-center cursor-pointer ${
-                isSelected
-                  ? 'ring-2 ring-white ring-offset-2 ring-offset-[#14112E] scale-110 shadow-lg'
-                  : 'opacity-65 hover:opacity-100 hover:scale-105'
-              }`}
+              className={`w-7 h-7 rounded-full transition-all flex items-center justify-center cursor-pointer ${isSelected
+                ? 'ring-2 ring-white ring-offset-2 ring-offset-[#14112E] scale-110 shadow-lg'
+                : 'opacity-65 hover:opacity-100 hover:scale-105'
+                }`}
               style={{ backgroundColor: preset.hex }}
               title={preset.label}
               aria-label={`Select ${preset.label} color theme`}
@@ -650,7 +649,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     },
   });
 
-    const ensureInvestmentDefaults = (res: CmsInvestmentData): CmsInvestmentData => ({
+  const ensureInvestmentDefaults = (res: CmsInvestmentData): CmsInvestmentData => ({
     ...initialCmsInvestmentData,
     ...res,
     headerSection: {
@@ -1511,7 +1510,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     }
   };
 
-  
+
   // Save Investment Data
   const handleSaveInvestmentData = async () => {
     try {
@@ -1616,16 +1615,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     }));
   };
 
-  const handlePIWorkTogetherChange = (field: keyof ProjectsInnovatorWorkTogetherSection, value: any) => {
-    setProjectsInnovatorData((prev) => ({
-      ...prev,
-      workTogetherSection: {
-        ...prev.workTogetherSection,
-        [field]: value,
-      },
-    }));
-  };
-
   const handlePIWorkTogetherBilingualChange = (
     field: 'tagline' | 'title' | 'description' | 'primaryButtonText' | 'secondaryButtonText',
     lang: 'en' | 'ar',
@@ -1711,16 +1700,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     }));
   };
 
-  const handleAttWorkTogetherChange = (field: keyof ProjectsInnovatorWorkTogetherSection, value: any) => {
-    setAttractiveData((prev) => ({
-      ...prev,
-      workTogetherSection: {
-        ...prev.workTogetherSection,
-        [field]: value,
-      },
-    }));
-  };
-
   const handleAttWorkTogetherBilingualChange = (
     field: 'tagline' | 'title' | 'description' | 'primaryButtonText' | 'secondaryButtonText',
     lang: 'en' | 'ar',
@@ -1802,16 +1781,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
           ...prev.aboutSection[field],
           [lang]: value,
         },
-      },
-    }));
-  };
-
-  const handleMIWorkTogetherChange = (field: keyof ProjectsInnovatorWorkTogetherSection, value: any) => {
-    setMedicsInnovatorData((prev) => ({
-      ...prev,
-      workTogetherSection: {
-        ...prev.workTogetherSection,
-        [field]: value,
       },
     }));
   };
@@ -2105,7 +2074,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     });
   };
 
-// Section 1: Contact Us & Enquiry Header Handler
+  // Section 1: Contact Us & Enquiry Header Handler
   const handleContactHeaderChange = (
     field: 'title' | 'description' | 'enquiryTitle' | 'enquiryDescription',
     lang: 'en' | 'ar',
@@ -3141,21 +3110,21 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   <User className="w-3.5 h-3.5 text-rose-400" />
                   Founder Section
                 </Link>
-                <Button
+                {/* <Button 
                   variant="outline"
                   onClick={() => setShowPreviewModal(true)}
                   className="border-white/10 text-white hover:bg-white/10 flex items-center gap-1.5 text-xs py-2 cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5 text-[#F68E2D]" />
                   Live Preview
-                </Button>
+                </Button>*/}
                 <Button
                   variant="outline"
                   onClick={handleReset}
                   className="border-white/10 text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1 text-xs py-2 cursor-pointer"
                   title="Reset all sections to default template"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
+                  {/* <RefreshCw className="w-3.5 h-3.5" /> */}
                 </Button>
               </div>
             </div>
@@ -3165,11 +3134,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               <div className="flex items-center gap-1.5 flex-wrap">
                 <button
                   onClick={() => setSelectedCategory('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    selectedCategory === 'all'
-                      ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${selectedCategory === 'all'
+                    ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20'
+                    : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                    }`}
                 >
                   All Sections ({tabsConfig.length})
                 </button>
@@ -3177,11 +3145,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   <button
                     key={tab.id}
                     onClick={() => setSelectedCategory(tab.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      selectedCategory === tab.id
-                        ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20'
-                        : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-                    }`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${selectedCategory === tab.id
+                      ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20'
+                      : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -3202,7 +3169,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
             {/* 2-COLUMN GRID OF SECTION CARDS */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-              
+
               {/* CARD 1: HOME PAGE (Sections 1 through 6) */}
               {(selectedCategory === 'all' || selectedCategory === 'home') && (
                 <div className="bg-[#14112E] border border-white/10 hover:border-white/20 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
@@ -3701,7 +3668,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
               )}
 
-              
+
               {/* CARD 3: COMPANY PROFILE (Dedicated 3 Sections Matching Reference Images) */}
               {filteredTabs.some((t) => t.id === 'company') && (
                 <div className="bg-[#14112E] border border-sky-500/30 hover:border-sky-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
@@ -4143,143 +4110,143 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
               )}
 
-              
-                {/* CARD 9: INVESTMENT (Dedicated 6 Sections Matching Reference Images) */}
-                {filteredTabs.some((t) => t.id === 'investment') && (
-                  <div className="bg-[#14112E] border border-emerald-500/30 hover:border-emerald-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
-                    {/* Card Header with Edit button in TOP RIGHT */}
-                    <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 bg-emerald-500/[0.04]">
-                      <div className="flex items-start gap-4">
-                        <div className="w-11 h-11 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                          <TrendingUp className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-base font-bold text-emerald-400">
-                              Investment
-                            </h3>
-                            <span className="text-xs text-emerald-400/70 font-normal">
-                              (الاستثمار)
-                            </span>
-                          </div>
-                          <p className="text-xs text-white/60 mt-0.5 leading-relaxed">
-                            Opportunities, institutional mission, macroeconomic drivers, focus sectors & environment
-                          </p>
-                        </div>
-                      </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleOpenPageEditor('investment')}
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        Edit Page
-                      </button>
+              {/* CARD 9: INVESTMENT (Dedicated 6 Sections Matching Reference Images) */}
+              {filteredTabs.some((t) => t.id === 'investment') && (
+                <div className="bg-[#14112E] border border-emerald-500/30 hover:border-emerald-500/50 rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between">
+                  {/* Card Header with Edit button in TOP RIGHT */}
+                  <div className="p-6 border-b border-white/5 flex items-start justify-between gap-4 bg-emerald-500/[0.04]">
+                    <div className="flex items-start gap-4">
+                      <div className="w-11 h-11 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                        <TrendingUp className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-emerald-400">
+                            Investment
+                          </h3>
+                          <span className="text-xs text-emerald-400/70 font-normal">
+                            (الاستثمار)
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/60 mt-0.5 leading-relaxed">
+                          Opportunities, institutional mission, macroeconomic drivers, focus sectors & environment
+                        </p>
+                      </div>
                     </div>
 
-                    {/* Section List Inside Card */}
-                    <div className="divide-y divide-white/5 flex-1">
-                      <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">
-                              Section 1: Investment Opportunities Header
-                            </span>
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Active
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-white/50">
-                            Headline: &quot;{investmentData.headerSection.title[activeLangTab] || 'Investment Opportunities'}&quot;
-                          </p>
-                        </div>
-                      </div>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenPageEditor('investment')}
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      Edit Page
+                    </button>
+                  </div>
 
-                      <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">
-                              Section 2: Institutional Mission
-                            </span>
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Active
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-white/50">
-                            National growth solutions, 3 narrative pillars, and metrics dashboard graphic
-                          </p>
+                  {/* Section List Inside Card */}
+                  <div className="divide-y divide-white/5 flex-1">
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-white">
+                            Section 1: Investment Opportunities Header
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
                         </div>
+                        <p className="text-[11px] text-white/50">
+                          Headline: &quot;{investmentData.headerSection.title[activeLangTab] || 'Investment Opportunities'}&quot;
+                        </p>
                       </div>
+                    </div>
 
-                      <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">
-                              Section 3: Macroeconomic Drivers
-                            </span>
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Active
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-white/50">
-                            Why invest in Iraq now? ({investmentData.driversSection.drivers.length} macroeconomic drivers)
-                          </p>
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-white">
+                            Section 2: Institutional Mission
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
                         </div>
+                        <p className="text-[11px] text-white/50">
+                          National growth solutions, 3 narrative pillars, and metrics dashboard graphic
+                        </p>
                       </div>
+                    </div>
 
-                      <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">
-                              Section 4: Our Focus Sectors
-                            </span>
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Active
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-white/50">
-                            Industry, real estate, energy, agriculture & tech ({investmentData.sectorsSection.sectors.length} focus areas)
-                          </p>
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-white">
+                            Section 3: Macroeconomic Drivers
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
                         </div>
+                        <p className="text-[11px] text-white/50">
+                          Why invest in Iraq now? ({investmentData.driversSection.drivers.length} macroeconomic drivers)
+                        </p>
                       </div>
+                    </div>
 
-                      <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">
-                              Section 5: The Investment Environment
-                            </span>
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Active
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-white/50">
-                            Encouraging factors ({investmentData.environmentSection.factors.length} factors) and foundation for investment
-                          </p>
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-white">
+                            Section 4: Our Focus Sectors
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
                         </div>
+                        <p className="text-[11px] text-white/50">
+                          Industry, real estate, energy, agriculture & tech ({investmentData.sectorsSection.sectors.length} focus areas)
+                        </p>
                       </div>
+                    </div>
 
-                      <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-semibold text-white">
-                              Section 6: Let's Work Together Banner
-                            </span>
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Active
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-white/50">
-                            Luxury high-converting CTA banner with Quote & Contact routing
-                          </p>
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-white">
+                            Section 5: The Investment Environment
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
                         </div>
+                        <p className="text-[11px] text-white/50">
+                          Encouraging factors ({investmentData.environmentSection.factors.length} factors) and foundation for investment
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-white">
+                            Section 6: Let's Work Together Banner
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-white/50">
+                          Luxury high-converting CTA banner with Quote & Contact routing
+                        </p>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                            {/* CARD 10: PROJECTS INNOVATOR (Dedicated 5 Sections Matching Reference Images) */}
+              {/* CARD 10: PROJECTS INNOVATOR (Dedicated 5 Sections Matching Reference Images) */}
               {filteredTabs.some((t) => t.id === 'projects-innovator') && (
                 <div className={`bg-[#14112E] border ${piTheme.cardBorder} rounded-2xl shadow-xl overflow-hidden transition-all flex flex-col justify-between`}>
                   {/* Card Header with Edit button in TOP RIGHT */}
@@ -4694,18 +4661,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                   <button
                     type="button"
                     onClick={() => setActiveLangTab('en')}
-                    className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      activeLangTab === 'en' ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20' : 'text-white/70 hover:text-white'
-                    }`}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeLangTab === 'en' ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20' : 'text-white/70 hover:text-white'
+                      }`}
                   >
                     <span>🇬🇧</span> EN
                   </button>
                   <button
                     type="button"
                     onClick={() => setActiveLangTab('ar')}
-                    className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      activeLangTab === 'ar' ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20' : 'text-white/70 hover:text-white'
-                    }`}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${activeLangTab === 'ar' ? 'bg-[#F68E2D] text-white shadow-md shadow-[#F68E2D]/20' : 'text-white/70 hover:text-white'
+                      }`}
                   >
                     <span>🇸🇦</span> AR
                   </button>
@@ -4732,7 +4697,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             {/* IF EDITING HOME PAGE (Sections 1 through 6) */}
             {editingTabId === 'home' && (
               <div className="space-y-8">
-                
+
                 {/* SECTION 1: HERO & FOUNDER */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
@@ -5972,23 +5937,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
 
                         <div>
-                          <label className="text-xs font-semibold text-white/80 block mb-1">
-                            Primary Button Target URL / Route
+                          <label className="text-xs font-semibold text-white/80 flex items-center justify-between mb-1">
+                            <span>Primary Button Target URL / Route</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
                           </label>
                           <input
                             type="text"
-                            value={data.bannerSection?.primaryButtonUrl || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                bannerSection: {
-                                  ...data.bannerSection,
-                                  primaryButtonUrl: e.target.value,
-                                },
-                              })
-                            }
-                            placeholder="/quotes or /contact"
-                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={data.bannerSection?.primaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -6036,23 +5998,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
 
                         <div>
-                          <label className="text-xs font-semibold text-white/80 block mb-1">
-                            Secondary Button Target URL / Route
+                          <label className="text-xs font-semibold text-white/80 flex items-center justify-between mb-1">
+                            <span>Secondary Button Target URL / Route</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
                           </label>
                           <input
                             type="text"
-                            value={data.bannerSection?.secondaryButtonUrl || ''}
-                            onChange={(e) =>
-                              setData({
-                                ...data,
-                                bannerSection: {
-                                  ...data.bannerSection,
-                                  secondaryButtonUrl: e.target.value,
-                                },
-                              })
-                            }
-                            placeholder="/contact"
-                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={data.bannerSection?.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -6093,11 +6052,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         <button
                           type="button"
                           onClick={() => setBrandsData({ ...brandsData, isActive: !brandsData.isActive })}
-                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                            brandsData.isActive !== false
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-white/10 text-white/40 border border-white/10'
-                          }`}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${brandsData.isActive !== false
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-white/10 text-white/40 border border-white/10'
+                            }`}
                         >
                           {brandsData.isActive !== false ? 'Active (Published)' : 'Inactive'}
                         </button>
@@ -6351,11 +6309,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         <button
                           type="button"
                           onClick={() => setCtaBannerData({ ...ctaBannerData, isActive: !ctaBannerData.isActive })}
-                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                            ctaBannerData.isActive
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-white/10 text-white/40 border border-white/10'
-                          }`}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${ctaBannerData.isActive
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-white/10 text-white/40 border border-white/10'
+                            }`}
                         >
                           {ctaBannerData.isActive ? 'Active (Published)' : 'Inactive'}
                         </button>
@@ -6558,20 +6515,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
 
                         <div>
-                          <label className="text-xs font-semibold text-white/70 block mb-1">
-                            Target URL / Route
+                          <label className="text-xs font-semibold text-white/70 flex items-center justify-between mb-1">
+                            <span>Target URL / Route</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
                           </label>
                           <input
                             type="text"
-                            value={ctaBannerData.primaryButtonUrl || ''}
-                            onChange={(e) =>
-                              setCtaBannerData({
-                                ...ctaBannerData,
-                                primaryButtonUrl: e.target.value,
-                              })
-                            }
-                            placeholder="/quotes or /contact"
-                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={ctaBannerData.primaryButtonUrl || '/quotes'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -6620,20 +6577,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </div>
 
                         <div>
-                          <label className="text-xs font-semibold text-white/70 block mb-1">
-                            Target URL / Route
+                          <label className="text-xs font-semibold text-white/70 flex items-center justify-between mb-1">
+                            <span>Target URL / Route</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
                           </label>
                           <input
                             type="text"
-                            value={ctaBannerData.secondaryButtonUrl || ''}
-                            onChange={(e) =>
-                              setCtaBannerData({
-                                ...ctaBannerData,
-                                secondaryButtonUrl: e.target.value,
-                              })
-                            }
-                            placeholder="/contact"
-                            className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={ctaBannerData.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -6666,7 +6623,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               </div>
             )}
 
-                        {/* IF EDITING ABOUT US PAGE (Sections 1 through 4) */}
+            {/* IF EDITING ABOUT US PAGE (Sections 1 through 4) */}
             {editingTabId === 'about' && (
               <div className="space-y-8">
                 {/* SECTION 1: PAGE HEADER & OVERVIEW */}
@@ -7479,452 +7436,399 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       </div>
                     </div>
                   </CardContent>
- 
-                {/* SECTION 5: OUR LEADERSHIP (IMAGE 6) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
-                        5
+
+                  {/* SECTION 5: OUR LEADERSHIP (IMAGE 6) */}
+                  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                    <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
+                          5
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-bold text-white">
+                            Section 5: Our Leadership
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            Tagline, title, description, and executive leadership profiles
+                          </p>
+                        </div>
                       </div>
+                      <Button
+                        type="button"
+                        onClick={handleAddLeader}
+                        size="sm"
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add Leader
+                      </Button>
+                    </CardHeader>
+
+                    <CardContent className="p-6 space-y-6">
+                      {/* Tagline */}
                       <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 5: Our Leadership
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          Tagline, title, description, and executive leadership profiles
-                        </p>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.leadershipSection.tagline.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                leadershipSection: {
+                                  ...aboutData.leadershipSection,
+                                  tagline: { ...aboutData.leadershipSection.tagline, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. OUR LEADERSHIP"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.leadershipSection.tagline.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                leadershipSection: {
+                                  ...aboutData.leadershipSection,
+                                  tagline: { ...aboutData.leadershipSection.tagline, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: قيادتنا"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
                       </div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddLeader}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Leader
-                    </Button>
-                  </CardHeader>
 
-                  <CardContent className="p-6 space-y-6">
-                    {/* Tagline */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.leadershipSection.tagline.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              leadershipSection: {
-                                ...aboutData.leadershipSection,
-                                tagline: { ...aboutData.leadershipSection.tagline, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. OUR LEADERSHIP"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.leadershipSection.tagline.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              leadershipSection: {
-                                ...aboutData.leadershipSection,
-                                tagline: { ...aboutData.leadershipSection.tagline, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: قيادتنا"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Main Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.leadershipSection.title.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              leadershipSection: {
-                                ...aboutData.leadershipSection,
-                                title: { ...aboutData.leadershipSection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. The People Behind Our Progress"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.leadershipSection.title.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              leadershipSection: {
-                                ...aboutData.leadershipSection,
-                                title: { ...aboutData.leadershipSection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: الأشخاص الذين يقودون تقدمنا"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <textarea
-                          rows={3}
-                          value={aboutData.leadershipSection.description.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              leadershipSection: {
-                                ...aboutData.leadershipSection,
-                                description: { ...aboutData.leadershipSection.description, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Meet the leadership and teams working together to deliver quality..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <textarea
-                          rows={3}
-                          dir="rtl"
-                          value={aboutData.leadershipSection.description.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              leadershipSection: {
-                                ...aboutData.leadershipSection,
-                                description: { ...aboutData.leadershipSection.description, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: تعرف على القيادة والفرق التي تعمل معاً لتقديم الجودة..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Repeating Leaders List */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                        Leadership Members ({aboutData.leadershipSection.leaders.length})
-                      </h4>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {aboutData.leadershipSection.leaders.map((leader, lIdx) => (
-                          <div
-                            key={leader.id || lIdx}
-                            className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
-                          >
-                            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                              <span className="text-xs font-bold text-red-400">
-                                Leader #{lIdx + 1}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveLeader(lIdx)}
-                                className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                title="Delete leader"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-
-                            {/* Image Upload */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Leader Photo (Portrait)
-                              </label>
-                              <ImageUploadField
-                                value={leader.image || ''}
-                                onChange={(url) => handleLeaderChange(lIdx, 'image', url)}
-                                folder="leadership"
-                                label="Upload Leader Photo"
-                              />
-                            </div>
-
-                            {/* Name */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Full Name ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={leader.name.en}
-                                  onChange={(e) => handleLeaderChange(lIdx, 'name', 'en', e.target.value)}
-                                  placeholder="e.g. Dr. Ahmed Dhahir"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={leader.name.ar}
-                                  onChange={(e) => handleLeaderChange(lIdx, 'name', 'ar', e.target.value)}
-                                  placeholder="مثال: د. أحمد ظاهر"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Role */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Designation / Role ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={leader.role.en}
-                                  onChange={(e) => handleLeaderChange(lIdx, 'role', 'en', e.target.value)}
-                                  placeholder="e.g. Founder & CEO"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={leader.role.ar}
-                                  onChange={(e) => handleLeaderChange(lIdx, 'role', 'ar', e.target.value)}
-                                  placeholder="مثال: المؤسس والمدير التنفيذي"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 6: OUR MANAGEMENT TEAM (IMAGE 7) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
-                        6
-                      </div>
+                      {/* Main Title */}
                       <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 6: Our Management Team
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          Group divisions with company logos, links, and nested management team members
-                        </p>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.leadershipSection.title.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                leadershipSection: {
+                                  ...aboutData.leadershipSection,
+                                  title: { ...aboutData.leadershipSection.title, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. The People Behind Our Progress"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.leadershipSection.title.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                leadershipSection: {
+                                  ...aboutData.leadershipSection,
+                                  title: { ...aboutData.leadershipSection.title, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: الأشخاص الذين يقودون تقدمنا"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
                       </div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddDivision}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Division
-                    </Button>
-                  </CardHeader>
 
-                  <CardContent className="p-6 space-y-6">
-                    {/* Main Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.managementSection.title.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              managementSection: {
-                                ...aboutData.managementSection,
-                                title: { ...aboutData.managementSection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Our Management Team"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.managementSection.title.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              managementSection: {
-                                ...aboutData.managementSection,
-                                title: { ...aboutData.managementSection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: فريق إدارتنا"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
+                      {/* Description */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <textarea
+                            rows={3}
+                            value={aboutData.leadershipSection.description.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                leadershipSection: {
+                                  ...aboutData.leadershipSection,
+                                  description: { ...aboutData.leadershipSection.description, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Meet the leadership and teams working together to deliver quality..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <textarea
+                            rows={3}
+                            dir="rtl"
+                            value={aboutData.leadershipSection.description.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                leadershipSection: {
+                                  ...aboutData.leadershipSection,
+                                  description: { ...aboutData.leadershipSection.description, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: تعرف على القيادة والفرق التي تعمل معاً لتقديم الجودة..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                          />
+                        )}
+                      </div>
 
-                    {/* Divisions List */}
-                    <div className="pt-4 border-t border-white/10 space-y-6">
-                      <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                        Specialized Divisions ({aboutData.managementSection.divisions.length})
-                      </h4>
+                      {/* Repeating Leaders List */}
+                      <div className="pt-4 border-t border-white/10 space-y-4">
+                        <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                          Leadership Members ({aboutData.leadershipSection.leaders.length})
+                        </h4>
 
-                      <div className="space-y-6">
-                        {aboutData.managementSection.divisions.map((division, dIdx) => (
-                          <div
-                            key={division.id || dIdx}
-                            className="p-6 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-5 transition-all"
-                          >
-                            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                              <div className="flex items-center gap-3">
-                                <span className="px-2.5 py-1 rounded-md text-xs font-black bg-red-600/30 text-red-400 border border-red-500/30">
-                                  {division.badge || `DIV ${dIdx + 1}`}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {aboutData.leadershipSection.leaders.map((leader, lIdx) => (
+                            <div
+                              key={leader.id || lIdx}
+                              className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
+                            >
+                              <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                                <span className="text-xs font-bold text-red-400">
+                                  Leader #{lIdx + 1}
                                 </span>
-                                <span className="text-sm font-bold text-white">
-                                  {division.companyName.en || `Division #${dIdx + 1}`}
-                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveLeader(lIdx)}
+                                  className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                                  title="Delete leader"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveDivision(dIdx)}
-                                className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                title="Delete division"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              {/* Short Badge */}
+                              {/* Image Upload */}
                               <div>
                                 <label className="text-[11px] text-white/60 block mb-1">
-                                  Short Badge (e.g. PI, AT, MI)
-                                </label>
-                                <input
-                                  type="text"
-                                  value={division.badge}
-                                  onChange={(e) => handleDivisionChange(dIdx, 'badge', e.target.value)}
-                                  placeholder="e.g. PI"
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              </div>
-
-                              {/* Company Logo */}
-                              <div className="md:col-span-2">
-                                <label className="text-[11px] text-white/60 block mb-1">
-                                  Company Logo
+                                  Leader Photo (Portrait)
                                 </label>
                                 <ImageUploadField
-                                  value={division.logoUrl || ''}
-                                  onChange={(url) => handleDivisionChange(dIdx, 'logoUrl', url)}
-                                  folder="divisions"
-                                  label="Upload Division Logo"
+                                  value={leader.image || ''}
+                                  onChange={(url) => handleLeaderChange(lIdx, 'image', url)}
+                                  folder="leadership"
+                                  label="Upload Leader Photo"
                                 />
                               </div>
-                            </div>
 
-                            {/* Company Name */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Company Name ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={division.companyName.en}
-                                  onChange={(e) => handleDivisionChange(dIdx, 'companyName', 'en', e.target.value)}
-                                  placeholder="e.g. Projects Innovator"
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={division.companyName.ar}
-                                  onChange={(e) => handleDivisionChange(dIdx, 'companyName', 'ar', e.target.value)}
-                                  placeholder="مثال: مبتكر المشاريع"
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Description */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <textarea
-                                  rows={2}
-                                  value={division.description.en}
-                                  onChange={(e) => handleDivisionChange(dIdx, 'description', 'en', e.target.value)}
-                                  placeholder="e.g. Delivering innovative construction and infrastructure solutions..."
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <textarea
-                                  rows={2}
-                                  dir="rtl"
-                                  value={division.description.ar}
-                                  onChange={(e) => handleDivisionChange(dIdx, 'description', 'ar', e.target.value)}
-                                  placeholder="مثال: تقديم حلول بناء وبنية تحتية مبتكرة تشكل مساحات حديثة..."
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Link Text and URL */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {/* Name */}
                               <div>
                                 <label className="text-[11px] text-white/60 block mb-1">
-                                  Link Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                  Full Name ({activeLangTab === 'en' ? 'English' : 'Arabic'})
                                 </label>
                                 {activeLangTab === 'en' && (
                                   <input
                                     type="text"
-                                    value={division.linkText.en}
-                                    onChange={(e) => handleDivisionChange(dIdx, 'linkText', 'en', e.target.value)}
-                                    placeholder="e.g. Projects Innovator ↗"
+                                    value={leader.name.en}
+                                    onChange={(e) => handleLeaderChange(lIdx, 'name', 'en', e.target.value)}
+                                    placeholder="e.g. Dr. Ahmed Dhahir"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <input
+                                    type="text"
+                                    dir="rtl"
+                                    value={leader.name.ar}
+                                    onChange={(e) => handleLeaderChange(lIdx, 'name', 'ar', e.target.value)}
+                                    placeholder="مثال: د. أحمد ظاهر"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                  />
+                                )}
+                              </div>
+
+                              {/* Role */}
+                              <div>
+                                <label className="text-[11px] text-white/60 block mb-1">
+                                  Designation / Role ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <input
+                                    type="text"
+                                    value={leader.role.en}
+                                    onChange={(e) => handleLeaderChange(lIdx, 'role', 'en', e.target.value)}
+                                    placeholder="e.g. Founder & CEO"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <input
+                                    type="text"
+                                    dir="rtl"
+                                    value={leader.role.ar}
+                                    onChange={(e) => handleLeaderChange(lIdx, 'role', 'ar', e.target.value)}
+                                    placeholder="مثال: المؤسس والمدير التنفيذي"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* SECTION 6: OUR MANAGEMENT TEAM (IMAGE 7) */}
+                  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                    <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
+                          6
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-bold text-white">
+                            Section 6: Our Management Team
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            Group divisions with company logos, links, and nested management team members
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleAddDivision}
+                        size="sm"
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add Division
+                      </Button>
+                    </CardHeader>
+
+                    <CardContent className="p-6 space-y-6">
+                      {/* Main Title */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.managementSection.title.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                managementSection: {
+                                  ...aboutData.managementSection,
+                                  title: { ...aboutData.managementSection.title, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Our Management Team"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.managementSection.title.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                managementSection: {
+                                  ...aboutData.managementSection,
+                                  title: { ...aboutData.managementSection.title, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: فريق إدارتنا"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Divisions List */}
+                      <div className="pt-4 border-t border-white/10 space-y-6">
+                        <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                          Specialized Divisions ({aboutData.managementSection.divisions.length})
+                        </h4>
+
+                        <div className="space-y-6">
+                          {aboutData.managementSection.divisions.map((division, dIdx) => (
+                            <div
+                              key={division.id || dIdx}
+                              className="p-6 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-5 transition-all"
+                            >
+                              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                                <div className="flex items-center gap-3">
+                                  <span className="px-2.5 py-1 rounded-md text-xs font-black bg-red-600/30 text-red-400 border border-red-500/30">
+                                    {division.badge || `DIV ${dIdx + 1}`}
+                                  </span>
+                                  <span className="text-sm font-bold text-white">
+                                    {division.companyName.en || `Division #${dIdx + 1}`}
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveDivision(dIdx)}
+                                  className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                                  title="Delete division"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {/* Short Badge */}
+                                <div>
+                                  <label className="text-[11px] text-white/60 block mb-1">
+                                    Short Badge (e.g. PI, AT, MI)
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={division.badge}
+                                    onChange={(e) => handleDivisionChange(dIdx, 'badge', e.target.value)}
+                                    placeholder="e.g. PI"
+                                    className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                </div>
+
+                                {/* Company Logo */}
+                                <div className="md:col-span-2">
+                                  <label className="text-[11px] text-white/60 block mb-1">
+                                    Company Logo
+                                  </label>
+                                  <ImageUploadField
+                                    value={division.logoUrl || ''}
+                                    onChange={(url) => handleDivisionChange(dIdx, 'logoUrl', url)}
+                                    folder="divisions"
+                                    label="Upload Division Logo"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Company Name */}
+                              <div>
+                                <label className="text-[11px] text-white/60 block mb-1">
+                                  Company Name ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <input
+                                    type="text"
+                                    value={division.companyName.en}
+                                    onChange={(e) => handleDivisionChange(dIdx, 'companyName', 'en', e.target.value)}
+                                    placeholder="e.g. Projects Innovator"
                                     className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                                   />
                                 )}
@@ -7932,1297 +7836,1353 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                   <input
                                     type="text"
                                     dir="rtl"
-                                    value={division.linkText.ar}
-                                    onChange={(e) => handleDivisionChange(dIdx, 'linkText', 'ar', e.target.value)}
-                                    placeholder="مثال: مبتكر المشاريع ↗"
+                                    value={division.companyName.ar}
+                                    onChange={(e) => handleDivisionChange(dIdx, 'companyName', 'ar', e.target.value)}
+                                    placeholder="مثال: مبتكر المشاريع"
                                     className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                                   />
                                 )}
                               </div>
+
+                              {/* Description */}
                               <div>
                                 <label className="text-[11px] text-white/60 block mb-1">
-                                  Link URL
+                                  Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
                                 </label>
-                                <input
-                                  type="text"
-                                  value={division.linkUrl}
-                                  onChange={(e) => handleDivisionChange(dIdx, 'linkUrl', e.target.value)}
-                                  placeholder="e.g. /companies/projects-innovator"
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              </div>
-                            </div>
-
-                            {/* Nested Management Members */}
-                            <div className="pt-4 border-t border-white/10 space-y-4">
-                              <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                  Management Members ({division.members?.length || 0})
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleAddDivisionMember(dIdx)}
-                                  className="text-xs text-red-400 hover:text-red-300 font-semibold inline-flex items-center gap-1 cursor-pointer"
-                                >
-                                  <Plus className="w-3.5 h-3.5" />
-                                  Add Member
-                                </button>
+                                {activeLangTab === 'en' && (
+                                  <textarea
+                                    rows={2}
+                                    value={division.description.en}
+                                    onChange={(e) => handleDivisionChange(dIdx, 'description', 'en', e.target.value)}
+                                    placeholder="e.g. Delivering innovative construction and infrastructure solutions..."
+                                    className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <textarea
+                                    rows={2}
+                                    dir="rtl"
+                                    value={division.description.ar}
+                                    onChange={(e) => handleDivisionChange(dIdx, 'description', 'ar', e.target.value)}
+                                    placeholder="مثال: تقديم حلول بناء وبنية تحتية مبتكرة تشكل مساحات حديثة..."
+                                    className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                                  />
+                                )}
                               </div>
 
+                              {/* Link Text and URL */}
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {(division.members || []).map((member, mIdx) => (
-                                  <div
-                                    key={member.id || mIdx}
-                                    className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3 relative group"
+                                <div>
+                                  <label className="text-[11px] text-white/60 block mb-1">
+                                    Link Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                  </label>
+                                  {activeLangTab === 'en' && (
+                                    <input
+                                      type="text"
+                                      value={division.linkText.en}
+                                      onChange={(e) => handleDivisionChange(dIdx, 'linkText', 'en', e.target.value)}
+                                      placeholder="e.g. Projects Innovator ↗"
+                                      className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                    />
+                                  )}
+                                  {activeLangTab === 'ar' && (
+                                    <input
+                                      type="text"
+                                      dir="rtl"
+                                      value={division.linkText.ar}
+                                      onChange={(e) => handleDivisionChange(dIdx, 'linkText', 'ar', e.target.value)}
+                                      placeholder="مثال: مبتكر المشاريع ↗"
+                                      className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                    />
+                                  )}
+                                </div>
+                                <div>
+                                  <label className="text-[11px] text-white/60 flex items-center justify-between mb-1">
+                                    <span>Link URL</span>
+                                    <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                      <Lock className="w-2.5 h-2.5 text-white/40" />
+                                      Fixed Route
+                                    </span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    readOnly
+                                    disabled
+                                    value={division.linkUrl || '/companies'}
+                                    title="Target URL is fixed by system navigation and cannot be edited"
+                                    className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Nested Management Members */}
+                              <div className="pt-4 border-t border-white/10 space-y-4">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] font-bold text-white/70 uppercase tracking-wider">
+                                    Management Members ({division.members?.length || 0})
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAddDivisionMember(dIdx)}
+                                    className="text-xs text-red-400 hover:text-red-300 font-semibold inline-flex items-center gap-1 cursor-pointer"
                                   >
-                                    <div className="flex items-center justify-between pb-1 border-b border-white/10">
-                                      <span className="text-[10px] font-bold text-red-400">
-                                        Member #{mIdx + 1}
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleRemoveDivisionMember(dIdx, mIdx)}
-                                        className="text-white/40 hover:text-red-400 p-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
-                                        title="Delete member"
-                                      >
-                                        <Trash2 className="w-3 h-3" />
-                                      </button>
-                                    </div>
+                                    <Plus className="w-3.5 h-3.5" />
+                                    Add Member
+                                  </button>
+                                </div>
 
-                                    {/* Member Photo */}
-                                    <div>
-                                      <label className="text-[10px] text-white/50 block mb-1">
-                                        Member Photo
-                                      </label>
-                                      <ImageUploadField
-                                        value={member.image || ''}
-                                        onChange={(url) => handleDivisionMemberChange(dIdx, mIdx, 'image', url)}
-                                        folder="management"
-                                        label="Upload Photo"
-                                      />
-                                    </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {(division.members || []).map((member, mIdx) => (
+                                    <div
+                                      key={member.id || mIdx}
+                                      className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3 relative group"
+                                    >
+                                      <div className="flex items-center justify-between pb-1 border-b border-white/10">
+                                        <span className="text-[10px] font-bold text-red-400">
+                                          Member #{mIdx + 1}
+                                        </span>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleRemoveDivisionMember(dIdx, mIdx)}
+                                          className="text-white/40 hover:text-red-400 p-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
+                                          title="Delete member"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </button>
+                                      </div>
 
-                                    {/* Member Name */}
-                                    <div>
-                                      <label className="text-[10px] text-white/50 block mb-1">
-                                        Member Name ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                                      </label>
-                                      {activeLangTab === 'en' && (
-                                        <input
-                                          type="text"
-                                          value={member.name.en}
-                                          onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'name', 'en', e.target.value)}
-                                          placeholder="e.g. Management Member 1"
-                                          className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      {/* Member Photo */}
+                                      <div>
+                                        <label className="text-[10px] text-white/50 block mb-1">
+                                          Member Photo
+                                        </label>
+                                        <ImageUploadField
+                                          value={member.image || ''}
+                                          onChange={(url) => handleDivisionMemberChange(dIdx, mIdx, 'image', url)}
+                                          folder="management"
+                                          label="Upload Photo"
                                         />
-                                      )}
-                                      {activeLangTab === 'ar' && (
-                                        <input
-                                          type="text"
-                                          dir="rtl"
-                                          value={member.name.ar}
-                                          onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'name', 'ar', e.target.value)}
-                                          placeholder="مثال: عضو الإدارة 1"
-                                          className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                        />
-                                      )}
+                                      </div>
+
+                                      {/* Member Name */}
+                                      <div>
+                                        <label className="text-[10px] text-white/50 block mb-1">
+                                          Member Name ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                        </label>
+                                        {activeLangTab === 'en' && (
+                                          <input
+                                            type="text"
+                                            value={member.name.en}
+                                            onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'name', 'en', e.target.value)}
+                                            placeholder="e.g. Management Member 1"
+                                            className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                          />
+                                        )}
+                                        {activeLangTab === 'ar' && (
+                                          <input
+                                            type="text"
+                                            dir="rtl"
+                                            value={member.name.ar}
+                                            onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'name', 'ar', e.target.value)}
+                                            placeholder="مثال: عضو الإدارة 1"
+                                            className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                          />
+                                        )}
+                                      </div>
+
+                                      {/* Member Role */}
+                                      <div>
+                                        <label className="text-[10px] text-white/50 block mb-1">
+                                          Role / Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                        </label>
+                                        {activeLangTab === 'en' && (
+                                          <input
+                                            type="text"
+                                            value={member.role.en}
+                                            onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'role', 'en', e.target.value)}
+                                            placeholder="e.g. General Manager"
+                                            className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                          />
+                                        )}
+                                        {activeLangTab === 'ar' && (
+                                          <input
+                                            type="text"
+                                            dir="rtl"
+                                            value={member.role.ar}
+                                            onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'role', 'ar', e.target.value)}
+                                            placeholder="مثال: المدير العام"
+                                            className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                          />
+                                        )}
+                                      </div>
                                     </div>
-
-                                    {/* Member Role */}
-                                    <div>
-                                      <label className="text-[10px] text-white/50 block mb-1">
-                                        Role / Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                                      </label>
-                                      {activeLangTab === 'en' && (
-                                        <input
-                                          type="text"
-                                          value={member.role.en}
-                                          onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'role', 'en', e.target.value)}
-                                          placeholder="e.g. General Manager"
-                                          className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                        />
-                                      )}
-                                      {activeLangTab === 'ar' && (
-                                        <input
-                                          type="text"
-                                          dir="rtl"
-                                          value={member.role.ar}
-                                          onChange={(e) => handleDivisionMemberChange(dIdx, mIdx, 'role', 'ar', e.target.value)}
-                                          placeholder="مثال: المدير العام"
-                                          className="w-full px-2.5 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 7: OUR CORE VALUES (IMAGE 8) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
-                        7
-                      </div>
-                      <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 7: Our Core Values
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          What We Stand For - 6 core value cards with icons, numbers, and principles
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddCoreValue}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Core Value
-                    </Button>
-                  </CardHeader>
-
-                  <CardContent className="p-6 space-y-6">
-                    {/* Tagline */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.coreValuesSection.tagline.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              coreValuesSection: {
-                                ...aboutData.coreValuesSection,
-                                tagline: { ...aboutData.coreValuesSection.tagline, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. WHAT WE STAND FOR"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.coreValuesSection.tagline.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              coreValuesSection: {
-                                ...aboutData.coreValuesSection,
-                                tagline: { ...aboutData.coreValuesSection.tagline, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: ما نؤمن به وندافع عنه"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Main Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.coreValuesSection.title.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              coreValuesSection: {
-                                ...aboutData.coreValuesSection,
-                                title: { ...aboutData.coreValuesSection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Our Core Values"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.coreValuesSection.title.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              coreValuesSection: {
-                                ...aboutData.coreValuesSection,
-                                title: { ...aboutData.coreValuesSection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: قيمنا الجوهرية"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <textarea
-                          rows={3}
-                          value={aboutData.coreValuesSection.description.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              coreValuesSection: {
-                                ...aboutData.coreValuesSection,
-                                description: { ...aboutData.coreValuesSection.description, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. The principles that guide our decisions, shape our actions..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <textarea
-                          rows={3}
-                          dir="rtl"
-                          value={aboutData.coreValuesSection.description.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              coreValuesSection: {
-                                ...aboutData.coreValuesSection,
-                                description: { ...aboutData.coreValuesSection.description, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: المبادئ التي توجه قراراتنا وتشكل أفعالنا..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Core Values 3x2 Grid */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                        Core Value Cards ({aboutData.coreValuesSection.values.length})
-                      </h4>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {aboutData.coreValuesSection.values.map((val, vIdx) => (
-                          <div
-                            key={val.id || vIdx}
-                            className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
-                          >
-                            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                              <span className="text-xs font-bold text-red-400">
-                                Value #{vIdx + 1}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveCoreValue(vIdx)}
-                                className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                title="Delete value"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                              {/* Number Badge */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Badge</label>
-                                <input
-                                  type="text"
-                                  value={val.number}
-                                  onChange={(e) => handleCoreValueChange(vIdx, 'number', e.target.value)}
-                                  placeholder="01"
-                                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-red-400 font-bold focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              </div>
-
-                              {/* Lucide Icon Dropdown */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
-                                <LucideIconSelect
-                                  value={val.icon}
-                                  onChange={(newIcon) => handleCoreValueChange(vIdx, 'icon', newIcon)}
-                                  options={CORE_VALUES_ICONS}
-                                />
-                              </div>
-                            </div>
-
-                            {/* Title */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={val.title.en}
-                                  onChange={(e) => handleCoreValueChange(vIdx, 'title', 'en', e.target.value)}
-                                  placeholder="e.g. Relationships"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={val.title.ar}
-                                  onChange={(e) => handleCoreValueChange(vIdx, 'title', 'ar', e.target.value)}
-                                  placeholder="مثال: العلاقات"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Description */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <textarea
-                                  rows={2}
-                                  value={val.description.en}
-                                  onChange={(e) => handleCoreValueChange(vIdx, 'description', 'en', e.target.value)}
-                                  placeholder="e.g. We build lasting relationships through trust..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <textarea
-                                  rows={2}
-                                  dir="rtl"
-                                  value={val.description.ar}
-                                  onChange={(e) => handleCoreValueChange(vIdx, 'description', 'ar', e.target.value)}
-                                  placeholder="مثال: نبني علاقات دائمة من خلال الثقة والشفافية..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 8: OUR HISTORY & OWNERSHIP (IMAGE 9) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
-                        8
-                      </div>
-                      <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 8: Our History & Ownership
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          Brief history, foundations, and shareholding structure cards
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddHistoryItem}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Card
-                    </Button>
-                  </CardHeader>
-
-                  <CardContent className="p-6 space-y-6">
-                    {/* Tagline */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.historySection.tagline.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              historySection: {
-                                ...aboutData.historySection,
-                                tagline: { ...aboutData.historySection.tagline, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. OUR BACKGROUND"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.historySection.tagline.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              historySection: {
-                                ...aboutData.historySection,
-                                tagline: { ...aboutData.historySection.tagline, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: خلفيتنا وتاريخنا"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Main Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.historySection.title.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              historySection: {
-                                ...aboutData.historySection,
-                                title: { ...aboutData.historySection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Our History & Ownership"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.historySection.title.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              historySection: {
-                                ...aboutData.historySection,
-                                title: { ...aboutData.historySection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: تاريخنا وهيكلية الملكية"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <textarea
-                          rows={3}
-                          value={aboutData.historySection.description.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              historySection: {
-                                ...aboutData.historySection,
-                                description: { ...aboutData.historySection.description, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Discover the foundations of our business, the expertise behind our journey..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <textarea
-                          rows={3}
-                          dir="rtl"
-                          value={aboutData.historySection.description.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              historySection: {
-                                ...aboutData.historySection,
-                                description: { ...aboutData.historySection.description, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: اكتشف أسس أعمالنا، والخبرة الكامنة وراء مسيرتنا..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* History Items List */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                        History & Ownership Cards ({aboutData.historySection.items.length})
-                      </h4>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {aboutData.historySection.items.map((item, hIdx) => (
-                          <div
-                            key={item.id || hIdx}
-                            className="p-6 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
-                          >
-                            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                              <span className="text-xs font-bold text-red-400">
-                                Card #{hIdx + 1}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveHistoryItem(hIdx)}
-                                className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                title="Delete card"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                              {/* Number Badge */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Badge</label>
-                                <input
-                                  type="text"
-                                  value={item.number}
-                                  onChange={(e) => handleHistoryItemChange(hIdx, 'number', e.target.value)}
-                                  placeholder="01"
-                                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-red-400 font-bold focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              </div>
-
-                              {/* Lucide Icon Dropdown */}
-                              <div>
-                                <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
-                                <LucideIconSelect
-                                  value={item.icon}
-                                  onChange={(newIcon) => handleHistoryItemChange(hIdx, 'icon', newIcon)}
-                                  options={HISTORY_ICONS}
-                                />
-                              </div>
-                            </div>
-
-                            {/* Title */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Card Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={item.title.en}
-                                  onChange={(e) => handleHistoryItemChange(hIdx, 'title', 'en', e.target.value)}
-                                  placeholder="e.g. Brief History"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={item.title.ar}
-                                  onChange={(e) => handleHistoryItemChange(hIdx, 'title', 'ar', e.target.value)}
-                                  placeholder="مثال: نبذة تاريخية"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Description */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Content Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <textarea
-                                  rows={4}
-                                  value={item.description.en}
-                                  onChange={(e) => handleHistoryItemChange(hIdx, 'description', 'en', e.target.value)}
-                                  placeholder="e.g. Salama was established in 2020..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <textarea
-                                  rows={4}
-                                  dir="rtl"
-                                  value={item.description.ar}
-                                  onChange={(e) => handleHistoryItemChange(hIdx, 'description', 'ar', e.target.value)}
-                                  placeholder="مثال: تأسست سالاما عام 2020، ومقرها الرئيسي في بغداد..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 9: OUR PURPOSE & OBJECTIVES (IMAGE 10) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
-                        9
-                      </div>
-                      <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 9: Our Purpose & Objectives
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          Clear objectives, shared progress commitment highlight, and priority pillars
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddObjective}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Objective
-                    </Button>
-                  </CardHeader>
-
-                  <CardContent className="p-6 space-y-6">
-                    {/* Tagline */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.purposeSection.tagline.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              purposeSection: {
-                                ...aboutData.purposeSection,
-                                tagline: { ...aboutData.purposeSection.tagline, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. OUR PURPOSE"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.purposeSection.tagline.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              purposeSection: {
-                                ...aboutData.purposeSection,
-                                tagline: { ...aboutData.purposeSection.tagline, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: هدفنا ورؤيتنا"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Main Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.purposeSection.title.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              purposeSection: {
-                                ...aboutData.purposeSection,
-                                title: { ...aboutData.purposeSection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Driving Progress Through Clear Objectives"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.purposeSection.title.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              purposeSection: {
-                                ...aboutData.purposeSection,
-                                title: { ...aboutData.purposeSection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: دفع عجلة التقدم عبر أهداف واضحة"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <textarea
-                          rows={3}
-                          value={aboutData.purposeSection.description.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              purposeSection: {
-                                ...aboutData.purposeSection,
-                                description: { ...aboutData.purposeSection.description, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. We partner with like-minded organizations to promote sustainability..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <textarea
-                          rows={3}
-                          dir="rtl"
-                          value={aboutData.purposeSection.description.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              purposeSection: {
-                                ...aboutData.purposeSection,
-                                description: { ...aboutData.purposeSection.description, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: نتعاون مع المنظمات ذات التوجه المشترك لتعزيز الاستدامة..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Left Highlight Card Settings */}
-                    <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                      <div className="flex items-center gap-2">
-                        <HeartHandshake className="w-4 h-4 text-red-500" />
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                          Highlight Box (Committed to Shared Progress)
-                        </h4>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="md:col-span-2">
-                          <label className="text-[11px] text-white/60 block mb-1">
-                            Highlight Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                          </label>
-                          {activeLangTab === 'en' && (
-                            <input
-                              type="text"
-                              value={aboutData.purposeSection.highlightTitle.en}
-                              onChange={(e) =>
-                                setAboutData({
-                                  ...aboutData,
-                                  purposeSection: {
-                                    ...aboutData.purposeSection,
-                                    highlightTitle: { ...aboutData.purposeSection.highlightTitle, en: e.target.value },
-                                  },
-                                })
-                              }
-                              placeholder="e.g. Committed to Shared Progress"
-                              className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                            />
-                          )}
-                          {activeLangTab === 'ar' && (
-                            <input
-                              type="text"
-                              dir="rtl"
-                              value={aboutData.purposeSection.highlightTitle.ar}
-                              onChange={(e) =>
-                                setAboutData({
-                                  ...aboutData,
-                                  purposeSection: {
-                                    ...aboutData.purposeSection,
-                                    highlightTitle: { ...aboutData.purposeSection.highlightTitle, ar: e.target.value },
-                                  },
-                                })
-                              }
-                              placeholder="مثال: ملتزمون بالتقدم المشترك"
-                              className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                            />
-                          )}
+                          ))}
                         </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
+                  {/* SECTION 7: OUR CORE VALUES (IMAGE 8) */}
+                  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                    <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
+                          7
+                        </div>
                         <div>
-                          <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
-                          <LucideIconSelect
-                            value={aboutData.purposeSection.highlightIcon}
-                            onChange={(newIcon) =>
-                              setAboutData({
-                                ...aboutData,
-                                purposeSection: {
-                                  ...aboutData.purposeSection,
-                                  highlightIcon: newIcon,
-                                },
-                              })
-                            }
-                            options={PURPOSE_ICONS}
-                          />
+                          <CardTitle className="text-base font-bold text-white">
+                            Section 7: Our Core Values
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            What We Stand For - 6 core value cards with icons, numbers, and principles
+                          </p>
                         </div>
                       </div>
+                      <Button
+                        type="button"
+                        onClick={handleAddCoreValue}
+                        size="sm"
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add Core Value
+                      </Button>
+                    </CardHeader>
 
+                    <CardContent className="p-6 space-y-6">
+                      {/* Tagline */}
                       <div>
-                        <label className="text-[11px] text-white/60 block mb-1">
-                          Highlight Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
                         </label>
                         {activeLangTab === 'en' && (
-                          <textarea
-                            rows={2}
-                            value={aboutData.purposeSection.highlightDescription.en}
+                          <input
+                            type="text"
+                            value={aboutData.coreValuesSection.tagline.en}
                             onChange={(e) =>
                               setAboutData({
                                 ...aboutData,
-                                purposeSection: {
-                                  ...aboutData.purposeSection,
-                                  highlightDescription: { ...aboutData.purposeSection.highlightDescription, en: e.target.value },
+                                coreValuesSection: {
+                                  ...aboutData.coreValuesSection,
+                                  tagline: { ...aboutData.coreValuesSection.tagline, en: e.target.value },
                                 },
                               })
                             }
-                            placeholder="e.g. We believe meaningful results come from responsible management..."
-                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                            placeholder="e.g. WHAT WE STAND FOR"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.coreValuesSection.tagline.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                coreValuesSection: {
+                                  ...aboutData.coreValuesSection,
+                                  tagline: { ...aboutData.coreValuesSection.tagline, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: ما نؤمن به وندافع عنه"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Main Title */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.coreValuesSection.title.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                coreValuesSection: {
+                                  ...aboutData.coreValuesSection,
+                                  title: { ...aboutData.coreValuesSection.title, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Our Core Values"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.coreValuesSection.title.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                coreValuesSection: {
+                                  ...aboutData.coreValuesSection,
+                                  title: { ...aboutData.coreValuesSection.title, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: قيمنا الجوهرية"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <textarea
+                            rows={3}
+                            value={aboutData.coreValuesSection.description.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                coreValuesSection: {
+                                  ...aboutData.coreValuesSection,
+                                  description: { ...aboutData.coreValuesSection.description, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. The principles that guide our decisions, shape our actions..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
                           />
                         )}
                         {activeLangTab === 'ar' && (
                           <textarea
-                            rows={2}
+                            rows={3}
                             dir="rtl"
-                            value={aboutData.purposeSection.highlightDescription.ar}
+                            value={aboutData.coreValuesSection.description.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                coreValuesSection: {
+                                  ...aboutData.coreValuesSection,
+                                  description: { ...aboutData.coreValuesSection.description, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: المبادئ التي توجه قراراتنا وتشكل أفعالنا..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Core Values 3x2 Grid */}
+                      <div className="pt-4 border-t border-white/10 space-y-4">
+                        <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                          Core Value Cards ({aboutData.coreValuesSection.values.length})
+                        </h4>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {aboutData.coreValuesSection.values.map((val, vIdx) => (
+                            <div
+                              key={val.id || vIdx}
+                              className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
+                            >
+                              <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                                <span className="text-xs font-bold text-red-400">
+                                  Value #{vIdx + 1}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveCoreValue(vIdx)}
+                                  className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                                  title="Delete value"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-3">
+                                {/* Number Badge */}
+                                <div>
+                                  <label className="text-[11px] text-white/60 block mb-1">Badge</label>
+                                  <input
+                                    type="text"
+                                    value={val.number}
+                                    onChange={(e) => handleCoreValueChange(vIdx, 'number', e.target.value)}
+                                    placeholder="01"
+                                    className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-red-400 font-bold focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                </div>
+
+                                {/* Lucide Icon Dropdown */}
+                                <div>
+                                  <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                                  <LucideIconSelect
+                                    value={val.icon}
+                                    onChange={(newIcon) => handleCoreValueChange(vIdx, 'icon', newIcon)}
+                                    options={CORE_VALUES_ICONS}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Title */}
+                              <div>
+                                <label className="text-[11px] text-white/60 block mb-1">
+                                  Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <input
+                                    type="text"
+                                    value={val.title.en}
+                                    onChange={(e) => handleCoreValueChange(vIdx, 'title', 'en', e.target.value)}
+                                    placeholder="e.g. Relationships"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <input
+                                    type="text"
+                                    dir="rtl"
+                                    value={val.title.ar}
+                                    onChange={(e) => handleCoreValueChange(vIdx, 'title', 'ar', e.target.value)}
+                                    placeholder="مثال: العلاقات"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                  />
+                                )}
+                              </div>
+
+                              {/* Description */}
+                              <div>
+                                <label className="text-[11px] text-white/60 block mb-1">
+                                  Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <textarea
+                                    rows={2}
+                                    value={val.description.en}
+                                    onChange={(e) => handleCoreValueChange(vIdx, 'description', 'en', e.target.value)}
+                                    placeholder="e.g. We build lasting relationships through trust..."
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <textarea
+                                    rows={2}
+                                    dir="rtl"
+                                    value={val.description.ar}
+                                    onChange={(e) => handleCoreValueChange(vIdx, 'description', 'ar', e.target.value)}
+                                    placeholder="مثال: نبني علاقات دائمة من خلال الثقة والشفافية..."
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* SECTION 8: OUR HISTORY & OWNERSHIP (IMAGE 9) */}
+                  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                    <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
+                          8
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-bold text-white">
+                            Section 8: Our History & Ownership
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            Brief history, foundations, and shareholding structure cards
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleAddHistoryItem}
+                        size="sm"
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add Card
+                      </Button>
+                    </CardHeader>
+
+                    <CardContent className="p-6 space-y-6">
+                      {/* Tagline */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.historySection.tagline.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                historySection: {
+                                  ...aboutData.historySection,
+                                  tagline: { ...aboutData.historySection.tagline, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. OUR BACKGROUND"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.historySection.tagline.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                historySection: {
+                                  ...aboutData.historySection,
+                                  tagline: { ...aboutData.historySection.tagline, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: خلفيتنا وتاريخنا"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Main Title */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.historySection.title.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                historySection: {
+                                  ...aboutData.historySection,
+                                  title: { ...aboutData.historySection.title, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Our History & Ownership"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.historySection.title.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                historySection: {
+                                  ...aboutData.historySection,
+                                  title: { ...aboutData.historySection.title, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: تاريخنا وهيكلية الملكية"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <textarea
+                            rows={3}
+                            value={aboutData.historySection.description.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                historySection: {
+                                  ...aboutData.historySection,
+                                  description: { ...aboutData.historySection.description, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Discover the foundations of our business, the expertise behind our journey..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <textarea
+                            rows={3}
+                            dir="rtl"
+                            value={aboutData.historySection.description.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                historySection: {
+                                  ...aboutData.historySection,
+                                  description: { ...aboutData.historySection.description, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: اكتشف أسس أعمالنا، والخبرة الكامنة وراء مسيرتنا..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* History Items List */}
+                      <div className="pt-4 border-t border-white/10 space-y-4">
+                        <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                          History & Ownership Cards ({aboutData.historySection.items.length})
+                        </h4>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {aboutData.historySection.items.map((item, hIdx) => (
+                            <div
+                              key={item.id || hIdx}
+                              className="p-6 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
+                            >
+                              <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                                <span className="text-xs font-bold text-red-400">
+                                  Card #{hIdx + 1}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveHistoryItem(hIdx)}
+                                  className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                                  title="Delete card"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-3">
+                                {/* Number Badge */}
+                                <div>
+                                  <label className="text-[11px] text-white/60 block mb-1">Badge</label>
+                                  <input
+                                    type="text"
+                                    value={item.number}
+                                    onChange={(e) => handleHistoryItemChange(hIdx, 'number', e.target.value)}
+                                    placeholder="01"
+                                    className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-red-400 font-bold focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                </div>
+
+                                {/* Lucide Icon Dropdown */}
+                                <div>
+                                  <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                                  <LucideIconSelect
+                                    value={item.icon}
+                                    onChange={(newIcon) => handleHistoryItemChange(hIdx, 'icon', newIcon)}
+                                    options={HISTORY_ICONS}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Title */}
+                              <div>
+                                <label className="text-[11px] text-white/60 block mb-1">
+                                  Card Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <input
+                                    type="text"
+                                    value={item.title.en}
+                                    onChange={(e) => handleHistoryItemChange(hIdx, 'title', 'en', e.target.value)}
+                                    placeholder="e.g. Brief History"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <input
+                                    type="text"
+                                    dir="rtl"
+                                    value={item.title.ar}
+                                    onChange={(e) => handleHistoryItemChange(hIdx, 'title', 'ar', e.target.value)}
+                                    placeholder="مثال: نبذة تاريخية"
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                  />
+                                )}
+                              </div>
+
+                              {/* Description */}
+                              <div>
+                                <label className="text-[11px] text-white/60 block mb-1">
+                                  Content Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <textarea
+                                    rows={4}
+                                    value={item.description.en}
+                                    onChange={(e) => handleHistoryItemChange(hIdx, 'description', 'en', e.target.value)}
+                                    placeholder="e.g. Salama was established in 2020..."
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <textarea
+                                    rows={4}
+                                    dir="rtl"
+                                    value={item.description.ar}
+                                    onChange={(e) => handleHistoryItemChange(hIdx, 'description', 'ar', e.target.value)}
+                                    placeholder="مثال: تأسست سالاما عام 2020، ومقرها الرئيسي في بغداد..."
+                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* SECTION 9: OUR PURPOSE & OBJECTIVES (IMAGE 10) */}
+                  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                    <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
+                          9
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-bold text-white">
+                            Section 9: Our Purpose & Objectives
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            Clear objectives, shared progress commitment highlight, and priority pillars
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleAddObjective}
+                        size="sm"
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add Objective
+                      </Button>
+                    </CardHeader>
+
+                    <CardContent className="p-6 space-y-6">
+                      {/* Tagline */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.purposeSection.tagline.en}
                             onChange={(e) =>
                               setAboutData({
                                 ...aboutData,
                                 purposeSection: {
                                   ...aboutData.purposeSection,
-                                  highlightDescription: { ...aboutData.purposeSection.highlightDescription, ar: e.target.value },
+                                  tagline: { ...aboutData.purposeSection.tagline, en: e.target.value },
                                 },
                               })
                             }
-                            placeholder="مثال: نؤمن بأن النتائج ذات المغزى تأتي من الإدارة المسؤولة..."
-                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                            placeholder="e.g. OUR PURPOSE"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.purposeSection.tagline.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                purposeSection: {
+                                  ...aboutData.purposeSection,
+                                  tagline: { ...aboutData.purposeSection.tagline, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: هدفنا ورؤيتنا"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
                           />
                         )}
                       </div>
-                    </div>
 
-                    {/* Right Priorities & Objectives List */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                          Priority Objectives ({aboutData.purposeSection.objectives.length})
-                        </h4>
+                      {/* Main Title */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.purposeSection.title.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                purposeSection: {
+                                  ...aboutData.purposeSection,
+                                  title: { ...aboutData.purposeSection.title, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Driving Progress Through Clear Objectives"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.purposeSection.title.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                purposeSection: {
+                                  ...aboutData.purposeSection,
+                                  title: { ...aboutData.purposeSection.title, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: دفع عجلة التقدم عبر أهداف واضحة"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
                       </div>
 
-                      <div className="space-y-3">
-                        {aboutData.purposeSection.objectives.map((obj, oIdx) => (
-                          <div
-                            key={obj.id || oIdx}
-                            className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] border border-white/10 flex flex-col md:flex-row items-center gap-4 transition-all"
-                          >
-                            <div className="w-16">
-                              <label className="text-[10px] text-white/50 block mb-0.5">Badge</label>
+                      {/* Description */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <textarea
+                            rows={3}
+                            value={aboutData.purposeSection.description.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                purposeSection: {
+                                  ...aboutData.purposeSection,
+                                  description: { ...aboutData.purposeSection.description, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. We partner with like-minded organizations to promote sustainability..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <textarea
+                            rows={3}
+                            dir="rtl"
+                            value={aboutData.purposeSection.description.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                purposeSection: {
+                                  ...aboutData.purposeSection,
+                                  description: { ...aboutData.purposeSection.description, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: نتعاون مع المنظمات ذات التوجه المشترك لتعزيز الاستدامة..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Left Highlight Card Settings */}
+                      <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                        <div className="flex items-center gap-2">
+                          <HeartHandshake className="w-4 h-4 text-red-500" />
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                            Highlight Box (Committed to Shared Progress)
+                          </h4>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="md:col-span-2">
+                            <label className="text-[11px] text-white/60 block mb-1">
+                              Highlight Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                            </label>
+                            {activeLangTab === 'en' && (
                               <input
                                 type="text"
-                                value={obj.number}
-                                onChange={(e) => handleObjectiveChange(oIdx, 'number', e.target.value)}
-                                placeholder="01"
-                                className="w-full px-2 py-1.5 text-xs rounded bg-black/30 border border-white/10 text-red-400 font-bold focus:outline-none"
+                                value={aboutData.purposeSection.highlightTitle.en}
+                                onChange={(e) =>
+                                  setAboutData({
+                                    ...aboutData,
+                                    purposeSection: {
+                                      ...aboutData.purposeSection,
+                                      highlightTitle: { ...aboutData.purposeSection.highlightTitle, en: e.target.value },
+                                    },
+                                  })
+                                }
+                                placeholder="e.g. Committed to Shared Progress"
+                                className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
                               />
-                            </div>
-
-                            <div className="w-48">
-                              <label className="text-[10px] text-white/50 block mb-0.5">Lucide Icon</label>
-                              <LucideIconSelect
-                                value={obj.icon}
-                                onChange={(newIcon) => handleObjectiveChange(oIdx, 'icon', newIcon)}
-                                options={OBJECTIVES_ICONS}
+                            )}
+                            {activeLangTab === 'ar' && (
+                              <input
+                                type="text"
+                                dir="rtl"
+                                value={aboutData.purposeSection.highlightTitle.ar}
+                                onChange={(e) =>
+                                  setAboutData({
+                                    ...aboutData,
+                                    purposeSection: {
+                                      ...aboutData.purposeSection,
+                                      highlightTitle: { ...aboutData.purposeSection.highlightTitle, ar: e.target.value },
+                                    },
+                                  })
+                                }
+                                placeholder="مثال: ملتزمون بالتقدم المشترك"
+                                className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
                               />
-                            </div>
-
-                            <div className="flex-1 w-full">
-                              <label className="text-[10px] text-white/50 block mb-0.5">
-                                Objective Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={obj.title.en}
-                                  onChange={(e) => handleObjectiveChange(oIdx, 'title', 'en', e.target.value)}
-                                  placeholder="e.g. Effective Project Management"
-                                  className="w-full px-3 py-1.5 text-xs rounded bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={obj.title.ar}
-                                  onChange={(e) => handleObjectiveChange(oIdx, 'title', 'ar', e.target.value)}
-                                  placeholder="مثال: الإدارة الفعالة للمشاريع"
-                                  className="w-full px-3 py-1.5 text-xs rounded bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveObjective(oIdx)}
-                              className="text-white/40 hover:text-red-400 p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer shrink-0 mt-3 md:mt-0"
-                              title="Delete objective"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            )}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
 
-                {/* SECTION 10: CALL-TO-ACTION BANNER (IMAGE 4) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
-                        10
+                          <div>
+                            <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
+                            <LucideIconSelect
+                              value={aboutData.purposeSection.highlightIcon}
+                              onChange={(newIcon) =>
+                                setAboutData({
+                                  ...aboutData,
+                                  purposeSection: {
+                                    ...aboutData.purposeSection,
+                                    highlightIcon: newIcon,
+                                  },
+                                })
+                              }
+                              options={PURPOSE_ICONS}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] text-white/60 block mb-1">
+                            Highlight Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                          </label>
+                          {activeLangTab === 'en' && (
+                            <textarea
+                              rows={2}
+                              value={aboutData.purposeSection.highlightDescription.en}
+                              onChange={(e) =>
+                                setAboutData({
+                                  ...aboutData,
+                                  purposeSection: {
+                                    ...aboutData.purposeSection,
+                                    highlightDescription: { ...aboutData.purposeSection.highlightDescription, en: e.target.value },
+                                  },
+                                })
+                              }
+                              placeholder="e.g. We believe meaningful results come from responsible management..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                            />
+                          )}
+                          {activeLangTab === 'ar' && (
+                            <textarea
+                              rows={2}
+                              dir="rtl"
+                              value={aboutData.purposeSection.highlightDescription.ar}
+                              onChange={(e) =>
+                                setAboutData({
+                                  ...aboutData,
+                                  purposeSection: {
+                                    ...aboutData.purposeSection,
+                                    highlightDescription: { ...aboutData.purposeSection.highlightDescription, ar: e.target.value },
+                                  },
+                                })
+                              }
+                              placeholder="مثال: نؤمن بأن النتائج ذات المغزى تأتي من الإدارة المسؤولة..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                            />
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 10: Let's Work Together Banner
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          Crimson gradient banner with action triggers and quotation buttons
+
+                      {/* Right Priorities & Objectives List */}
+                      <div className="pt-4 border-t border-white/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                            Priority Objectives ({aboutData.purposeSection.objectives.length})
+                          </h4>
+                        </div>
+
+                        <div className="space-y-3">
+                          {aboutData.purposeSection.objectives.map((obj, oIdx) => (
+                            <div
+                              key={obj.id || oIdx}
+                              className="p-4 rounded-xl bg-white/5 hover:bg-white/[0.08] border border-white/10 flex flex-col md:flex-row items-center gap-4 transition-all"
+                            >
+                              <div className="w-16">
+                                <label className="text-[10px] text-white/50 block mb-0.5">Badge</label>
+                                <input
+                                  type="text"
+                                  value={obj.number}
+                                  onChange={(e) => handleObjectiveChange(oIdx, 'number', e.target.value)}
+                                  placeholder="01"
+                                  className="w-full px-2 py-1.5 text-xs rounded bg-black/30 border border-white/10 text-red-400 font-bold focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="w-48">
+                                <label className="text-[10px] text-white/50 block mb-0.5">Lucide Icon</label>
+                                <LucideIconSelect
+                                  value={obj.icon}
+                                  onChange={(newIcon) => handleObjectiveChange(oIdx, 'icon', newIcon)}
+                                  options={OBJECTIVES_ICONS}
+                                />
+                              </div>
+
+                              <div className="flex-1 w-full">
+                                <label className="text-[10px] text-white/50 block mb-0.5">
+                                  Objective Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                                </label>
+                                {activeLangTab === 'en' && (
+                                  <input
+                                    type="text"
+                                    value={obj.title.en}
+                                    onChange={(e) => handleObjectiveChange(oIdx, 'title', 'en', e.target.value)}
+                                    placeholder="e.g. Effective Project Management"
+                                    className="w-full px-3 py-1.5 text-xs rounded bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  />
+                                )}
+                                {activeLangTab === 'ar' && (
+                                  <input
+                                    type="text"
+                                    dir="rtl"
+                                    value={obj.title.ar}
+                                    onChange={(e) => handleObjectiveChange(oIdx, 'title', 'ar', e.target.value)}
+                                    placeholder="مثال: الإدارة الفعالة للمشاريع"
+                                    className="w-full px-3 py-1.5 text-xs rounded bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                  />
+                                )}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveObjective(oIdx)}
+                                className="text-white/40 hover:text-red-400 p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer shrink-0 mt-3 md:mt-0"
+                                title="Delete objective"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* SECTION 10: CALL-TO-ACTION BANNER (IMAGE 4) */}
+                  <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                    <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center font-bold text-white text-xs">
+                          10
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-bold text-white">
+                            Section 10: Let's Work Together Banner
+                          </CardTitle>
+                          <p className="text-xs text-white/50">
+                            Crimson gradient banner with action triggers and quotation buttons
+                          </p>
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="p-6 space-y-6">
+                      {/* Live Preview Box */}
+                      <div className="relative rounded-2xl overflow-hidden p-6 sm:p-8 text-center bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/30 space-y-3 shadow-xl">
+                        <div className="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/30 text-white/80 border border-white/15">
+                          {aboutData.bannerSection.tagline[activeLangTab] || "LET'S WORK TOGETHER"}
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-extrabold text-white">
+                          {aboutData.bannerSection.title[activeLangTab] || "Let's Build Something That Moves Business Forward."}
+                        </h3>
+                        <p className="text-xs text-white/70 max-w-xl mx-auto">
+                          {aboutData.bannerSection.description[activeLangTab] || 'Looking for medical products, equipment, pharmaceutical solutions...'}
                         </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-6 space-y-6">
-                    {/* Live Preview Box */}
-                    <div className="relative rounded-2xl overflow-hidden p-6 sm:p-8 text-center bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/30 space-y-3 shadow-xl">
-                      <div className="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/30 text-white/80 border border-white/15">
-                        {aboutData.bannerSection.tagline[activeLangTab] || "LET'S WORK TOGETHER"}
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-extrabold text-white">
-                        {aboutData.bannerSection.title[activeLangTab] || "Let's Build Something That Moves Business Forward."}
-                      </h3>
-                      <p className="text-xs text-white/70 max-w-xl mx-auto">
-                        {aboutData.bannerSection.description[activeLangTab] || 'Looking for medical products, equipment, pharmaceutical solutions...'}
-                      </p>
-                      <div className="pt-2 flex items-center justify-center gap-3">
-                        <span className="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#701020]">
-                          {aboutData.bannerSection.primaryButtonText[activeLangTab] || 'Get a Quote'} &rarr;
-                        </span>
-                        <span className="px-4 py-1.5 rounded-full text-xs font-bold bg-transparent border border-white/40 text-white">
-                          {aboutData.bannerSection.secondaryButtonText[activeLangTab] || 'Contact Us'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Tagline */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.bannerSection.tagline.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              bannerSection: {
-                                ...aboutData.bannerSection,
-                                tagline: { ...aboutData.bannerSection.tagline, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. LET'S WORK TOGETHER"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.bannerSection.tagline.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              bannerSection: {
-                                ...aboutData.bannerSection,
-                                tagline: { ...aboutData.bannerSection.tagline, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: لنعمل معاً"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={aboutData.bannerSection.title.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              bannerSection: {
-                                ...aboutData.bannerSection,
-                                title: { ...aboutData.bannerSection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Let's Build Something That Moves Business Forward."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={aboutData.bannerSection.title.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              bannerSection: {
-                                ...aboutData.bannerSection,
-                                title: { ...aboutData.bannerSection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: دعونا نبني ما يدفع الأعمال إلى الأمام."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <textarea
-                          rows={3}
-                          value={aboutData.bannerSection.description.en}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              bannerSection: {
-                                ...aboutData.bannerSection,
-                                description: { ...aboutData.bannerSection.description, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Looking for medical products, equipment, pharmaceutical solutions..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <textarea
-                          rows={3}
-                          dir="rtl"
-                          value={aboutData.bannerSection.description.ar}
-                          onChange={(e) =>
-                            setAboutData({
-                              ...aboutData,
-                              bannerSection: {
-                                ...aboutData.bannerSection,
-                                description: { ...aboutData.bannerSection.description, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: تبحث عن منتجات طبية، معدات، حلول دوائية أو خدمات تجارية؟"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Button Text & Links */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                      <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
-                        <span className="text-xs font-bold text-white block">Primary Button (Solid White)</span>
-                        <div>
-                          <label className="text-[11px] text-white/60 block mb-1">
-                            Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                          </label>
-                          {activeLangTab === 'en' && (
-                            <input
-                              type="text"
-                              value={aboutData.bannerSection.primaryButtonText.en}
-                              onChange={(e) =>
-                                setAboutData({
-                                  ...aboutData,
-                                  bannerSection: {
-                                    ...aboutData.bannerSection,
-                                    primaryButtonText: { ...aboutData.bannerSection.primaryButtonText, en: e.target.value },
-                                  },
-                                })
-                              }
-                              placeholder="e.g. Get a Quote"
-                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                            />
-                          )}
-                          {activeLangTab === 'ar' && (
-                            <input
-                              type="text"
-                              dir="rtl"
-                              value={aboutData.bannerSection.primaryButtonText.ar}
-                              onChange={(e) =>
-                                setAboutData({
-                                  ...aboutData,
-                                  bannerSection: {
-                                    ...aboutData.bannerSection,
-                                    primaryButtonText: { ...aboutData.bannerSection.primaryButtonText, ar: e.target.value },
-                                  },
-                                })
-                              }
-                              placeholder="مثال: طلب عرض أسعار"
-                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] text-right"
-                            />
-                          )}
+                        <div className="pt-2 flex items-center justify-center gap-3">
+                          <span className="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#701020]">
+                            {aboutData.bannerSection.primaryButtonText[activeLangTab] || 'Get a Quote'} &rarr;
+                          </span>
+                          <span className="px-4 py-1.5 rounded-full text-xs font-bold bg-transparent border border-white/40 text-white">
+                            {aboutData.bannerSection.secondaryButtonText[activeLangTab] || 'Contact Us'}
+                          </span>
                         </div>
-                        <div>
-                          <label className="text-[11px] text-white/60 block mb-1">Target Link URL</label>
+                      </div>
+
+                      {/* Tagline */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Tagline ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
                           <input
                             type="text"
-                            value={aboutData.bannerSection.primaryButtonUrl}
+                            value={aboutData.bannerSection.tagline.en}
                             onChange={(e) =>
                               setAboutData({
                                 ...aboutData,
                                 bannerSection: {
                                   ...aboutData.bannerSection,
-                                  primaryButtonUrl: e.target.value,
+                                  tagline: { ...aboutData.bannerSection.tagline, en: e.target.value },
                                 },
                               })
                             }
-                            placeholder="e.g. /contact"
-                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
+                            placeholder="e.g. LET'S WORK TOGETHER"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
                           />
-                        </div>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
-                        <span className="text-xs font-bold text-white block">Secondary Button (Ghost Border)</span>
-                        <div>
-                          <label className="text-[11px] text-white/60 block mb-1">
-                            Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                          </label>
-                          {activeLangTab === 'en' && (
-                            <input
-                              type="text"
-                              value={aboutData.bannerSection.secondaryButtonText.en}
-                              onChange={(e) =>
-                                setAboutData({
-                                  ...aboutData,
-                                  bannerSection: {
-                                    ...aboutData.bannerSection,
-                                    secondaryButtonText: { ...aboutData.bannerSection.secondaryButtonText, en: e.target.value },
-                                  },
-                                })
-                              }
-                              placeholder="e.g. Contact Us"
-                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                            />
-                          )}
-                          {activeLangTab === 'ar' && (
-                            <input
-                              type="text"
-                              dir="rtl"
-                              value={aboutData.bannerSection.secondaryButtonText.ar}
-                              onChange={(e) =>
-                                setAboutData({
-                                  ...aboutData,
-                                  bannerSection: {
-                                    ...aboutData.bannerSection,
-                                    secondaryButtonText: { ...aboutData.bannerSection.secondaryButtonText, ar: e.target.value },
-                                  },
-                                })
-                              }
-                              placeholder="مثال: تواصل معنا"
-                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] text-right"
-                            />
-                          )}
-                        </div>
-                        <div>
-                          <label className="text-[11px] text-white/60 block mb-1">Target Link URL</label>
+                        )}
+                        {activeLangTab === 'ar' && (
                           <input
                             type="text"
-                            value={aboutData.bannerSection.secondaryButtonUrl}
+                            dir="rtl"
+                            value={aboutData.bannerSection.tagline.ar}
                             onChange={(e) =>
                               setAboutData({
                                 ...aboutData,
                                 bannerSection: {
                                   ...aboutData.bannerSection,
-                                  secondaryButtonUrl: e.target.value,
+                                  tagline: { ...aboutData.bannerSection.tagline, ar: e.target.value },
                                 },
                               })
                             }
-                            placeholder="e.g. /contact"
-                            className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
+                            placeholder="مثال: لنعمل معاً"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
                           />
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <input
+                            type="text"
+                            value={aboutData.bannerSection.title.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                bannerSection: {
+                                  ...aboutData.bannerSection,
+                                  title: { ...aboutData.bannerSection.title, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Let's Build Something That Moves Business Forward."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <input
+                            type="text"
+                            dir="rtl"
+                            value={aboutData.bannerSection.title.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                bannerSection: {
+                                  ...aboutData.bannerSection,
+                                  title: { ...aboutData.bannerSection.title, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: دعونا نبني ما يدفع الأعمال إلى الأمام."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="text-xs font-medium text-white/80 block mb-1">
+                          Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                        </label>
+                        {activeLangTab === 'en' && (
+                          <textarea
+                            rows={3}
+                            value={aboutData.bannerSection.description.en}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                bannerSection: {
+                                  ...aboutData.bannerSection,
+                                  description: { ...aboutData.bannerSection.description, en: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="e.g. Looking for medical products, equipment, pharmaceutical solutions..."
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
+                          />
+                        )}
+                        {activeLangTab === 'ar' && (
+                          <textarea
+                            rows={3}
+                            dir="rtl"
+                            value={aboutData.bannerSection.description.ar}
+                            onChange={(e) =>
+                              setAboutData({
+                                ...aboutData,
+                                bannerSection: {
+                                  ...aboutData.bannerSection,
+                                  description: { ...aboutData.bannerSection.description, ar: e.target.value },
+                                },
+                              })
+                            }
+                            placeholder="مثال: تبحث عن منتجات طبية، معدات، حلول دوائية أو خدمات تجارية؟"
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                          />
+                        )}
+                      </div>
+
+                      {/* Button Text & Links */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+                          <span className="text-xs font-bold text-white block">Primary Button (Solid White)</span>
+                          <div>
+                            <label className="text-[11px] text-white/60 block mb-1">
+                              Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                            </label>
+                            {activeLangTab === 'en' && (
+                              <input
+                                type="text"
+                                value={aboutData.bannerSection.primaryButtonText.en}
+                                onChange={(e) =>
+                                  setAboutData({
+                                    ...aboutData,
+                                    bannerSection: {
+                                      ...aboutData.bannerSection,
+                                      primaryButtonText: { ...aboutData.bannerSection.primaryButtonText, en: e.target.value },
+                                    },
+                                  })
+                                }
+                                placeholder="e.g. Get a Quote"
+                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
+                              />
+                            )}
+                            {activeLangTab === 'ar' && (
+                              <input
+                                type="text"
+                                dir="rtl"
+                                value={aboutData.bannerSection.primaryButtonText.ar}
+                                onChange={(e) =>
+                                  setAboutData({
+                                    ...aboutData,
+                                    bannerSection: {
+                                      ...aboutData.bannerSection,
+                                      primaryButtonText: { ...aboutData.bannerSection.primaryButtonText, ar: e.target.value },
+                                    },
+                                  })
+                                }
+                                placeholder="مثال: طلب عرض أسعار"
+                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] text-right"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <label className="text-[11px] text-white/60 flex items-center justify-between mb-1">
+                              <span>Target Link URL</span>
+                              <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                <Lock className="w-2.5 h-2.5 text-white/40" />
+                                Fixed Route
+                              </span>
+                            </label>
+                            <input
+                              type="text"
+                              readOnly
+                              disabled
+                              value={aboutData.bannerSection.primaryButtonUrl || '/contact'}
+                              title="Target URL is fixed by system navigation and cannot be edited"
+                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+                          <span className="text-xs font-bold text-white block">Secondary Button (Ghost Border)</span>
+                          <div>
+                            <label className="text-[11px] text-white/60 block mb-1">
+                              Button Text ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                            </label>
+                            {activeLangTab === 'en' && (
+                              <input
+                                type="text"
+                                value={aboutData.bannerSection.secondaryButtonText.en}
+                                onChange={(e) =>
+                                  setAboutData({
+                                    ...aboutData,
+                                    bannerSection: {
+                                      ...aboutData.bannerSection,
+                                      secondaryButtonText: { ...aboutData.bannerSection.secondaryButtonText, en: e.target.value },
+                                    },
+                                  })
+                                }
+                                placeholder="e.g. Contact Us"
+                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
+                              />
+                            )}
+                            {activeLangTab === 'ar' && (
+                              <input
+                                type="text"
+                                dir="rtl"
+                                value={aboutData.bannerSection.secondaryButtonText.ar}
+                                onChange={(e) =>
+                                  setAboutData({
+                                    ...aboutData,
+                                    bannerSection: {
+                                      ...aboutData.bannerSection,
+                                      secondaryButtonText: { ...aboutData.bannerSection.secondaryButtonText, ar: e.target.value },
+                                    },
+                                  })
+                                }
+                                placeholder="مثال: تواصل معنا"
+                                className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] text-right"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <label className="text-[11px] text-white/60 flex items-center justify-between mb-1">
+                              <span>Target Link URL</span>
+                              <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                <Lock className="w-2.5 h-2.5 text-white/40" />
+                                Fixed Route
+                              </span>
+                            </label>
+                            <input
+                              type="text"
+                              readOnly
+                              disabled
+                              value={aboutData.bannerSection.secondaryButtonUrl || '/contact'}
+                              title="Target URL is fixed by system navigation and cannot be edited"
+                              className="w-full px-3 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
+                    </CardContent>
+                  </Card>
+
                 </Card>
-
-               </Card>
               </div>
             )}
 
@@ -10502,15 +10462,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
                             {/* Navigation Link URL */}
                             <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Navigation Target Link (Arrow ↗)
+                              <label className="text-[11px] text-white/60 flex items-center justify-between mb-1">
+                                <span>Navigation Target Link (Arrow ↗)</span>
+                                <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                  <Lock className="w-2.5 h-2.5 text-white/40" />
+                                  Fixed Route
+                                </span>
                               </label>
                               <input
                                 type="text"
-                                value={card.linkUrl}
-                                onChange={(e) => handleBusinessAreaCardChange(aIdx, 'linkUrl', e.target.value)}
-                                placeholder="e.g. /services/medical-equipment"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                readOnly
+                                disabled
+                                value={card.linkUrl || '/services'}
+                                title="Target URL is fixed by system navigation and cannot be edited"
+                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                               />
                             </div>
                           </div>
@@ -11029,13 +10994,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                 </div>
                               )}
                               <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-white/70">Target Button URL</label>
+                                <label className="text-xs font-semibold text-white/70 flex items-center justify-between">
+                                  <span>Target Button URL</span>
+                                  <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                    <Lock className="w-2.5 h-2.5 text-white/40" />
+                                    Fixed Route
+                                  </span>
+                                </label>
                                 <input
                                   type="text"
-                                  value={product.buttonUrl || ''}
-                                  onChange={(e) => handleProductChange(pIdx, 'buttonUrl', e.target.value)}
-                                  placeholder="e.g. /contact or /quote"
-                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  readOnly
+                                  disabled
+                                  value={product.buttonUrl || '/contact'}
+                                  title="Target URL is fixed by system navigation and cannot be edited"
+                                  className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                                 />
                               </div>
                             </div>
@@ -11195,13 +11167,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                                      project.statusType === 'completed'
-                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                        : project.statusType === 'planned'
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${project.statusType === 'completed'
+                                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                      : project.statusType === 'planned'
                                         ? 'bg-sky-500/10 border-sky-500/30 text-sky-400'
                                         : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                                    }`}
+                                      }`}
                                   >
                                     {project.statusType}
                                   </span>
@@ -11315,13 +11286,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
                               {/* Link URL */}
                               <div className="space-y-1">
-                                <label className="text-[11px] font-semibold text-white/70">Target Project URL</label>
+                                <label className="text-[11px] font-semibold text-white/70 flex items-center justify-between">
+                                  <span>Target Project URL</span>
+                                  <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                    <Lock className="w-2.5 h-2.5 text-white/40" />
+                                    Fixed Route
+                                  </span>
+                                </label>
                                 <input
                                   type="text"
-                                  value={project.linkUrl || ''}
-                                  onChange={(e) => handleProjectChange(pIdx, 'linkUrl', e.target.value)}
-                                  placeholder="e.g. /projects/smart-city"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                  readOnly
+                                  disabled
+                                  value={project.linkUrl || '/projects'}
+                                  title="Target URL is fixed by system navigation and cannot be edited"
+                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                                 />
                               </div>
                             </div>
@@ -11460,13 +11438,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           </div>
                         )}
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-white/70">Button Target URL</label>
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center justify-between">
+                            <span>Button Target URL</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
                           <input
                             type="text"
-                            value={projectsData.bannerSection.primaryButtonUrl}
-                            onChange={(e) => handleProjectsBannerChange('primaryButtonUrl', e.target.value)}
-                            placeholder="/contact"
-                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={projectsData.bannerSection.primaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -11499,13 +11484,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           </div>
                         )}
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-white/70">Button Target URL</label>
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center justify-between">
+                            <span>Button Target URL</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
                           <input
                             type="text"
-                            value={projectsData.bannerSection.secondaryButtonUrl}
-                            onChange={(e) => handleProjectsBannerChange('secondaryButtonUrl', e.target.value)}
-                            placeholder="/contact"
-                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={projectsData.bannerSection.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -11941,13 +11933,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           </div>
                         )}
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-white/70">Button Target URL</label>
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center justify-between">
+                            <span>Button Target URL</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
                           <input
                             type="text"
-                            value={partnersData.bannerSection.primaryButtonUrl}
-                            onChange={(e) => handlePartnersBannerChange('primaryButtonUrl', e.target.value)}
-                            placeholder="/contact"
-                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={partnersData.bannerSection.primaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -11980,13 +11979,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           </div>
                         )}
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-white/70">Button Target URL</label>
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center justify-between">
+                            <span>Button Target URL</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
                           <input
                             type="text"
-                            value={partnersData.bannerSection.secondaryButtonUrl}
-                            onChange={(e) => handlePartnersBannerChange('secondaryButtonUrl', e.target.value)}
-                            placeholder="/contact"
-                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            readOnly
+                            disabled
+                            value={partnersData.bannerSection.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                           />
                         </div>
                       </div>
@@ -12482,7 +12488,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               </div>
             )}
 
-            
+
             {/* IF EDITING INVESTMENT PAGE (SECTIONS 1 TO 6) */}
             {editingTabId === 'investment' && (
               <div className="space-y-8">
@@ -13131,13 +13137,20 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                             )}
 
                             <div className="space-y-1 pt-1">
-                              <label className="text-[11px] text-white/60">Explore Link URL (Arrow ↗)</label>
+                              <label className="text-[11px] text-white/60 flex items-center justify-between">
+                                <span>Explore Link URL (Arrow ↗)</span>
+                                <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                                  <Lock className="w-2.5 h-2.5 text-white/40" />
+                                  Fixed Route
+                                </span>
+                              </label>
                               <input
                                 type="text"
-                                value={sector.linkUrl || ''}
-                                onChange={(e) => handleInvestmentSectorChange(idx, 'linkUrl', e.target.value)}
-                                placeholder="/investment/industry"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                readOnly
+                                disabled
+                                value={sector.linkUrl || '/investment'}
+                                title="Target URL is fixed by system navigation and cannot be edited"
+                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                               />
                             </div>
                           </div>
@@ -13607,23 +13620,37 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </>
                       )}
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-white/70">Primary Button Target URL</label>
+                        <label className="text-xs font-semibold text-white/70 flex items-center justify-between">
+                          <span>Primary Button Target URL</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
                         <input
                           type="text"
-                          value={investmentData.bannerSection.primaryButtonUrl}
-                          onChange={(e) => handleInvestmentBannerChange('primaryButtonUrl', e.target.value)}
-                          placeholder="/contact"
-                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          readOnly
+                          disabled
+                          value={investmentData.bannerSection.primaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-white/70">Secondary Button Target URL</label>
+                        <label className="text-xs font-semibold text-white/70 flex items-center justify-between">
+                          <span>Secondary Button Target URL</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
                         <input
                           type="text"
-                          value={investmentData.bannerSection.secondaryButtonUrl}
-                          onChange={(e) => handleInvestmentBannerChange('secondaryButtonUrl', e.target.value)}
-                          placeholder="/contact"
-                          className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          readOnly
+                          disabled
+                          value={investmentData.bannerSection.secondaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                         />
                       </div>
                     </div>
@@ -13633,1519 +13660,1603 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
             )}
 
             {/* IF EDITING PROJECTS INNOVATOR PAGE (SECTIONS 1 TO 5) */}
-{editingTabId === 'projects-innovator' && (
-  <div className="space-y-8">
-    {/* SECTION 0: PAGE COLOR THEME */}
-    <ColorThemeEditorCard
-      value={projectsInnovatorData.colorTheme}
-      fallback="red"
-      theme={piTheme}
-      onChange={(color) =>
-        setProjectsInnovatorData((prev) => ({ ...prev, colorTheme: color }))
-      }
-    />
-
-    {/* SECTION 1: HERO BANNER (IMAGE 1) */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            1
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 1: Hero Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الأول: بانر الواجهة)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Logo, headline with colored highlight, description, action buttons, and background image
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        {/* Logo URL & Logo Text */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <ImageUploadField
-              label={activeLangTab === 'ar' ? 'شعار البانر' : 'Banner Logo'}
-              value={projectsInnovatorData.heroBannerSection.logoUrl}
-              onChange={(url) => handlePIHeroBannerChange('logoUrl', url)}
-              folder="projects-innovator"
-            />
-          </div>
-
-          <div className="space-y-3">
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.heroBannerSection.logoText.en}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
-                  placeholder="PROJECTS INNOVATOR"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+            {editingTabId === 'projects-innovator' && (
+              <div className="space-y-8">
+                {/* SECTION 0: PAGE COLOR THEME */}
+                <ColorThemeEditorCard
+                  value={projectsInnovatorData.colorTheme}
+                  fallback="red"
+                  theme={piTheme}
+                  onChange={(color) =>
+                    setProjectsInnovatorData((prev) => ({ ...prev, colorTheme: color }))
+                  }
                 />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.heroBannerSection.logoText.ar}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
-                  placeholder="شركة مبتكر المشاريع"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
+
+                {/* SECTION 1: HERO BANNER (IMAGE 1) */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
+                        1
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 1: Hero Banner</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الأول: بانر الواجهة)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Logo, headline with colored highlight, description, action buttons, and background image
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    {/* Logo URL & Logo Text */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <ImageUploadField
+                          label={activeLangTab === 'ar' ? 'شعار البانر' : 'Banner Logo'}
+                          value={projectsInnovatorData.heroBannerSection.logoUrl}
+                          onChange={(url) => handlePIHeroBannerChange('logoUrl', url)}
+                          folder="projects-innovator"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.heroBannerSection.logoText.en}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
+                              placeholder="PROJECTS INNOVATOR"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.heroBannerSection.logoText.ar}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
+                              placeholder="شركة مبتكر المشاريع"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Title & Highlight & Description */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Main Title Prefix</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.heroBannerSection.title.en}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('title', 'en', e.target.value)}
+                              placeholder="Building Tomorrow"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400">🇬🇧 Title Highlight (Red Colored)</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.heroBannerSection.titleHighlight.en}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
+                              placeholder="Through Innovation"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                            <textarea
+                              rows={3}
+                              value={projectsInnovatorData.heroBannerSection.description.en}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Delivering innovative construction and infrastructure solutions..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 بداية العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.heroBannerSection.title.ar}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="بناء الغد"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الجزء المميز باللون الأحمر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.heroBannerSection.titleHighlight.ar}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
+                              placeholder="من خلال الابتكار"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500 text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                            <textarea
+                              rows={3}
+                              dir="rtl"
+                              value={projectsInnovatorData.heroBannerSection.description.ar}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="تقديم حلول مبتكرة في البناء والبنية التحتية لتشكيل المساحات الحديثة..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Buttons & Background Image */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-bold text-red-400">
+                          {activeLangTab === 'ar' ? 'الزر الرئيسي (استكشف خدماتنا)' : 'Primary Button (Explore Services)'}
+                        </h4>
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Button Label</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.heroBannerSection.primaryButtonText.en}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
+                              placeholder="Explore Our Services"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.heroBannerSection.primaryButtonText.ar}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                              placeholder="استكشف خدماتنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                            <span>{activeLangTab === 'ar' ? 'رابط الزر (URL)' : 'Button URL'}</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            disabled
+                            value={projectsInnovatorData.heroBannerSection.primaryButtonUrl || '/services'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-bold text-white/80">
+                          {activeLangTab === 'ar' ? 'الزر الثانوي (اتصل بنا)' : 'Secondary Button (Contact Us)'}
+                        </h4>
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Button Label</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.heroBannerSection.secondaryButtonText.en}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.heroBannerSection.secondaryButtonText.ar}
+                              onChange={(e) => handlePIHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                            <span>{activeLangTab === 'ar' ? 'رابط الزر (URL)' : 'Button URL'}</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            disabled
+                            value={projectsInnovatorData.heroBannerSection.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5">
+                      <ImageUploadField
+                        label={activeLangTab === 'ar' ? 'صورة خلفية الواجهة (ناطحة سحاب)' : 'Skyscraper Hero Background Image'}
+                        value={projectsInnovatorData.heroBannerSection.backgroundImageUrl}
+                        onChange={(url) => handlePIHeroBannerChange('backgroundImageUrl', url)}
+                        folder="projects-innovator"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 2: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
+                        2
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 2: About Projects Innovator</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن مبتكر المشاريع)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Holding entity overview, sustainable platform narrative, and headquarters visual
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400">🇬🇧 Section Tagline</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.aboutSection.tagline.en}
+                              onChange={(e) => handlePIAboutBilingualChange('tagline', 'en', e.target.value)}
+                              placeholder="ABOUT PROJECTS INNOVATOR"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Headline Title</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.aboutSection.title.en}
+                              onChange={(e) => handlePIAboutBilingualChange('title', 'en', e.target.value)}
+                              placeholder="More Than a Company, A Platform for Sustainable Growth."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Narrative Description</label>
+                            <textarea
+                              rows={4}
+                              value={projectsInnovatorData.aboutSection.description.en}
+                              onChange={(e) => handlePIAboutBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Projects Innovator is the parent and holding entity of Mobtaker Group..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 شريط العنوان الفرعي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.aboutSection.tagline.ar}
+                              onChange={(e) => handlePIAboutBilingualChange('tagline', 'ar', e.target.value)}
+                              placeholder="عن مبتكر المشاريع"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.aboutSection.title.ar}
+                              onChange={(e) => handlePIAboutBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="أكثر من مجرد شركة، منصة للنمو المستدام."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
+                            <textarea
+                              rows={4}
+                              dir="rtl"
+                              value={projectsInnovatorData.aboutSection.description.ar}
+                              onChange={(e) => handlePIAboutBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="تعتبر مبتكر المشاريع الكيان القابض والأم لمجموعة مبتكر..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Headquarters Building Image */}
+                    <div className="pt-4 border-t border-white/5">
+                      <ImageUploadField
+                        label={activeLangTab === 'ar' ? 'صورة مبنى المقر الرئيسي' : 'Corporate Headquarters Building Image'}
+                        value={projectsInnovatorData.aboutSection.imageUrl}
+                        onChange={(url) => handlePIAboutChange('imageUrl', url)}
+                        folder="projects-innovator"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 3: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
+                        3
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 3: Let's Work Together Banner</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الثالث: بانر لنعمل معاً)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          High-impact crimson banner with proposal request and contact routing
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400">🇬🇧 Banner Tagline</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.workTogetherSection.tagline.en}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
+                              placeholder="LET'S WORK TOGETHER"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Headline Title</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.workTogetherSection.title.en}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'en', e.target.value)}
+                              placeholder="Let's Build Something That Moves Business Forward."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
+                            <textarea
+                              rows={3}
+                              value={projectsInnovatorData.workTogetherSection.description.en}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Looking for medical products, equipment, pharmaceutical solutions..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white resize-none"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Primary Button Label</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.workTogetherSection.primaryButtonText.en}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
+                              placeholder="Get a Quote"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
+                            <input
+                              type="text"
+                              value={projectsInnovatorData.workTogetherSection.secondaryButtonText.en}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.workTogetherSection.tagline.ar}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
+                              placeholder="دعنا نعمل معاً"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.workTogetherSection.title.ar}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
+                            <textarea
+                              rows={3}
+                              dir="rtl"
+                              value={projectsInnovatorData.workTogetherSection.description.ar}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="هل تبحث عن منتجات طبية، معدات، حلول دوائية، أو خدمات تجارية؟..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right resize-none"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.workTogetherSection.primaryButtonText.ar}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                              placeholder="احصل على عرض أسعار"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={projectsInnovatorData.workTogetherSection.secondaryButtonText.ar}
+                              onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Button URLs (Common) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                          <span>{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={projectsInnovatorData.workTogetherSection.primaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                          <span>{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={projectsInnovatorData.workTogetherSection.secondaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* Title & Highlight & Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Main Title Prefix</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.heroBannerSection.title.en}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('title', 'en', e.target.value)}
-                  placeholder="Building Tomorrow"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400">🇬🇧 Title Highlight (Red Colored)</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.heroBannerSection.titleHighlight.en}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
-                  placeholder="Through Innovation"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
-                <textarea
-                  rows={3}
-                  value={projectsInnovatorData.heroBannerSection.description.en}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Delivering innovative construction and infrastructure solutions..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 بداية العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.heroBannerSection.title.ar}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="بناء الغد"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الجزء المميز باللون الأحمر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.heroBannerSection.titleHighlight.ar}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
-                  placeholder="من خلال الابتكار"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-red-500/30 text-white placeholder-white/30 focus:outline-none focus:border-red-500 text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  value={projectsInnovatorData.heroBannerSection.description.ar}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="تقديم حلول مبتكرة في البناء والبنية التحتية لتشكيل المساحات الحديثة..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
 
-        {/* Buttons & Background Image */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-red-400">
-              {activeLangTab === 'ar' ? 'الزر الرئيسي (استكشف خدماتنا)' : 'Primary Button (Explore Services)'}
-            </h4>
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Label</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.heroBannerSection.primaryButtonText.en}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
-                  placeholder="Explore Our Services"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+            {/* IF EDITING ATTRACTIVE PAGE (SECTIONS 1 TO 5) */}
+            {editingTabId === 'attractive' && (
+              <div className="space-y-8">
+                {/* SECTION 0: PAGE COLOR THEME */}
+                <ColorThemeEditorCard
+                  value={attractiveData.colorTheme}
+                  fallback="blue"
+                  theme={attTheme}
+                  onChange={(color) =>
+                    setAttractiveData((prev) => ({ ...prev, colorTheme: color }))
+                  }
                 />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.heroBannerSection.primaryButtonText.ar}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                  placeholder="استكشف خدماتنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
+
+                {/* SECTION 1: HERO BANNER */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
+                        1
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 1: Hero Banner</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الأول: بانر الواجهة)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Logo, headline with colored highlight, description, action buttons, and background image
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    {/* Logo URL & Logo Text */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <ImageUploadField
+                          label={activeLangTab === 'ar' ? 'شعار البانر' : 'Banner Logo'}
+                          value={attractiveData.heroBannerSection.logoUrl}
+                          onChange={(url) => handleAttHeroBannerChange('logoUrl', url)}
+                          folder="attractive"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
+                            <input
+                              type="text"
+                              value={attractiveData.heroBannerSection.logoText.en}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'en', e.target.value)}
+                              placeholder="ATTRACTIVE"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.heroBannerSection.logoText.ar}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
+                              placeholder="أتراكتيف"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Headline & Colored Highlight & Description */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Main Headline</label>
+                            <input
+                              type="text"
+                              value={attractiveData.heroBannerSection.title.en}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('title', 'en', e.target.value)}
+                              placeholder="Building Tomorrow"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400">🇬🇧 Highlighted Phrase in Accent Color</label>
+                            <input
+                              type="text"
+                              value={attractiveData.heroBannerSection.titleHighlight.en}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
+                              placeholder="Through Innovation"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Hero Description</label>
+                            <textarea
+                              rows={3}
+                              value={attractiveData.heroBannerSection.description.en}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Delivering innovative solutions..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.heroBannerSection.title.ar}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="بناء الغد"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 العبارة المميزة بلون بارز</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.heroBannerSection.titleHighlight.ar}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
+                              placeholder="من خلال الابتكار"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500 text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الرئيسي للواجهة</label>
+                            <textarea
+                              rows={3}
+                              dir="rtl"
+                              value={attractiveData.heroBannerSection.description.ar}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="تقديم حلول مبتكرة..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                        <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
+                          {activeLangTab === 'ar' ? 'الزر الرئيسي (أزرق)' : 'Primary Button (BLUE)'}
+                        </span>
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
+                            <input
+                              type="text"
+                              value={attractiveData.heroBannerSection.primaryButtonText.en}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
+                              placeholder="Explore Our Services →"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.heroBannerSection.primaryButtonText.ar}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                              placeholder="استكشف خدماتنا ←"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                            <span>{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            disabled
+                            value={attractiveData.heroBannerSection.primaryButtonUrl || '/services'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                        <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
+                          {activeLangTab === 'ar' ? 'الزر الثانوي (تحديد أبيض)' : 'Secondary Button (White Outline)'}
+                        </span>
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
+                            <input
+                              type="text"
+                              value={attractiveData.heroBannerSection.secondaryButtonText.en}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.heroBannerSection.secondaryButtonText.ar}
+                              onChange={(e) => handleAttHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                            <span>{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            disabled
+                            value={attractiveData.heroBannerSection.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5">
+                      <ImageUploadField
+                        label={activeLangTab === 'ar' ? 'صورة خلفية الواجهة (عمارة حديثة)' : 'Hero Background Image (Architecture)'}
+                        value={attractiveData.heroBannerSection.backgroundImageUrl}
+                        onChange={(url) => handleAttHeroBannerChange('backgroundImageUrl', url)}
+                        folder="attractive"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 2: ABOUT ATTRACTIVE */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
+                        2
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 2: About Attractive</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن الشركة)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Company profile tagline, headline, narrative, and headquarters visual
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400">🇬🇧 Top Tagline</label>
+                            <input
+                              type="text"
+                              value={attractiveData.aboutSection.tagline.en}
+                              onChange={(e) => handleAttAboutBilingualChange('tagline', 'en', e.target.value)}
+                              placeholder="ABOUT ATTRACTIVE"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 About Title / Headline</label>
+                            <input
+                              type="text"
+                              value={attractiveData.aboutSection.title.en}
+                              onChange={(e) => handleAttAboutBilingualChange('title', 'en', e.target.value)}
+                              placeholder="More Than a Company..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 About Description</label>
+                            <textarea
+                              rows={4}
+                              value={attractiveData.aboutSection.description.en}
+                              onChange={(e) => handleAttAboutBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Descriptive narrative..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 الشعار الترويجي العلوي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.aboutSection.tagline.ar}
+                              onChange={(e) => handleAttAboutBilingualChange('tagline', 'ar', e.target.value)}
+                              placeholder="عن أتراكتيف"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القصة / الرؤية بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.aboutSection.title.ar}
+                              onChange={(e) => handleAttAboutBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="أكثر من مجرد شركة..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
+                            <textarea
+                              rows={4}
+                              dir="rtl"
+                              value={attractiveData.aboutSection.description.ar}
+                              onChange={(e) => handleAttAboutBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="وصف سردي..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5">
+                      <ImageUploadField
+                        label={activeLangTab === 'ar' ? 'صورة مبنى المقر الرئيسي' : 'Corporate Headquarters Building Image'}
+                        value={attractiveData.aboutSection.imageUrl}
+                        onChange={(url) => handleAttAboutChange('imageUrl', url)}
+                        folder="attractive"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 3: LETS WORK TOGETHER BANNER */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
+                        3
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 3: Let's Work Together Banner</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الثالث: بانر لنعمل معاً)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Bottom partnership call-to-action banner with quote request & contact buttons
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400">🇬🇧 Top Tagline</label>
+                            <input
+                              type="text"
+                              value={attractiveData.workTogetherSection.tagline.en}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
+                              placeholder="— LET'S WORK TOGETHER —"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Headline</label>
+                            <input
+                              type="text"
+                              value={attractiveData.workTogetherSection.title.en}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'en', e.target.value)}
+                              placeholder="Let's Build Something That Moves Business Forward."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Banner Description</label>
+                            <textarea
+                              rows={3}
+                              value={attractiveData.workTogetherSection.description.en}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Partner with us to design and deliver..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400">🇬🇧 Primary Button Label</label>
+                            <input
+                              type="text"
+                              value={attractiveData.workTogetherSection.primaryButtonText.en}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
+                              placeholder="Get a Quote ↗"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
+                            <input
+                              type="text"
+                              value={attractiveData.workTogetherSection.secondaryButtonText.en}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.workTogetherSection.tagline.ar}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
+                              placeholder="— لنعمل معاً —"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.workTogetherSection.title.ar}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف البانر بالعربية</label>
+                            <textarea
+                              rows={3}
+                              dir="rtl"
+                              value={attractiveData.workTogetherSection.description.ar}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="تشارك معنا لتصميم وتنفيذ..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.workTogetherSection.primaryButtonText.ar}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                              placeholder="احصل على عرض أسعار ↗"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={attractiveData.workTogetherSection.secondaryButtonText.ar}
+                              onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Action Button URLs (Common) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                          <span>{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={attractiveData.workTogetherSection.primaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                          <span>{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={attractiveData.workTogetherSection.secondaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر (URL)' : 'Button URL'}</label>
-              <input
-                type="text"
-                value={projectsInnovatorData.heroBannerSection.primaryButtonUrl}
-                onChange={(e) => handlePIHeroBannerChange('primaryButtonUrl', e.target.value)}
-                placeholder="/services"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          </div>
 
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white/80">
-              {activeLangTab === 'ar' ? 'الزر الثانوي (اتصل بنا)' : 'Secondary Button (Contact Us)'}
-            </h4>
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Label</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.heroBannerSection.secondaryButtonText.en}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+
+            {/* IF EDITING MEDICS INNOVATOR PAGE (SECTIONS 1 TO 5) */}
+            {editingTabId === 'medics-innovator' && (
+              <div className="space-y-8">
+                {/* SECTION 0: PAGE COLOR THEME */}
+                <ColorThemeEditorCard
+                  value={medicsInnovatorData.colorTheme}
+                  fallback="red"
+                  theme={miTheme}
+                  onChange={(color) =>
+                    setMedicsInnovatorData((prev) => ({ ...prev, colorTheme: color }))
+                  }
                 />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.heroBannerSection.secondaryButtonText.ar}
-                  onChange={(e) => handlePIHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                  placeholder="اتصل بنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
+
+                {/* SECTION 1: HERO BANNER */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
+                        1
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 1: Hero Banner</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الأول: بانر الواجهة)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Logo, headline with colored highlight, description, action buttons, and background image
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    {/* Logo URL & Logo Text */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <ImageUploadField
+                          label={activeLangTab === 'ar' ? 'شعار البانر' : 'Banner Logo'}
+                          value={medicsInnovatorData.heroBannerSection.logoUrl}
+                          onChange={(url) => handleMIHeroBannerChange('logoUrl', url)}
+                          folder="medics-innovator"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.heroBannerSection.logoText.en}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
+                              placeholder="MEDICS INNOVATOR"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.heroBannerSection.logoText.ar}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
+                              placeholder="ميديكس إنوفيتور"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Headline & Colored Highlight & Description */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Main Headline</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.heroBannerSection.title.en}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('title', 'en', e.target.value)}
+                              placeholder="Building Tomorrow"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400">🇬🇧 Highlighted Phrase in Accent Color</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.heroBannerSection.titleHighlight.en}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
+                              placeholder="Through Innovation"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Hero Description</label>
+                            <textarea
+                              rows={3}
+                              value={medicsInnovatorData.heroBannerSection.description.en}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Delivering innovative solutions..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.heroBannerSection.title.ar}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="بناء الغد"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 العبارة المميزة بلون بارز</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.heroBannerSection.titleHighlight.ar}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
+                              placeholder="من خلال الابتكار"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500 text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الرئيسي للواجهة</label>
+                            <textarea
+                              rows={3}
+                              dir="rtl"
+                              value={medicsInnovatorData.heroBannerSection.description.ar}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="تقديم حلول مبتكرة..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                        <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
+                          {activeLangTab === 'ar' ? 'الزر الرئيسي (أزرق)' : 'Primary Button (BLUE)'}
+                        </span>
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.heroBannerSection.primaryButtonText.en}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
+                              placeholder="Explore Our Services →"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.heroBannerSection.primaryButtonText.ar}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                              placeholder="استكشف خدماتنا ←"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                            <span>{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            disabled
+                            value={medicsInnovatorData.heroBannerSection.primaryButtonUrl || '/services'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
+                        <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
+                          {activeLangTab === 'ar' ? 'الزر الثانوي (تحديد أبيض)' : 'Secondary Button (White Outline)'}
+                        </span>
+                        {activeLangTab === 'en' ? (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.heroBannerSection.secondaryButtonText.en}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.heroBannerSection.secondaryButtonText.ar}
+                              onChange={(e) => handleMIHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        )}
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                            <span>{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</span>
+                            <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                              <Lock className="w-2.5 h-2.5 text-white/40" />
+                              Fixed Route
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            readOnly
+                            disabled
+                            value={medicsInnovatorData.heroBannerSection.secondaryButtonUrl || '/contact'}
+                            title="Target URL is fixed by system navigation and cannot be edited"
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5">
+                      <ImageUploadField
+                        label={activeLangTab === 'ar' ? 'صورة خلفية الواجهة (عمارة حديثة)' : 'Hero Background Image (Architecture)'}
+                        value={medicsInnovatorData.heroBannerSection.backgroundImageUrl}
+                        onChange={(url) => handleMIHeroBannerChange('backgroundImageUrl', url)}
+                        folder="medics-innovator"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 2: ABOUT MEDICS INNOVATOR */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
+                        2
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 2: About Medics Innovator</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن الشركة)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Company profile tagline, headline, narrative, and headquarters visual
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400">🇬🇧 Top Tagline</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.aboutSection.tagline.en}
+                              onChange={(e) => handleMIAboutBilingualChange('tagline', 'en', e.target.value)}
+                              placeholder="ABOUT MEDICS INNOVATOR"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 About Title / Headline</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.aboutSection.title.en}
+                              onChange={(e) => handleMIAboutBilingualChange('title', 'en', e.target.value)}
+                              placeholder="More Than a Company..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 About Description</label>
+                            <textarea
+                              rows={4}
+                              value={medicsInnovatorData.aboutSection.description.en}
+                              onChange={(e) => handleMIAboutBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Descriptive narrative..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 الشعار الترويجي العلوي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.aboutSection.tagline.ar}
+                              onChange={(e) => handleMIAboutBilingualChange('tagline', 'ar', e.target.value)}
+                              placeholder="عن ميديكس إنوفيتور"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القصة / الرؤية بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.aboutSection.title.ar}
+                              onChange={(e) => handleMIAboutBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="أكثر من مجرد شركة..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
+                            <textarea
+                              rows={4}
+                              dir="rtl"
+                              value={medicsInnovatorData.aboutSection.description.ar}
+                              onChange={(e) => handleMIAboutBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="وصف سردي..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5">
+                      <ImageUploadField
+                        label={activeLangTab === 'ar' ? 'صورة مبنى المقر الرئيسي' : 'Corporate Headquarters Building Image'}
+                        value={medicsInnovatorData.aboutSection.imageUrl}
+                        onChange={(url) => handleMIAboutChange('imageUrl', url)}
+                        folder="medics-innovator"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* SECTION 3: LETS WORK TOGETHER BANNER */}
+                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
+                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
+                        3
+                      </div>
+                      <div>
+                        <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                          <span>Section 3: Let's Work Together Banner</span>
+                          <span className="text-xs text-white/50 font-normal">(القسم الثالث: بانر لنعمل معاً)</span>
+                        </CardTitle>
+                        <p className="text-xs text-white/50">
+                          Bottom partnership call-to-action banner with quote request & contact buttons
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeLangTab === 'en' ? (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400">🇬🇧 Top Tagline</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.workTogetherSection.tagline.en}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
+                              placeholder="— LET'S WORK TOGETHER —"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Headline</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.workTogetherSection.title.en}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'en', e.target.value)}
+                              placeholder="Let's Build Something That Moves Business Forward."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Banner Description</label>
+                            <textarea
+                              rows={3}
+                              value={medicsInnovatorData.workTogetherSection.description.en}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'en', e.target.value)}
+                              placeholder="Partner with us to design and deliver..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400">🇬🇧 Primary Button Label</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.workTogetherSection.primaryButtonText.en}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
+                              placeholder="Get a Quote ↗"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
+                            <input
+                              type="text"
+                              value={medicsInnovatorData.workTogetherSection.secondaryButtonText.en}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
+                              placeholder="Contact Us"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.workTogetherSection.tagline.ar}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
+                              placeholder="— لنعمل معاً —"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.workTogetherSection.title.ar}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
+                              placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5 md:col-span-2">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف البانر بالعربية</label>
+                            <textarea
+                              rows={3}
+                              dir="rtl"
+                              value={medicsInnovatorData.workTogetherSection.description.ar}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
+                              placeholder="تشارك معنا لتصميم وتنفيذ..."
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.workTogetherSection.primaryButtonText.ar}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
+                              placeholder="احصل على عرض أسعار ↗"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={medicsInnovatorData.workTogetherSection.secondaryButtonText.ar}
+                              onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
+                              placeholder="اتصل بنا"
+                              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Action Button URLs (Common) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                          <span>{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={medicsInnovatorData.workTogetherSection.primaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-white/50 flex items-center justify-between">
+                          <span>{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</span>
+                          <span className="text-[10px] text-white/40 font-normal flex items-center gap-1">
+                            <Lock className="w-2.5 h-2.5 text-white/40" />
+                            Fixed Route
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={medicsInnovatorData.workTogetherSection.secondaryButtonUrl || '/contact'}
+                          title="Target URL is fixed by system navigation and cannot be edited"
+                          className="w-full px-3 py-2 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر (URL)' : 'Button URL'}</label>
-              <input
-                type="text"
-                value={projectsInnovatorData.heroBannerSection.secondaryButtonUrl}
-                onChange={(e) => handlePIHeroBannerChange('secondaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-white/5">
-          <ImageUploadField
-            label={activeLangTab === 'ar' ? 'صورة خلفية الواجهة (ناطحة سحاب)' : 'Skyscraper Hero Background Image'}
-            value={projectsInnovatorData.heroBannerSection.backgroundImageUrl}
-            onChange={(url) => handlePIHeroBannerChange('backgroundImageUrl', url)}
-            folder="projects-innovator"
-          />
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 2: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
-            2
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 2: About Projects Innovator</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن مبتكر المشاريع)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Holding entity overview, sustainable platform narrative, and headquarters visual
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400">🇬🇧 Section Tagline</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.aboutSection.tagline.en}
-                  onChange={(e) => handlePIAboutBilingualChange('tagline', 'en', e.target.value)}
-                  placeholder="ABOUT PROJECTS INNOVATOR"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline Title</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.aboutSection.title.en}
-                  onChange={(e) => handlePIAboutBilingualChange('title', 'en', e.target.value)}
-                  placeholder="More Than a Company, A Platform for Sustainable Growth."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Narrative Description</label>
-                <textarea
-                  rows={4}
-                  value={projectsInnovatorData.aboutSection.description.en}
-                  onChange={(e) => handlePIAboutBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Projects Innovator is the parent and holding entity of Mobtaker Group..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 شريط العنوان الفرعي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.aboutSection.tagline.ar}
-                  onChange={(e) => handlePIAboutBilingualChange('tagline', 'ar', e.target.value)}
-                  placeholder="عن مبتكر المشاريع"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.aboutSection.title.ar}
-                  onChange={(e) => handlePIAboutBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="أكثر من مجرد شركة، منصة للنمو المستدام."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
-                <textarea
-                  rows={4}
-                  dir="rtl"
-                  value={projectsInnovatorData.aboutSection.description.ar}
-                  onChange={(e) => handlePIAboutBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="تعتبر مبتكر المشاريع الكيان القابض والأم لمجموعة مبتكر..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Headquarters Building Image */}
-        <div className="pt-4 border-t border-white/5">
-          <ImageUploadField
-            label={activeLangTab === 'ar' ? 'صورة مبنى المقر الرئيسي' : 'Corporate Headquarters Building Image'}
-            value={projectsInnovatorData.aboutSection.imageUrl}
-            onChange={(url) => handlePIAboutChange('imageUrl', url)}
-            folder="projects-innovator"
-          />
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 3: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            3
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 3: Let's Work Together Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثالث: بانر لنعمل معاً)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              High-impact crimson banner with proposal request and contact routing
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400">🇬🇧 Banner Tagline</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.workTogetherSection.tagline.en}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
-                  placeholder="LET'S WORK TOGETHER"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline Title</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.workTogetherSection.title.en}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'en', e.target.value)}
-                  placeholder="Let's Build Something That Moves Business Forward."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Description</label>
-                <textarea
-                  rows={3}
-                  value={projectsInnovatorData.workTogetherSection.description.en}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Looking for medical products, equipment, pharmaceutical solutions..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white resize-none"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Primary Button Label</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.workTogetherSection.primaryButtonText.en}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
-                  placeholder="Get a Quote"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
-                <input
-                  type="text"
-                  value={projectsInnovatorData.workTogetherSection.secondaryButtonText.en}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.workTogetherSection.tagline.ar}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
-                  placeholder="دعنا نعمل معاً"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.workTogetherSection.title.ar}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  value={projectsInnovatorData.workTogetherSection.description.ar}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="هل تبحث عن منتجات طبية، معدات، حلول دوائية، أو خدمات تجارية؟..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right resize-none"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.workTogetherSection.primaryButtonText.ar}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                  placeholder="احصل على عرض أسعار"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={projectsInnovatorData.workTogetherSection.secondaryButtonText.ar}
-                  onChange={(e) => handlePIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                  placeholder="اتصل بنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Button URLs (Common) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</label>
-            <input
-              type="text"
-              value={projectsInnovatorData.workTogetherSection.primaryButtonUrl}
-              onChange={(e) => handlePIWorkTogetherChange('primaryButtonUrl', e.target.value)}
-              placeholder="/contact"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</label>
-            <input
-              type="text"
-              value={projectsInnovatorData.workTogetherSection.secondaryButtonUrl}
-              onChange={(e) => handlePIWorkTogetherChange('secondaryButtonUrl', e.target.value)}
-              placeholder="/contact"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white"
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-)}
-
-
-{/* IF EDITING ATTRACTIVE PAGE (SECTIONS 1 TO 5) */}
-{editingTabId === 'attractive' && (
-  <div className="space-y-8">
-    {/* SECTION 0: PAGE COLOR THEME */}
-    <ColorThemeEditorCard
-      value={attractiveData.colorTheme}
-      fallback="blue"
-      theme={attTheme}
-      onChange={(color) =>
-        setAttractiveData((prev) => ({ ...prev, colorTheme: color }))
-      }
-    />
-
-    {/* SECTION 1: HERO BANNER */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-            1
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 1: Hero Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الأول: بانر الواجهة)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Logo, headline with colored highlight, description, action buttons, and background image
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        {/* Logo URL & Logo Text */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <ImageUploadField
-              label={activeLangTab === 'ar' ? 'شعار البانر' : 'Banner Logo'}
-              value={attractiveData.heroBannerSection.logoUrl}
-              onChange={(url) => handleAttHeroBannerChange('logoUrl', url)}
-              folder="attractive"
-            />
-          </div>
-
-          <div className="space-y-3">
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
-                <input
-                  type="text"
-                  value={attractiveData.heroBannerSection.logoText.en}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'en', e.target.value)}
-                  placeholder="ATTRACTIVE"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.heroBannerSection.logoText.ar}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
-                  placeholder="أتراكتيف"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Headline & Colored Highlight & Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Main Headline</label>
-                <input
-                  type="text"
-                  value={attractiveData.heroBannerSection.title.en}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('title', 'en', e.target.value)}
-                  placeholder="Building Tomorrow"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400">🇬🇧 Highlighted Phrase in Accent Color</label>
-                <input
-                  type="text"
-                  value={attractiveData.heroBannerSection.titleHighlight.en}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
-                  placeholder="Through Innovation"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Hero Description</label>
-                <textarea
-                  rows={3}
-                  value={attractiveData.heroBannerSection.description.en}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Delivering innovative solutions..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.heroBannerSection.title.ar}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="بناء الغد"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 العبارة المميزة بلون بارز</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.heroBannerSection.titleHighlight.ar}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
-                  placeholder="من خلال الابتكار"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500 text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الرئيسي للواجهة</label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  value={attractiveData.heroBannerSection.description.ar}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="تقديم حلول مبتكرة..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
-              {activeLangTab === 'ar' ? 'الزر الرئيسي (أزرق)' : 'Primary Button (BLUE)'}
-            </span>
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
-                <input
-                  type="text"
-                  value={attractiveData.heroBannerSection.primaryButtonText.en}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
-                  placeholder="Explore Our Services →"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.heroBannerSection.primaryButtonText.ar}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                  placeholder="استكشف خدماتنا ←"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
-              <input
-                type="text"
-                value={attractiveData.heroBannerSection.primaryButtonUrl}
-                onChange={(e) => handleAttHeroBannerChange('primaryButtonUrl', e.target.value)}
-                placeholder="/services"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
-              {activeLangTab === 'ar' ? 'الزر الثانوي (تحديد أبيض)' : 'Secondary Button (White Outline)'}
-            </span>
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
-                <input
-                  type="text"
-                  value={attractiveData.heroBannerSection.secondaryButtonText.en}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.heroBannerSection.secondaryButtonText.ar}
-                  onChange={(e) => handleAttHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                  placeholder="اتصل بنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
-              <input
-                type="text"
-                value={attractiveData.heroBannerSection.secondaryButtonUrl}
-                onChange={(e) => handleAttHeroBannerChange('secondaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-white/5">
-          <ImageUploadField
-            label={activeLangTab === 'ar' ? 'صورة خلفية الواجهة (عمارة حديثة)' : 'Hero Background Image (Architecture)'}
-            value={attractiveData.heroBannerSection.backgroundImageUrl}
-            onChange={(url) => handleAttHeroBannerChange('backgroundImageUrl', url)}
-            folder="attractive"
-          />
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 2: ABOUT ATTRACTIVE */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
-            2
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 2: About Attractive</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن الشركة)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Company profile tagline, headline, narrative, and headquarters visual
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400">🇬🇧 Top Tagline</label>
-                <input
-                  type="text"
-                  value={attractiveData.aboutSection.tagline.en}
-                  onChange={(e) => handleAttAboutBilingualChange('tagline', 'en', e.target.value)}
-                  placeholder="ABOUT ATTRACTIVE"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 About Title / Headline</label>
-                <input
-                  type="text"
-                  value={attractiveData.aboutSection.title.en}
-                  onChange={(e) => handleAttAboutBilingualChange('title', 'en', e.target.value)}
-                  placeholder="More Than a Company..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 About Description</label>
-                <textarea
-                  rows={4}
-                  value={attractiveData.aboutSection.description.en}
-                  onChange={(e) => handleAttAboutBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Descriptive narrative..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 الشعار الترويجي العلوي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.aboutSection.tagline.ar}
-                  onChange={(e) => handleAttAboutBilingualChange('tagline', 'ar', e.target.value)}
-                  placeholder="عن أتراكتيف"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القصة / الرؤية بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.aboutSection.title.ar}
-                  onChange={(e) => handleAttAboutBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="أكثر من مجرد شركة..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
-                <textarea
-                  rows={4}
-                  dir="rtl"
-                  value={attractiveData.aboutSection.description.ar}
-                  onChange={(e) => handleAttAboutBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="وصف سردي..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="pt-4 border-t border-white/5">
-          <ImageUploadField
-            label={activeLangTab === 'ar' ? 'صورة مبنى المقر الرئيسي' : 'Corporate Headquarters Building Image'}
-            value={attractiveData.aboutSection.imageUrl}
-            onChange={(url) => handleAttAboutChange('imageUrl', url)}
-            folder="attractive"
-          />
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 3: LETS WORK TOGETHER BANNER */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            3
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 3: Let's Work Together Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثالث: بانر لنعمل معاً)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Bottom partnership call-to-action banner with quote request & contact buttons
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400">🇬🇧 Top Tagline</label>
-                <input
-                  type="text"
-                  value={attractiveData.workTogetherSection.tagline.en}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
-                  placeholder="— LET'S WORK TOGETHER —"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline</label>
-                <input
-                  type="text"
-                  value={attractiveData.workTogetherSection.title.en}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'en', e.target.value)}
-                  placeholder="Let's Build Something That Moves Business Forward."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Banner Description</label>
-                <textarea
-                  rows={3}
-                  value={attractiveData.workTogetherSection.description.en}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Partner with us to design and deliver..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400">🇬🇧 Primary Button Label</label>
-                <input
-                  type="text"
-                  value={attractiveData.workTogetherSection.primaryButtonText.en}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
-                  placeholder="Get a Quote ↗"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
-                <input
-                  type="text"
-                  value={attractiveData.workTogetherSection.secondaryButtonText.en}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.workTogetherSection.tagline.ar}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
-                  placeholder="— لنعمل معاً —"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.workTogetherSection.title.ar}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف البانر بالعربية</label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  value={attractiveData.workTogetherSection.description.ar}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="تشارك معنا لتصميم وتنفيذ..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.workTogetherSection.primaryButtonText.ar}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                  placeholder="احصل على عرض أسعار ↗"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={attractiveData.workTogetherSection.secondaryButtonText.ar}
-                  onChange={(e) => handleAttWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                  placeholder="اتصل بنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Action Button URLs (Common) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</label>
-            <input
-              type="text"
-              value={attractiveData.workTogetherSection.primaryButtonUrl}
-              onChange={(e) => handleAttWorkTogetherChange('primaryButtonUrl', e.target.value)}
-              placeholder="/contact"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</label>
-            <input
-              type="text"
-              value={attractiveData.workTogetherSection.secondaryButtonUrl}
-              onChange={(e) => handleAttWorkTogetherChange('secondaryButtonUrl', e.target.value)}
-              placeholder="/contact"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-)}
-
-
-{/* IF EDITING MEDICS INNOVATOR PAGE (SECTIONS 1 TO 5) */}
-{editingTabId === 'medics-innovator' && (
-  <div className="space-y-8">
-    {/* SECTION 0: PAGE COLOR THEME */}
-    <ColorThemeEditorCard
-      value={medicsInnovatorData.colorTheme}
-      fallback="red"
-      theme={miTheme}
-      onChange={(color) =>
-        setMedicsInnovatorData((prev) => ({ ...prev, colorTheme: color }))
-      }
-    />
-
-    {/* SECTION 1: HERO BANNER */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-            1
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 1: Hero Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الأول: بانر الواجهة)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Logo, headline with colored highlight, description, action buttons, and background image
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        {/* Logo URL & Logo Text */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <ImageUploadField
-              label={activeLangTab === 'ar' ? 'شعار البانر' : 'Banner Logo'}
-              value={medicsInnovatorData.heroBannerSection.logoUrl}
-              onChange={(url) => handleMIHeroBannerChange('logoUrl', url)}
-              folder="medics-innovator"
-            />
-          </div>
-
-          <div className="space-y-3">
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Logo Text</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.heroBannerSection.logoText.en}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'en', e.target.value)}
-                  placeholder="MEDICS INNOVATOR"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الشعار بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.heroBannerSection.logoText.ar}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('logoText', 'ar', e.target.value)}
-                  placeholder="ميديكس إنوفيتور"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Headline & Colored Highlight & Description */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Main Headline</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.heroBannerSection.title.en}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('title', 'en', e.target.value)}
-                  placeholder="Building Tomorrow"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400">🇬🇧 Highlighted Phrase in Accent Color</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.heroBannerSection.titleHighlight.en}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'en', e.target.value)}
-                  placeholder="Through Innovation"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Hero Description</label>
-                <textarea
-                  rows={3}
-                  value={medicsInnovatorData.heroBannerSection.description.en}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Delivering innovative solutions..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.heroBannerSection.title.ar}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="بناء الغد"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 العبارة المميزة بلون بارز</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.heroBannerSection.titleHighlight.ar}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('titleHighlight', 'ar', e.target.value)}
-                  placeholder="من خلال الابتكار"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-blue-500/30 text-blue-300 font-semibold placeholder-white/30 focus:outline-none focus:border-blue-500 text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف الرئيسي للواجهة</label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  value={medicsInnovatorData.heroBannerSection.description.ar}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="تقديم حلول مبتكرة..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block">
-              {activeLangTab === 'ar' ? 'الزر الرئيسي (أزرق)' : 'Primary Button (BLUE)'}
-            </span>
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.heroBannerSection.primaryButtonText.en}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('primaryButtonText', 'en', e.target.value)}
-                  placeholder="Explore Our Services →"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.heroBannerSection.primaryButtonText.ar}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                  placeholder="استكشف خدماتنا ←"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
-              <input
-                type="text"
-                value={medicsInnovatorData.heroBannerSection.primaryButtonUrl}
-                onChange={(e) => handleMIHeroBannerChange('primaryButtonUrl', e.target.value)}
-                placeholder="/services"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-            <span className="text-xs font-bold text-white/70 uppercase tracking-wider block">
-              {activeLangTab === 'ar' ? 'الزر الثانوي (تحديد أبيض)' : 'Secondary Button (White Outline)'}
-            </span>
-            {activeLangTab === 'en' ? (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Button Text</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.heroBannerSection.secondaryButtonText.en}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.heroBannerSection.secondaryButtonText.ar}
-                  onChange={(e) => handleMIHeroBannerBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                  placeholder="اتصل بنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الوجهة (URL)' : 'Target URL'}</label>
-              <input
-                type="text"
-                value={medicsInnovatorData.heroBannerSection.secondaryButtonUrl}
-                onChange={(e) => handleMIHeroBannerChange('secondaryButtonUrl', e.target.value)}
-                placeholder="/contact"
-                className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-white/5">
-          <ImageUploadField
-            label={activeLangTab === 'ar' ? 'صورة خلفية الواجهة (عمارة حديثة)' : 'Hero Background Image (Architecture)'}
-            value={medicsInnovatorData.heroBannerSection.backgroundImageUrl}
-            onChange={(url) => handleMIHeroBannerChange('backgroundImageUrl', url)}
-            folder="medics-innovator"
-          />
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 2: ABOUT MEDICS INNOVATOR */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xs">
-            2
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 2: About Medics Innovator</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثاني: عن الشركة)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Company profile tagline, headline, narrative, and headquarters visual
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400">🇬🇧 Top Tagline</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.aboutSection.tagline.en}
-                  onChange={(e) => handleMIAboutBilingualChange('tagline', 'en', e.target.value)}
-                  placeholder="ABOUT MEDICS INNOVATOR"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white uppercase tracking-wider font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 About Title / Headline</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.aboutSection.title.en}
-                  onChange={(e) => handleMIAboutBilingualChange('title', 'en', e.target.value)}
-                  placeholder="More Than a Company..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 About Description</label>
-                <textarea
-                  rows={4}
-                  value={medicsInnovatorData.aboutSection.description.en}
-                  onChange={(e) => handleMIAboutBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Descriptive narrative..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 الشعار الترويجي العلوي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.aboutSection.tagline.ar}
-                  onChange={(e) => handleMIAboutBilingualChange('tagline', 'ar', e.target.value)}
-                  placeholder="عن ميديكس إنوفيتور"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان القصة / الرؤية بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.aboutSection.title.ar}
-                  onChange={(e) => handleMIAboutBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="أكثر من مجرد شركة..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 الوصف السردي بالعربية</label>
-                <textarea
-                  rows={4}
-                  dir="rtl"
-                  value={medicsInnovatorData.aboutSection.description.ar}
-                  onChange={(e) => handleMIAboutBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="وصف سردي..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="pt-4 border-t border-white/5">
-          <ImageUploadField
-            label={activeLangTab === 'ar' ? 'صورة مبنى المقر الرئيسي' : 'Corporate Headquarters Building Image'}
-            value={medicsInnovatorData.aboutSection.imageUrl}
-            onChange={(url) => handleMIAboutChange('imageUrl', url)}
-            folder="medics-innovator"
-          />
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* SECTION 3: LETS WORK TOGETHER BANNER */}
-    <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-      <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-xs">
-            3
-          </div>
-          <div>
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-              <span>Section 3: Let's Work Together Banner</span>
-              <span className="text-xs text-white/50 font-normal">(القسم الثالث: بانر لنعمل معاً)</span>
-            </CardTitle>
-            <p className="text-xs text-white/50">
-              Bottom partnership call-to-action banner with quote request & contact buttons
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeLangTab === 'en' ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400">🇬🇧 Top Tagline</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.workTogetherSection.tagline.en}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'en', e.target.value)}
-                  placeholder="— LET'S WORK TOGETHER —"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Headline</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.workTogetherSection.title.en}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'en', e.target.value)}
-                  placeholder="Let's Build Something That Moves Business Forward."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Banner Description</label>
-                <textarea
-                  rows={3}
-                  value={medicsInnovatorData.workTogetherSection.description.en}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'en', e.target.value)}
-                  placeholder="Partner with us to design and deliver..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400">🇬🇧 Primary Button Label</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.workTogetherSection.primaryButtonText.en}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('primaryButtonText', 'en', e.target.value)}
-                  placeholder="Get a Quote ↗"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">🇬🇧 Secondary Button Label</label>
-                <input
-                  type="text"
-                  value={medicsInnovatorData.workTogetherSection.secondaryButtonText.en}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'en', e.target.value)}
-                  placeholder="Contact Us"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-red-400 block text-right">🇸🇦 الشعار الفرعي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.workTogetherSection.tagline.ar}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('tagline', 'ar', e.target.value)}
-                  placeholder="— لنعمل معاً —"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-semibold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 العنوان الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.workTogetherSection.title.ar}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('title', 'ar', e.target.value)}
-                  placeholder="دعنا نبني شيئاً يدفع الأعمال إلى الأمام."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white font-bold placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 وصف البانر بالعربية</label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  value={medicsInnovatorData.workTogetherSection.description.ar}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('description', 'ar', e.target.value)}
-                  placeholder="تشارك معنا لتصميم وتنفيذ..."
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white leading-relaxed resize-none placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-blue-400 block text-right">🇸🇦 نص الزر الرئيسي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.workTogetherSection.primaryButtonText.ar}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('primaryButtonText', 'ar', e.target.value)}
-                  placeholder="احصل على عرض أسعار ↗"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#F68E2D] block text-right">🇸🇦 نص الزر الثانوي بالعربية</label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  value={medicsInnovatorData.workTogetherSection.secondaryButtonText.ar}
-                  onChange={(e) => handleMIWorkTogetherBilingualChange('secondaryButtonText', 'ar', e.target.value)}
-                  placeholder="اتصل بنا"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Action Button URLs (Common) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الرئيسي (URL)' : 'Primary Button URL'}</label>
-            <input
-              type="text"
-              value={medicsInnovatorData.workTogetherSection.primaryButtonUrl}
-              onChange={(e) => handleMIWorkTogetherChange('primaryButtonUrl', e.target.value)}
-              placeholder="/contact"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/50">{activeLangTab === 'ar' ? 'رابط الزر الثانوي (URL)' : 'Secondary Button URL'}</label>
-            <input
-              type="text"
-              value={medicsInnovatorData.workTogetherSection.secondaryButtonUrl}
-              onChange={(e) => handleMIWorkTogetherChange('secondaryButtonUrl', e.target.value)}
-              placeholder="/contact"
-              className="w-full px-3 py-2 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-            />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-)}
 
 
             {/* IF EDITING ANY OTHER TAB */}
@@ -15262,18 +15373,16 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 <button
                   type="button"
                   onClick={() => setPreviewLang('en')}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${
-                    previewLang === 'en' ? 'bg-[#F68E2D] text-white' : 'bg-white/5 text-white/70'
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${previewLang === 'en' ? 'bg-[#F68E2D] text-white' : 'bg-white/5 text-white/70'
+                    }`}
                 >
                   🇬🇧 English
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewLang('ar')}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${
-                    previewLang === 'ar' ? 'bg-[#F68E2D] text-white' : 'bg-white/5 text-white/70'
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${previewLang === 'ar' ? 'bg-[#F68E2D] text-white' : 'bg-white/5 text-white/70'
+                    }`}
                 >
                   🇸🇦 العربية
                 </button>
@@ -15731,7 +15840,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                 </div>
               )}
 
-                            {/* ----------------- COMPANY PROFILE PREVIEW (MATCHING REFERENCE IMAGES) ----------------- */}
+              {/* ----------------- COMPANY PROFILE PREVIEW (MATCHING REFERENCE IMAGES) ----------------- */}
               {editingTabId === 'company' && (
                 <div className="space-y-16 max-w-5xl mx-auto">
                   {/* SECTION 1: HEADER (IMAGE 1) */}
@@ -15838,7 +15947,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               )}
 
 
-                            {/* ----------------- SERVICES PREVIEW (MATCHING REFERENCE IMAGES) ----------------- */}
+              {/* ----------------- SERVICES PREVIEW (MATCHING REFERENCE IMAGES) ----------------- */}
               {editingTabId === 'services' && (
                 <div className="space-y-16 max-w-5xl mx-auto">
                   {/* SECTION 1: OUR SERVICES (IMAGE 1) */}
@@ -15960,11 +16069,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                     key={`thumb-${tIdx}`}
                                     type="button"
                                     onClick={() => setPreviewShopGalleryIndex(tIdx)}
-                                    className={`relative w-20 h-20 md:w-full md:h-24 rounded-xl overflow-hidden border transition-all shrink-0 cursor-pointer ${
-                                      activeImgIdx === tIdx
-                                        ? 'border-[#E51E25] ring-2 ring-[#E51E25]/40'
-                                        : 'border-white/15 opacity-70 hover:opacity-100'
-                                    }`}
+                                    className={`relative w-20 h-20 md:w-full md:h-24 rounded-xl overflow-hidden border transition-all shrink-0 cursor-pointer ${activeImgIdx === tIdx
+                                      ? 'border-[#E51E25] ring-2 ring-[#E51E25]/40'
+                                      : 'border-white/15 opacity-70 hover:opacity-100'
+                                      }`}
                                   >
                                     <img
                                       src={thumbUrl}
@@ -16192,13 +16300,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                 {project.category[previewLang]}
                               </span>
                               <span
-                                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
-                                  project.statusType === 'completed'
-                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                    : project.statusType === 'planned'
+                                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${project.statusType === 'completed'
+                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                  : project.statusType === 'planned'
                                     ? 'bg-sky-500/10 border-sky-500/30 text-sky-400'
                                     : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                                }`}
+                                  }`}
                               >
                                 {project.status[previewLang] || (project.statusType === 'completed' ? 'Completed' : project.statusType === 'planned' ? 'Planned' : 'Ongoing')}
                               </span>
@@ -16578,497 +16685,497 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               )}
 
               {/* ----------------- PROJECTS INNOVATOR PREVIEW (MATCHING REFERENCE IMAGES) ----------------- */}
-{editingTabId === 'projects-innovator' && (
-  <div className="space-y-16 max-w-6xl mx-auto">
-    {/* SECTION 1: HERO BANNER (IMAGE 1) */}
-    <div
-      className="relative rounded-3xl overflow-hidden border border-white/10 bg-cover bg-center p-8 sm:p-14 lg:p-16 min-h-[520px] flex flex-col justify-between shadow-2xl"
-      style={{
-        backgroundImage: `linear-gradient(to right, rgba(10, 15, 35, 0.92) 0%, rgba(10, 15, 35, 0.75) 50%, rgba(10, 15, 35, 0.4) 100%), url(${projectsInnovatorData.heroBannerSection.backgroundImageUrl})`,
-      }}
-    >
-      {/* Top Logo */}
-      <div className="flex items-center gap-3">
-        {projectsInnovatorData.heroBannerSection.logoUrl ? (
-          <img
-            src={projectsInnovatorData.heroBannerSection.logoUrl}
-            alt="Projects Innovator Logo"
-            className="h-10 w-auto object-contain brightness-125"
-          />
-        ) : (
-          <div className={`w-9 h-9 rounded-lg ${piTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
-            P
-          </div>
-        )}
-        <div className="text-left">
-          <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">
-            {previewLang === 'ar' ? 'شركة مبتكر المشاريع' : 'PROJECTS INNOVATOR'}
-          </p>
-          <p className="text-xs font-bold text-white tracking-wide">
-            {projectsInnovatorData.heroBannerSection.logoText[previewLang] || 'PROJECTS INNOVATOR'}
-          </p>
-        </div>
-      </div>
+              {editingTabId === 'projects-innovator' && (
+                <div className="space-y-16 max-w-6xl mx-auto">
+                  {/* SECTION 1: HERO BANNER (IMAGE 1) */}
+                  <div
+                    className="relative rounded-3xl overflow-hidden border border-white/10 bg-cover bg-center p-8 sm:p-14 lg:p-16 min-h-[520px] flex flex-col justify-between shadow-2xl"
+                    style={{
+                      backgroundImage: `linear-gradient(to right, rgba(10, 15, 35, 0.92) 0%, rgba(10, 15, 35, 0.75) 50%, rgba(10, 15, 35, 0.4) 100%), url(${projectsInnovatorData.heroBannerSection.backgroundImageUrl})`,
+                    }}
+                  >
+                    {/* Top Logo */}
+                    <div className="flex items-center gap-3">
+                      {projectsInnovatorData.heroBannerSection.logoUrl ? (
+                        <img
+                          src={projectsInnovatorData.heroBannerSection.logoUrl}
+                          alt="Projects Innovator Logo"
+                          className="h-10 w-auto object-contain brightness-125"
+                        />
+                      ) : (
+                        <div className={`w-9 h-9 rounded-lg ${piTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
+                          P
+                        </div>
+                      )}
+                      <div className="text-left">
+                        <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">
+                          {previewLang === 'ar' ? 'شركة مبتكر المشاريع' : 'PROJECTS INNOVATOR'}
+                        </p>
+                        <p className="text-xs font-bold text-white tracking-wide">
+                          {projectsInnovatorData.heroBannerSection.logoText[previewLang] || 'PROJECTS INNOVATOR'}
+                        </p>
+                      </div>
+                    </div>
 
-      {/* Main Copy */}
-      <div className="max-w-2xl space-y-5 my-8">
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight">
-          {projectsInnovatorData.heroBannerSection.title[previewLang]}{' '}
-          <span className={piTheme.accentText}>
-            {projectsInnovatorData.heroBannerSection.titleHighlight[previewLang]}
-          </span>
-        </h1>
+                    {/* Main Copy */}
+                    <div className="max-w-2xl space-y-5 my-8">
+                      <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-tight">
+                        {projectsInnovatorData.heroBannerSection.title[previewLang]}{' '}
+                        <span className={piTheme.accentText}>
+                          {projectsInnovatorData.heroBannerSection.titleHighlight[previewLang]}
+                        </span>
+                      </h1>
 
-        <p className="text-xs sm:text-sm text-white/75 leading-relaxed max-w-xl">
-          {projectsInnovatorData.heroBannerSection.description[previewLang]}
-        </p>
+                      <p className="text-xs sm:text-sm text-white/75 leading-relaxed max-w-xl">
+                        {projectsInnovatorData.heroBannerSection.description[previewLang]}
+                      </p>
 
-        {/* Action Buttons */}
-        <div className="pt-4 flex flex-wrap items-center gap-3">
-          <a
-            href={projectsInnovatorData.heroBannerSection.primaryButtonUrl || '#'}
-            className={`px-6 py-3 rounded-full ${piTheme.primaryBtn} text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer`}
-          >
-            <span>{projectsInnovatorData.heroBannerSection.primaryButtonText[previewLang] || 'Explore Our Services'}</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
+                      {/* Action Buttons */}
+                      <div className="pt-4 flex flex-wrap items-center gap-3">
+                        <a
+                          href={projectsInnovatorData.heroBannerSection.primaryButtonUrl || '#'}
+                          className={`px-6 py-3 rounded-full ${piTheme.primaryBtn} text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer`}
+                        >
+                          <span>{projectsInnovatorData.heroBannerSection.primaryButtonText[previewLang] || 'Explore Our Services'}</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </a>
 
-          <a
-            href={projectsInnovatorData.heroBannerSection.secondaryButtonUrl || '#'}
-            className="px-6 py-3 rounded-full bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs sm:text-sm shadow-xl hover:scale-105 transition-all cursor-pointer"
-          >
-            <span>{projectsInnovatorData.heroBannerSection.secondaryButtonText[previewLang] || 'Contact Us'}</span>
-          </a>
-        </div>
-      </div>
+                        <a
+                          href={projectsInnovatorData.heroBannerSection.secondaryButtonUrl || '#'}
+                          className="px-6 py-3 rounded-full bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs sm:text-sm shadow-xl hover:scale-105 transition-all cursor-pointer"
+                        >
+                          <span>{projectsInnovatorData.heroBannerSection.secondaryButtonText[previewLang] || 'Contact Us'}</span>
+                        </a>
+                      </div>
+                    </div>
 
-      <div />
-    </div>
+                    <div />
+                  </div>
 
-    {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
-    <div className="space-y-4 py-4 border-y border-white/5 text-center">
-      <p className="text-[11px] font-bold text-white/40 tracking-widest uppercase">
-        {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
-      </p>
+                  {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
+                  <div className="space-y-4 py-4 border-y border-white/5 text-center">
+                    <p className="text-[11px] font-bold text-white/40 tracking-widest uppercase">
+                      {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
+                    </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 py-4 px-6 bg-white/[0.02] rounded-2xl border border-white/5">
-        {(brandsData.brands || []).map((brand, idx) => (
-          <div
-            key={brand.id || idx}
-            className="flex items-center gap-2 group opacity-60 hover:opacity-100 transition-opacity"
-          >
-            {brand.logoUrl ? (
-              <img
-                src={brand.logoUrl}
-                alt={brand.name}
-                className="h-7 max-w-[120px] object-contain filter brightness-125"
-              />
-            ) : (
-              <span className="text-xs text-white/60 font-semibold">{brand.name}</span>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 py-4 px-6 bg-white/[0.02] rounded-2xl border border-white/5">
+                      {(brandsData.brands || []).map((brand, idx) => (
+                        <div
+                          key={brand.id || idx}
+                          className="flex items-center gap-2 group opacity-60 hover:opacity-100 transition-opacity"
+                        >
+                          {brand.logoUrl ? (
+                            <img
+                              src={brand.logoUrl}
+                              alt={brand.name}
+                              className="h-7 max-w-[120px] object-contain filter brightness-125"
+                            />
+                          ) : (
+                            <span className="text-xs text-white/60 font-semibold">{brand.name}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-    {/* SECTION 3: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-      <div className="lg:col-span-7 space-y-4">
-        <p className={`text-xs font-bold ${piTheme.accentText} tracking-widest uppercase`}>
-          {projectsInnovatorData.aboutSection.tagline[previewLang] || 'ABOUT PROJECTS INNOVATOR'}
-        </p>
+                  {/* SECTION 3: ABOUT PROJECTS INNOVATOR (IMAGE 2) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div className="lg:col-span-7 space-y-4">
+                      <p className={`text-xs font-bold ${piTheme.accentText} tracking-widest uppercase`}>
+                        {projectsInnovatorData.aboutSection.tagline[previewLang] || 'ABOUT PROJECTS INNOVATOR'}
+                      </p>
 
-        <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
-          {projectsInnovatorData.aboutSection.title[previewLang] || 'More Than a Company, A Platform for Sustainable Growth.'}
-        </h2>
+                      <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+                        {projectsInnovatorData.aboutSection.title[previewLang] || 'More Than a Company, A Platform for Sustainable Growth.'}
+                      </h2>
 
-        <p className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-xl">
-          {projectsInnovatorData.aboutSection.description[previewLang]}
-        </p>
-      </div>
+                      <p className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-xl">
+                        {projectsInnovatorData.aboutSection.description[previewLang]}
+                      </p>
+                    </div>
 
-      <div className="lg:col-span-5">
-        <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl group">
-          <img
-            src={projectsInnovatorData.aboutSection.imageUrl || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'}
-            alt="Corporate Headquarters"
-            className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-all duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-        </div>
-      </div>
-    </div>
+                    <div className="lg:col-span-5">
+                      <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl group">
+                        <img
+                          src={projectsInnovatorData.aboutSection.imageUrl || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'}
+                          alt="Corporate Headquarters"
+                          className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-all duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
 
-    {/* SECTION 3: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
-    <div className={`relative rounded-3xl overflow-hidden shadow-2xl border text-center p-8 sm:p-14 ${piTheme.bannerWrap}`}>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none" />
+                  {/* SECTION 3: LET'S WORK TOGETHER BANNER (IMAGE 3) */}
+                  <div className={`relative rounded-3xl overflow-hidden shadow-2xl border text-center p-8 sm:p-14 ${piTheme.bannerWrap}`}>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none" />
 
-      <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-        {/* Tagline */}
-        <p className="text-xs font-bold text-white/80 tracking-widest uppercase">
-          — {projectsInnovatorData.workTogetherSection.tagline[previewLang] || "LET'S WORK TOGETHER"} —
-        </p>
+                    <div className="relative z-10 max-w-3xl mx-auto space-y-4">
+                      {/* Tagline */}
+                      <p className="text-xs font-bold text-white/80 tracking-widest uppercase">
+                        — {projectsInnovatorData.workTogetherSection.tagline[previewLang] || "LET'S WORK TOGETHER"} —
+                      </p>
 
-        {/* Main Headline */}
-        <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
-          {projectsInnovatorData.workTogetherSection.title[previewLang] || "Let's Build Something That Moves Business Forward."}
-        </h2>
+                      {/* Main Headline */}
+                      <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+                        {projectsInnovatorData.workTogetherSection.title[previewLang] || "Let's Build Something That Moves Business Forward."}
+                      </h2>
 
-        {/* Description */}
-        <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-2xl mx-auto">
-          {projectsInnovatorData.workTogetherSection.description[previewLang]}
-        </p>
+                      {/* Description */}
+                      <p className="text-xs sm:text-sm text-white/80 leading-relaxed max-w-2xl mx-auto">
+                        {projectsInnovatorData.workTogetherSection.description[previewLang]}
+                      </p>
 
-        {/* Buttons */}
-        <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
-          <a
-            href={projectsInnovatorData.workTogetherSection.primaryButtonUrl || '#'}
-            className={`px-7 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer ${piTheme.bannerBtn}`}
-          >
-            <span>{projectsInnovatorData.workTogetherSection.primaryButtonText[previewLang] || 'Get a Quote'}</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
+                      {/* Buttons */}
+                      <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+                        <a
+                          href={projectsInnovatorData.workTogetherSection.primaryButtonUrl || '#'}
+                          className={`px-7 py-3 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all cursor-pointer ${piTheme.bannerBtn}`}
+                        >
+                          <span>{projectsInnovatorData.workTogetherSection.primaryButtonText[previewLang] || 'Get a Quote'}</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </a>
 
-          <a
-            href={projectsInnovatorData.workTogetherSection.secondaryButtonUrl || '#'}
-            className="px-7 py-3 rounded-full bg-white/10 hover:bg-white/15 text-white border border-white/30 font-semibold text-xs sm:text-sm flex items-center gap-2 backdrop-blur-sm transition-all cursor-pointer"
-          >
-            <Mail className="w-4 h-4" />
-            <span>{projectsInnovatorData.workTogetherSection.secondaryButtonText[previewLang] || 'Contact Us'}</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
-
-{/* ----------------- ATTRACTIVE PREVIEW ----------------- */}
-{editingTabId === 'attractive' && (
-  <div className="space-y-16 max-w-6xl mx-auto">
-    {/* SECTION 1: HERO BANNER */}
-    <div
-      className="relative rounded-3xl overflow-hidden border border-white/10 bg-cover bg-center p-8 sm:p-14 lg:p-16 min-h-[520px] flex flex-col justify-between shadow-2xl"
-      style={{
-        backgroundImage: `linear-gradient(to right, rgba(10, 15, 35, 0.92) 0%, rgba(10, 15, 35, 0.75) 50%, rgba(10, 15, 35, 0.4) 100%), url(${attractiveData.heroBannerSection.backgroundImageUrl})`,
-      }}
-    >
-      {/* Top Logo */}
-      <div className="flex items-center gap-3">
-        {attractiveData.heroBannerSection.logoUrl ? (
-          <img
-            src={attractiveData.heroBannerSection.logoUrl}
-            alt="Attractive Logo"
-            className="h-10 w-auto object-contain brightness-125"
-          />
-        ) : (
-          <div className={`w-9 h-9 rounded-lg ${attTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
-            A
-          </div>
-        )}
-        <div className="text-left">
-          <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">
-            {previewLang === 'ar' ? 'أتراكتيف' : 'ATTRACTIVE'}
-          </p>
-          <p className="text-xs font-bold text-white tracking-wide">
-            {attractiveData.heroBannerSection.logoText[previewLang] || 'ATTRACTIVE'}
-          </p>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-2xl space-y-6 my-10">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
-          {attractiveData.heroBannerSection.title[previewLang] || 'Building Tomorrow'}
-          {attractiveData.heroBannerSection.titleHighlight[previewLang] && (
-            <span className={`block ${attTheme.accentText} mt-2`}>
-              {attractiveData.heroBannerSection.titleHighlight[previewLang]}
-            </span>
-          )}
-        </h1>
-
-        <p className="text-sm sm:text-base text-white/75 leading-relaxed font-normal max-w-xl">
-          {attractiveData.heroBannerSection.description[previewLang]}
-        </p>
-
-        {/* Buttons */}
-        <div className="flex flex-wrap items-center gap-4 pt-2">
-          {attractiveData.heroBannerSection.primaryButtonText[previewLang] && (
-            <a
-              href={attractiveData.heroBannerSection.primaryButtonUrl || '#'}
-              className={`px-6 py-3 rounded-full ${attTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-2`}
-            >
-              <span>{attractiveData.heroBannerSection.primaryButtonText[previewLang]}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          )}
-
-          {attractiveData.heroBannerSection.secondaryButtonText[previewLang] && (
-            <a
-              href={attractiveData.heroBannerSection.secondaryButtonUrl || '#'}
-              className="px-6 py-3 rounded-full bg-white text-[#0b1028] hover:bg-white/90 font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-md"
-            >
-              {attractiveData.heroBannerSection.secondaryButtonText[previewLang]}
-            </a>
-          )}
-        </div>
-      </div>
-      <div />
-    </div>
-
-    {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
-    <div className="space-y-6 text-center">
-      <p className="text-xs tracking-[0.2em] uppercase font-bold text-white/50">
-        {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
-      </p>
-
-      <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 pt-2">
-        {(brandsData.brands || []).map((b, idx) => (
-          <div
-            key={b.id || idx}
-            className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-          >
-            {b.logoUrl ? (
-              <img
-                src={b.logoUrl}
-                alt={b.name}
-                className="h-7 sm:h-9 w-auto max-w-[120px] object-contain grayscale hover:grayscale-0 transition-all brightness-150"
-              />
-            ) : (
-              <span className="text-xs sm:text-sm font-bold tracking-widest text-white/60">
-                {b.name}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* SECTION 3: ABOUT */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-      <div className="space-y-6">
-        <div className={`inline-block text-xs font-bold tracking-wider ${attTheme.titleText} uppercase`}>
-          {attractiveData.aboutSection.tagline[previewLang] || 'ABOUT ATTRACTIVE'}
-        </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-          {attractiveData.aboutSection.title[previewLang]}
-        </h2>
-        <p className="text-sm text-white/70 leading-relaxed font-normal">
-          {attractiveData.aboutSection.description[previewLang]}
-        </p>
-      </div>
-
-      <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] bg-white/5 shadow-2xl">
-        <img
-          src={attractiveData.aboutSection.imageUrl}
-          alt="Attractive Headquarters"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1028]/80 via-transparent to-transparent" />
-      </div>
-    </div>
-
-    {/* SECTION 3: LETS WORK TOGETHER BANNER */}
-    <div className={`relative rounded-3xl overflow-hidden border ${attTheme.darkBannerWrap} p-8 sm:p-12 text-center shadow-2xl space-y-6`}>
-      <p className={`text-xs font-bold tracking-[0.25em] ${attTheme.titleText} uppercase`}>
-        {attractiveData.workTogetherSection.tagline[previewLang] || "— LET'S WORK TOGETHER —"}
-      </p>
-
-      <h2 className="text-2xl sm:text-4xl font-extrabold text-white max-w-2xl mx-auto leading-tight">
-        {attractiveData.workTogetherSection.title[previewLang]}
-      </h2>
-
-      <p className="text-xs sm:text-sm text-white/70 max-w-xl mx-auto leading-relaxed">
-        {attractiveData.workTogetherSection.description[previewLang]}
-      </p>
-
-      <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-        {attractiveData.workTogetherSection.primaryButtonText[previewLang] && (
-          <a
-            href={attractiveData.workTogetherSection.primaryButtonUrl || '#'}
-            className={`px-6 py-2.5 rounded-full ${attTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-1.5`}
-          >
-            <span>{attractiveData.workTogetherSection.primaryButtonText[previewLang]}</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
-        )}
-
-        {attractiveData.workTogetherSection.secondaryButtonText[previewLang] && (
-          <a
-            href={attractiveData.workTogetherSection.secondaryButtonUrl || '#'}
-            className="px-6 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all"
-          >
-            {attractiveData.workTogetherSection.secondaryButtonText[previewLang]}
-          </a>
-        )}
-      </div>
-    </div>
-  </div>
-)}
+                        <a
+                          href={projectsInnovatorData.workTogetherSection.secondaryButtonUrl || '#'}
+                          className="px-7 py-3 rounded-full bg-white/10 hover:bg-white/15 text-white border border-white/30 font-semibold text-xs sm:text-sm flex items-center gap-2 backdrop-blur-sm transition-all cursor-pointer"
+                        >
+                          <Mail className="w-4 h-4" />
+                          <span>{projectsInnovatorData.workTogetherSection.secondaryButtonText[previewLang] || 'Contact Us'}</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
 
-{/* ----------------- MEDICS INNOVATOR PREVIEW ----------------- */}
-{editingTabId === 'medics-innovator' && (
-  <div className="space-y-16 max-w-6xl mx-auto">
-    {/* SECTION 1: HERO BANNER */}
-    <div
-      className="relative rounded-3xl overflow-hidden border border-white/10 bg-cover bg-center p-8 sm:p-14 lg:p-16 min-h-[520px] flex flex-col justify-between shadow-2xl"
-      style={{
-        backgroundImage: `linear-gradient(to right, rgba(10, 15, 35, 0.92) 0%, rgba(10, 15, 35, 0.75) 50%, rgba(10, 15, 35, 0.4) 100%), url(${medicsInnovatorData.heroBannerSection.backgroundImageUrl})`,
-      }}
-    >
-      {/* Top Logo */}
-      <div className="flex items-center gap-3">
-        {medicsInnovatorData.heroBannerSection.logoUrl ? (
-          <img
-            src={medicsInnovatorData.heroBannerSection.logoUrl}
-            alt="Medics Innovator Logo"
-            className="h-10 w-auto object-contain brightness-125"
-          />
-        ) : (
-          <div className={`w-9 h-9 rounded-lg ${miTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
-            M
-          </div>
-        )}
-        <div className="text-left">
-          <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">
-            {previewLang === 'ar' ? 'ميديكس إنوفيتور' : 'MEDICS INNOVATOR'}
-          </p>
-          <p className="text-xs font-bold text-white tracking-wide">
-            {medicsInnovatorData.heroBannerSection.logoText[previewLang] || 'MEDICS INNOVATOR'}
-          </p>
-        </div>
-      </div>
+              {/* ----------------- ATTRACTIVE PREVIEW ----------------- */}
+              {editingTabId === 'attractive' && (
+                <div className="space-y-16 max-w-6xl mx-auto">
+                  {/* SECTION 1: HERO BANNER */}
+                  <div
+                    className="relative rounded-3xl overflow-hidden border border-white/10 bg-cover bg-center p-8 sm:p-14 lg:p-16 min-h-[520px] flex flex-col justify-between shadow-2xl"
+                    style={{
+                      backgroundImage: `linear-gradient(to right, rgba(10, 15, 35, 0.92) 0%, rgba(10, 15, 35, 0.75) 50%, rgba(10, 15, 35, 0.4) 100%), url(${attractiveData.heroBannerSection.backgroundImageUrl})`,
+                    }}
+                  >
+                    {/* Top Logo */}
+                    <div className="flex items-center gap-3">
+                      {attractiveData.heroBannerSection.logoUrl ? (
+                        <img
+                          src={attractiveData.heroBannerSection.logoUrl}
+                          alt="Attractive Logo"
+                          className="h-10 w-auto object-contain brightness-125"
+                        />
+                      ) : (
+                        <div className={`w-9 h-9 rounded-lg ${attTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
+                          A
+                        </div>
+                      )}
+                      <div className="text-left">
+                        <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">
+                          {previewLang === 'ar' ? 'أتراكتيف' : 'ATTRACTIVE'}
+                        </p>
+                        <p className="text-xs font-bold text-white tracking-wide">
+                          {attractiveData.heroBannerSection.logoText[previewLang] || 'ATTRACTIVE'}
+                        </p>
+                      </div>
+                    </div>
 
-      {/* Main Content */}
-      <div className="max-w-2xl space-y-6 my-10">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
-          {medicsInnovatorData.heroBannerSection.title[previewLang] || 'Building Tomorrow'}
-          {medicsInnovatorData.heroBannerSection.titleHighlight[previewLang] && (
-            <span className={`block ${miTheme.accentText} mt-2`}>
-              {medicsInnovatorData.heroBannerSection.titleHighlight[previewLang]}
-            </span>
-          )}
-        </h1>
+                    {/* Main Content */}
+                    <div className="max-w-2xl space-y-6 my-10">
+                      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
+                        {attractiveData.heroBannerSection.title[previewLang] || 'Building Tomorrow'}
+                        {attractiveData.heroBannerSection.titleHighlight[previewLang] && (
+                          <span className={`block ${attTheme.accentText} mt-2`}>
+                            {attractiveData.heroBannerSection.titleHighlight[previewLang]}
+                          </span>
+                        )}
+                      </h1>
 
-        <p className="text-sm sm:text-base text-white/75 leading-relaxed font-normal max-w-xl">
-          {medicsInnovatorData.heroBannerSection.description[previewLang]}
-        </p>
+                      <p className="text-sm sm:text-base text-white/75 leading-relaxed font-normal max-w-xl">
+                        {attractiveData.heroBannerSection.description[previewLang]}
+                      </p>
 
-        {/* Buttons */}
-        <div className="flex flex-wrap items-center gap-4 pt-2">
-          {medicsInnovatorData.heroBannerSection.primaryButtonText[previewLang] && (
-            <a
-              href={medicsInnovatorData.heroBannerSection.primaryButtonUrl || '#'}
-              className={`px-6 py-3 rounded-full ${miTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-2`}
-            >
-              <span>{medicsInnovatorData.heroBannerSection.primaryButtonText[previewLang]}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          )}
+                      {/* Buttons */}
+                      <div className="flex flex-wrap items-center gap-4 pt-2">
+                        {attractiveData.heroBannerSection.primaryButtonText[previewLang] && (
+                          <a
+                            href={attractiveData.heroBannerSection.primaryButtonUrl || '#'}
+                            className={`px-6 py-3 rounded-full ${attTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-2`}
+                          >
+                            <span>{attractiveData.heroBannerSection.primaryButtonText[previewLang]}</span>
+                            <ArrowUpRight className="w-4 h-4" />
+                          </a>
+                        )}
 
-          {medicsInnovatorData.heroBannerSection.secondaryButtonText[previewLang] && (
-            <a
-              href={medicsInnovatorData.heroBannerSection.secondaryButtonUrl || '#'}
-              className="px-6 py-3 rounded-full bg-white text-[#0b1028] hover:bg-white/90 font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-md"
-            >
-              {medicsInnovatorData.heroBannerSection.secondaryButtonText[previewLang]}
-            </a>
-          )}
-        </div>
-      </div>
-      <div />
-    </div>
+                        {attractiveData.heroBannerSection.secondaryButtonText[previewLang] && (
+                          <a
+                            href={attractiveData.heroBannerSection.secondaryButtonUrl || '#'}
+                            className="px-6 py-3 rounded-full bg-white text-[#0b1028] hover:bg-white/90 font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-md"
+                          >
+                            {attractiveData.heroBannerSection.secondaryButtonText[previewLang]}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    <div />
+                  </div>
 
-    {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
-    <div className="space-y-6 text-center">
-      <p className="text-xs tracking-[0.2em] uppercase font-bold text-white/50">
-        {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
-      </p>
+                  {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
+                  <div className="space-y-6 text-center">
+                    <p className="text-xs tracking-[0.2em] uppercase font-bold text-white/50">
+                      {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
+                    </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 pt-2">
-        {(brandsData.brands || []).map((b, idx) => (
-          <div
-            key={b.id || idx}
-            className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
-          >
-            {b.logoUrl ? (
-              <img
-                src={b.logoUrl}
-                alt={b.name}
-                className="h-7 sm:h-9 w-auto max-w-[120px] object-contain grayscale hover:grayscale-0 transition-all brightness-150"
-              />
-            ) : (
-              <span className="text-xs sm:text-sm font-bold tracking-widest text-white/60">
-                {b.name}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 pt-2">
+                      {(brandsData.brands || []).map((b, idx) => (
+                        <div
+                          key={b.id || idx}
+                          className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
+                        >
+                          {b.logoUrl ? (
+                            <img
+                              src={b.logoUrl}
+                              alt={b.name}
+                              className="h-7 sm:h-9 w-auto max-w-[120px] object-contain grayscale hover:grayscale-0 transition-all brightness-150"
+                            />
+                          ) : (
+                            <span className="text-xs sm:text-sm font-bold tracking-widest text-white/60">
+                              {b.name}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-    {/* SECTION 3: ABOUT */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-      <div className="space-y-6">
-        <div className={`inline-block text-xs font-bold tracking-wider ${miTheme.titleText} uppercase`}>
-          {medicsInnovatorData.aboutSection.tagline[previewLang] || 'ABOUT MEDICS INNOVATOR'}
-        </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-          {medicsInnovatorData.aboutSection.title[previewLang]}
-        </h2>
-        <p className="text-sm text-white/70 leading-relaxed font-normal">
-          {medicsInnovatorData.aboutSection.description[previewLang]}
-        </p>
-      </div>
+                  {/* SECTION 3: ABOUT */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                    <div className="space-y-6">
+                      <div className={`inline-block text-xs font-bold tracking-wider ${attTheme.titleText} uppercase`}>
+                        {attractiveData.aboutSection.tagline[previewLang] || 'ABOUT ATTRACTIVE'}
+                      </div>
+                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                        {attractiveData.aboutSection.title[previewLang]}
+                      </h2>
+                      <p className="text-sm text-white/70 leading-relaxed font-normal">
+                        {attractiveData.aboutSection.description[previewLang]}
+                      </p>
+                    </div>
 
-      <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] bg-white/5 shadow-2xl">
-        <img
-          src={medicsInnovatorData.aboutSection.imageUrl}
-          alt="Medics Innovator Headquarters"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1028]/80 via-transparent to-transparent" />
-      </div>
-    </div>
+                    <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] bg-white/5 shadow-2xl">
+                      <img
+                        src={attractiveData.aboutSection.imageUrl}
+                        alt="Attractive Headquarters"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1028]/80 via-transparent to-transparent" />
+                    </div>
+                  </div>
 
-    {/* SECTION 3: LETS WORK TOGETHER BANNER */}
-    <div className={`relative rounded-3xl overflow-hidden border ${miTheme.darkBannerWrap} p-8 sm:p-12 text-center shadow-2xl space-y-6`}>
-      <p className={`text-xs font-bold tracking-[0.25em] ${miTheme.titleText} uppercase`}>
-        {medicsInnovatorData.workTogetherSection.tagline[previewLang] || "— LET'S WORK TOGETHER —"}
-      </p>
+                  {/* SECTION 3: LETS WORK TOGETHER BANNER */}
+                  <div className={`relative rounded-3xl overflow-hidden border ${attTheme.darkBannerWrap} p-8 sm:p-12 text-center shadow-2xl space-y-6`}>
+                    <p className={`text-xs font-bold tracking-[0.25em] ${attTheme.titleText} uppercase`}>
+                      {attractiveData.workTogetherSection.tagline[previewLang] || "— LET'S WORK TOGETHER —"}
+                    </p>
 
-      <h2 className="text-2xl sm:text-4xl font-extrabold text-white max-w-2xl mx-auto leading-tight">
-        {medicsInnovatorData.workTogetherSection.title[previewLang]}
-      </h2>
+                    <h2 className="text-2xl sm:text-4xl font-extrabold text-white max-w-2xl mx-auto leading-tight">
+                      {attractiveData.workTogetherSection.title[previewLang]}
+                    </h2>
 
-      <p className="text-xs sm:text-sm text-white/70 max-w-xl mx-auto leading-relaxed">
-        {medicsInnovatorData.workTogetherSection.description[previewLang]}
-      </p>
+                    <p className="text-xs sm:text-sm text-white/70 max-w-xl mx-auto leading-relaxed">
+                      {attractiveData.workTogetherSection.description[previewLang]}
+                    </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-        {medicsInnovatorData.workTogetherSection.primaryButtonText[previewLang] && (
-          <a
-            href={medicsInnovatorData.workTogetherSection.primaryButtonUrl || '#'}
-            className={`px-6 py-2.5 rounded-full ${miTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-1.5`}
-          >
-            <span>{medicsInnovatorData.workTogetherSection.primaryButtonText[previewLang]}</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
-        )}
+                    <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                      {attractiveData.workTogetherSection.primaryButtonText[previewLang] && (
+                        <a
+                          href={attractiveData.workTogetherSection.primaryButtonUrl || '#'}
+                          className={`px-6 py-2.5 rounded-full ${attTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-1.5`}
+                        >
+                          <span>{attractiveData.workTogetherSection.primaryButtonText[previewLang]}</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </a>
+                      )}
 
-        {medicsInnovatorData.workTogetherSection.secondaryButtonText[previewLang] && (
-          <a
-            href={medicsInnovatorData.workTogetherSection.secondaryButtonUrl || '#'}
-            className="px-6 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all"
-          >
-            {medicsInnovatorData.workTogetherSection.secondaryButtonText[previewLang]}
-          </a>
-        )}
-      </div>
-    </div>
-  </div>
-)}
+                      {attractiveData.workTogetherSection.secondaryButtonText[previewLang] && (
+                        <a
+                          href={attractiveData.workTogetherSection.secondaryButtonUrl || '#'}
+                          className="px-6 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all"
+                        >
+                          {attractiveData.workTogetherSection.secondaryButtonText[previewLang]}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
+              {/* ----------------- MEDICS INNOVATOR PREVIEW ----------------- */}
+              {editingTabId === 'medics-innovator' && (
+                <div className="space-y-16 max-w-6xl mx-auto">
+                  {/* SECTION 1: HERO BANNER */}
+                  <div
+                    className="relative rounded-3xl overflow-hidden border border-white/10 bg-cover bg-center p-8 sm:p-14 lg:p-16 min-h-[520px] flex flex-col justify-between shadow-2xl"
+                    style={{
+                      backgroundImage: `linear-gradient(to right, rgba(10, 15, 35, 0.92) 0%, rgba(10, 15, 35, 0.75) 50%, rgba(10, 15, 35, 0.4) 100%), url(${medicsInnovatorData.heroBannerSection.backgroundImageUrl})`,
+                    }}
+                  >
+                    {/* Top Logo */}
+                    <div className="flex items-center gap-3">
+                      {medicsInnovatorData.heroBannerSection.logoUrl ? (
+                        <img
+                          src={medicsInnovatorData.heroBannerSection.logoUrl}
+                          alt="Medics Innovator Logo"
+                          className="h-10 w-auto object-contain brightness-125"
+                        />
+                      ) : (
+                        <div className={`w-9 h-9 rounded-lg ${miTheme.primaryBtn} flex items-center justify-center text-white font-black text-sm`}>
+                          M
+                        </div>
+                      )}
+                      <div className="text-left">
+                        <p className="text-[10px] text-white/50 tracking-wider uppercase font-semibold">
+                          {previewLang === 'ar' ? 'ميديكس إنوفيتور' : 'MEDICS INNOVATOR'}
+                        </p>
+                        <p className="text-xs font-bold text-white tracking-wide">
+                          {medicsInnovatorData.heroBannerSection.logoText[previewLang] || 'MEDICS INNOVATOR'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="max-w-2xl space-y-6 my-10">
+                      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight">
+                        {medicsInnovatorData.heroBannerSection.title[previewLang] || 'Building Tomorrow'}
+                        {medicsInnovatorData.heroBannerSection.titleHighlight[previewLang] && (
+                          <span className={`block ${miTheme.accentText} mt-2`}>
+                            {medicsInnovatorData.heroBannerSection.titleHighlight[previewLang]}
+                          </span>
+                        )}
+                      </h1>
+
+                      <p className="text-sm sm:text-base text-white/75 leading-relaxed font-normal max-w-xl">
+                        {medicsInnovatorData.heroBannerSection.description[previewLang]}
+                      </p>
+
+                      {/* Buttons */}
+                      <div className="flex flex-wrap items-center gap-4 pt-2">
+                        {medicsInnovatorData.heroBannerSection.primaryButtonText[previewLang] && (
+                          <a
+                            href={medicsInnovatorData.heroBannerSection.primaryButtonUrl || '#'}
+                            className={`px-6 py-3 rounded-full ${miTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-2`}
+                          >
+                            <span>{medicsInnovatorData.heroBannerSection.primaryButtonText[previewLang]}</span>
+                            <ArrowUpRight className="w-4 h-4" />
+                          </a>
+                        )}
+
+                        {medicsInnovatorData.heroBannerSection.secondaryButtonText[previewLang] && (
+                          <a
+                            href={medicsInnovatorData.heroBannerSection.secondaryButtonUrl || '#'}
+                            className="px-6 py-3 rounded-full bg-white text-[#0b1028] hover:bg-white/90 font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-md"
+                          >
+                            {medicsInnovatorData.heroBannerSection.secondaryButtonText[previewLang]}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    <div />
+                  </div>
+
+                  {/* SECTION 2: BRAND LOGOS (CENTRALIZED) */}
+                  <div className="space-y-6 text-center">
+                    <p className="text-xs tracking-[0.2em] uppercase font-bold text-white/50">
+                      {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'العلامات التجارية الموثوقة ورواد الصناعة' : 'TRUSTED BRANDS & INDUSTRY LEADERS')}
+                    </p>
+
+                    <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 pt-2">
+                      {(brandsData.brands || []).map((b, idx) => (
+                        <div
+                          key={b.id || idx}
+                          className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
+                        >
+                          {b.logoUrl ? (
+                            <img
+                              src={b.logoUrl}
+                              alt={b.name}
+                              className="h-7 sm:h-9 w-auto max-w-[120px] object-contain grayscale hover:grayscale-0 transition-all brightness-150"
+                            />
+                          ) : (
+                            <span className="text-xs sm:text-sm font-bold tracking-widest text-white/60">
+                              {b.name}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION 3: ABOUT */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                    <div className="space-y-6">
+                      <div className={`inline-block text-xs font-bold tracking-wider ${miTheme.titleText} uppercase`}>
+                        {medicsInnovatorData.aboutSection.tagline[previewLang] || 'ABOUT MEDICS INNOVATOR'}
+                      </div>
+                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                        {medicsInnovatorData.aboutSection.title[previewLang]}
+                      </h2>
+                      <p className="text-sm text-white/70 leading-relaxed font-normal">
+                        {medicsInnovatorData.aboutSection.description[previewLang]}
+                      </p>
+                    </div>
+
+                    <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-[4/3] bg-white/5 shadow-2xl">
+                      <img
+                        src={medicsInnovatorData.aboutSection.imageUrl}
+                        alt="Medics Innovator Headquarters"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1028]/80 via-transparent to-transparent" />
+                    </div>
+                  </div>
+
+                  {/* SECTION 3: LETS WORK TOGETHER BANNER */}
+                  <div className={`relative rounded-3xl overflow-hidden border ${miTheme.darkBannerWrap} p-8 sm:p-12 text-center shadow-2xl space-y-6`}>
+                    <p className={`text-xs font-bold tracking-[0.25em] ${miTheme.titleText} uppercase`}>
+                      {medicsInnovatorData.workTogetherSection.tagline[previewLang] || "— LET'S WORK TOGETHER —"}
+                    </p>
+
+                    <h2 className="text-2xl sm:text-4xl font-extrabold text-white max-w-2xl mx-auto leading-tight">
+                      {medicsInnovatorData.workTogetherSection.title[previewLang]}
+                    </h2>
+
+                    <p className="text-xs sm:text-sm text-white/70 max-w-xl mx-auto leading-relaxed">
+                      {medicsInnovatorData.workTogetherSection.description[previewLang]}
+                    </p>
+
+                    <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                      {medicsInnovatorData.workTogetherSection.primaryButtonText[previewLang] && (
+                        <a
+                          href={medicsInnovatorData.workTogetherSection.primaryButtonUrl || '#'}
+                          className={`px-6 py-2.5 rounded-full ${miTheme.primaryBtnShadow} text-white font-semibold text-xs sm:text-sm tracking-wide transition-all flex items-center gap-1.5`}
+                        >
+                          <span>{medicsInnovatorData.workTogetherSection.primaryButtonText[previewLang]}</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </a>
+                      )}
+
+                      {medicsInnovatorData.workTogetherSection.secondaryButtonText[previewLang] && (
+                        <a
+                          href={medicsInnovatorData.workTogetherSection.secondaryButtonUrl || '#'}
+                          className="px-6 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs sm:text-sm tracking-wide transition-all"
+                        >
+                          {medicsInnovatorData.workTogetherSection.secondaryButtonText[previewLang]}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
 
               {/* ----------------- CTA BANNER PREVIEW IN MODAL ----------------- */}
@@ -17164,230 +17271,230 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               {/* ----------------- HOME PAGE PREVIEW ----------------- */}
               {editingTabId !== 'cta-banner' && editingTabId !== 'about' && editingTabId !== 'company' && editingTabId !== 'services' && editingTabId !== 'shop' && editingTabId !== 'projects' && editingTabId !== 'partners' && editingTabId !== 'contact' && editingTabId !== 'projects-innovator' && editingTabId !== 'attractive' && editingTabId !== 'medics-innovator' && editingTabId !== 'brands' && (
                 <>
-              {/* SECTION 1: HERO */}
-              <div className="text-center max-w-3xl mx-auto space-y-4">
-                <div className="inline-block px-3 py-1 rounded-full bg-[#F68E2D]/10 border border-[#F68E2D]/30 text-[#F68E2D] text-xs font-semibold tracking-wide">
-                  {data.hero.headingTag[previewLang] || 'Empowering Growth'}
-                </div>
-                <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
-                  {data.hero.mainTitle[previewLang] || 'Hero Title'}
-                </h1>
-                <p className="text-sm sm:text-base text-white/70 max-w-2xl mx-auto">
-                  {data.hero.description[previewLang]}
-                </p>
-
-                <div className="pt-6 flex items-center justify-center gap-4 max-w-md mx-auto bg-white/5 p-4 rounded-xl border border-white/10 text-left">
-                  <img
-                    src={data.hero.founder.image}
-                    alt="Founder"
-                    className="w-16 h-16 rounded-full object-cover border-2 border-[#F68E2D]"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80';
-                    }}
-                  />
-                  <div className={previewLang === 'ar' ? 'text-right' : 'text-left'}>
-                    <p className="font-bold text-white text-sm">
-                      {data.hero.founder.name[previewLang]}
-                    </p>
-                    <p className="text-xs text-white/60 line-clamp-2">
-                      {data.hero.founder.description[previewLang]}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* SECTION 2: BRANDS */}
-              <div className="space-y-4 text-center">
-                <p className="text-xs uppercase tracking-widest text-white/40 font-semibold">
-                  {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'شركاؤنا والعلامات الموثوقة' : 'Trusted by Leading Global Innovators')}
-                </p>
-                <div className="flex flex-wrap items-center justify-center gap-8 py-4 px-6 bg-white/5 rounded-2xl border border-white/5">
-                  {(brandsData.brands || []).map((b, i) => (
-                    <div key={i} className="flex items-center gap-2 group opacity-75 hover:opacity-100 transition-opacity">
-                      {b.logoUrl && (
-                        <img
-                          src={b.logoUrl}
-                          alt={b.name}
-                          className="h-8 max-w-[120px] object-contain filter brightness-125"
-                          onError={(e) => {
-                            e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=100&q=80';
-                          }}
-                        />
-                      )}
-                      <span className="text-xs font-medium text-white/80">{b.name}</span>
+                  {/* SECTION 1: HERO */}
+                  <div className="text-center max-w-3xl mx-auto space-y-4">
+                    <div className="inline-block px-3 py-1 rounded-full bg-[#F68E2D]/10 border border-[#F68E2D]/30 text-[#F68E2D] text-xs font-semibold tracking-wide">
+                      {data.hero.headingTag[previewLang] || 'Empowering Growth'}
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* SECTION 3: ABOUT & OUR SECTORS */}
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 h-64">
-                    <img
-                      src={data.aboutSectorsSection.image}
-                      alt="About section"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80';
-                      }}
-                    />
-                    <div className="absolute bottom-3 left-3 right-3 bg-black/70 backdrop-blur-md p-2.5 rounded-lg border border-white/10 flex items-center gap-2 text-xs text-white">
-                      <MapPin className="w-4 h-4 text-[#F68E2D]" />
-                      <span>{data.aboutSectorsSection.location[previewLang]}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-                      {data.aboutSectorsSection.title[previewLang]}
-                    </h2>
-                    <p className="text-sm text-white/70 leading-relaxed">
-                      {data.aboutSectorsSection.description[previewLang]}
+                    <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
+                      {data.hero.mainTitle[previewLang] || 'Hero Title'}
+                    </h1>
+                    <p className="text-sm sm:text-base text-white/70 max-w-2xl mx-auto">
+                      {data.hero.description[previewLang]}
                     </p>
-                  </div>
-                </div>
 
-                {/* Our Sectors Pill Tags matching screenshot */}
-                <div className="pt-6 border-t border-white/10 space-y-3">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                    {previewLang === 'ar' ? 'قطاعاتنا' : 'Our Sectors'}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    {data.aboutSectorsSection.sectors.map((sec, idx) => (
-                      <span
-                        key={idx}
-                        className="px-4 py-2 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-sm transition-all"
-                      >
-                        {sec.title[previewLang] || (previewLang === 'ar' ? 'قطاع' : 'Sector')}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* SECTION 4: SPECIALIZED COMPANIES / DIVISIONS (IMAGE 1 TOP HALF) */}
-              <div className="space-y-8 pt-6 border-t border-white/10">
-                <div className="text-center max-w-2xl mx-auto space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#F68E2D]">
-                    {data.companiesSection?.tagline?.[previewLang] || 'OUR COMPANIES'}
-                  </span>
-                  <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
-                    {data.companiesSection?.title?.[previewLang] || 'Three Specialized Divisions. One Group'}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-white/60">
-                    {data.companiesSection?.description?.[previewLang]}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {(data.companiesSection?.companies || []).map((comp, idx) => (
-                    <div
-                      key={comp.id || idx}
-                      className="p-6 rounded-3xl bg-[#0b1028]/90 border border-white/10 hover:border-[#F68E2D]/40 shadow-xl space-y-5 text-center flex flex-col justify-between transition-all"
-                    >
-                      <div className="space-y-4">
-                        <div className="w-20 h-20 mx-auto rounded-2xl bg-white p-3 flex items-center justify-center shadow-md">
-                          {comp.logoUrl ? (
-                            <img
-                              src={comp.logoUrl}
-                              alt={comp.name[previewLang]}
-                              className="max-h-full max-w-full object-contain"
-                            />
-                          ) : (
-                            <ImageIcon className="w-8 h-8 text-black/30" />
-                          )}
-                        </div>
-
-                        <h3 className="text-lg font-bold text-white">
-                          {comp.name[previewLang]}
-                        </h3>
-
-                        <p className="text-xs text-white/60 leading-relaxed">
-                          {comp.description[previewLang]}
+                    <div className="pt-6 flex items-center justify-center gap-4 max-w-md mx-auto bg-white/5 p-4 rounded-xl border border-white/10 text-left">
+                      <img
+                        src={data.hero.founder.image}
+                        alt="Founder"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-[#F68E2D]"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80';
+                        }}
+                      />
+                      <div className={previewLang === 'ar' ? 'text-right' : 'text-left'}>
+                        <p className="font-bold text-white text-sm">
+                          {data.hero.founder.name[previewLang]}
+                        </p>
+                        <p className="text-xs text-white/60 line-clamp-2">
+                          {data.hero.founder.description[previewLang]}
                         </p>
                       </div>
+                    </div>
+                  </div>
 
-                      <div className="pt-2">
-                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/90 border border-white/10">
-                          {previewLang === 'ar' ? 'استكشف' : 'Explore'} &rarr;
+                  {/* SECTION 2: BRANDS */}
+                  <div className="space-y-4 text-center">
+                    <p className="text-xs uppercase tracking-widest text-white/40 font-semibold">
+                      {brandsData.title?.[previewLang] || (previewLang === 'ar' ? 'شركاؤنا والعلامات الموثوقة' : 'Trusted by Leading Global Innovators')}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-8 py-4 px-6 bg-white/5 rounded-2xl border border-white/5">
+                      {(brandsData.brands || []).map((b, i) => (
+                        <div key={i} className="flex items-center gap-2 group opacity-75 hover:opacity-100 transition-opacity">
+                          {b.logoUrl && (
+                            <img
+                              src={b.logoUrl}
+                              alt={b.name}
+                              className="h-8 max-w-[120px] object-contain filter brightness-125"
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=100&q=80';
+                              }}
+                            />
+                          )}
+                          <span className="text-xs font-medium text-white/80">{b.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION 3: ABOUT & OUR SECTORS */}
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                      <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 h-64">
+                        <img
+                          src={data.aboutSectorsSection.image}
+                          alt="About section"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80';
+                          }}
+                        />
+                        <div className="absolute bottom-3 left-3 right-3 bg-black/70 backdrop-blur-md p-2.5 rounded-lg border border-white/10 flex items-center gap-2 text-xs text-white">
+                          <MapPin className="w-4 h-4 text-[#F68E2D]" />
+                          <span>{data.aboutSectorsSection.location[previewLang]}</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+                          {data.aboutSectorsSection.title[previewLang]}
+                        </h2>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          {data.aboutSectorsSection.description[previewLang]}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Our Sectors Pill Tags matching screenshot */}
+                    <div className="pt-6 border-t border-white/10 space-y-3">
+                      <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                        {previewLang === 'ar' ? 'قطاعاتنا' : 'Our Sectors'}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        {data.aboutSectorsSection.sectors.map((sec, idx) => (
+                          <span
+                            key={idx}
+                            className="px-4 py-2 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-sm transition-all"
+                          >
+                            {sec.title[previewLang] || (previewLang === 'ar' ? 'قطاع' : 'Sector')}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 4: SPECIALIZED COMPANIES / DIVISIONS (IMAGE 1 TOP HALF) */}
+                  <div className="space-y-8 pt-6 border-t border-white/10">
+                    <div className="text-center max-w-2xl mx-auto space-y-2">
+                      <span className="text-xs font-bold uppercase tracking-widest text-[#F68E2D]">
+                        {data.companiesSection?.tagline?.[previewLang] || 'OUR COMPANIES'}
+                      </span>
+                      <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
+                        {data.companiesSection?.title?.[previewLang] || 'Three Specialized Divisions. One Group'}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-white/60">
+                        {data.companiesSection?.description?.[previewLang]}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {(data.companiesSection?.companies || []).map((comp, idx) => (
+                        <div
+                          key={comp.id || idx}
+                          className="p-6 rounded-3xl bg-[#0b1028]/90 border border-white/10 hover:border-[#F68E2D]/40 shadow-xl space-y-5 text-center flex flex-col justify-between transition-all"
+                        >
+                          <div className="space-y-4">
+                            <div className="w-20 h-20 mx-auto rounded-2xl bg-white p-3 flex items-center justify-center shadow-md">
+                              {comp.logoUrl ? (
+                                <img
+                                  src={comp.logoUrl}
+                                  alt={comp.name[previewLang]}
+                                  className="max-h-full max-w-full object-contain"
+                                />
+                              ) : (
+                                <ImageIcon className="w-8 h-8 text-black/30" />
+                              )}
+                            </div>
+
+                            <h3 className="text-lg font-bold text-white">
+                              {comp.name[previewLang]}
+                            </h3>
+
+                            <p className="text-xs text-white/60 leading-relaxed">
+                              {comp.description[previewLang]}
+                            </p>
+                          </div>
+
+                          <div className="pt-2">
+                            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/90 border border-white/10">
+                              {previewLang === 'ar' ? 'استكشف' : 'Explore'} &rarr;
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION 5: PURPOSE, VISION & MISSION (IMAGE 1 BOTTOM HALF) */}
+                  <div className="space-y-8 pt-6 border-t border-white/10">
+                    <div className="text-center max-w-2xl mx-auto space-y-2">
+                      <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">
+                        {data.purposeSection?.tagline?.[previewLang] || 'OUR PURPOSE'}
+                      </span>
+                      <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
+                        {data.purposeSection?.title?.[previewLang] || 'Driven by Vision. Defined by Purpose.'}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-white/60">
+                        {data.purposeSection?.description?.[previewLang]}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {(data.purposeSection?.tags || []).map((tag, idx) => (
+                        <div
+                          key={tag.id || idx}
+                          className="p-6 rounded-2xl bg-[#0b1028]/90 border border-white/10 space-y-2.5 flex items-start gap-4"
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                            {idx === 0 ? <Compass className="w-5 h-5" /> : <Target className="w-5 h-5" />}
+                          </div>
+                          <div>
+                            <h4 className="text-base font-bold text-white">
+                              {tag.title[previewLang]}
+                            </h4>
+                            <p className="text-xs text-white/70 leading-relaxed mt-1">
+                              {tag.description[previewLang]}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Infographic Image */}
+                    {data.purposeSection?.image && (
+                      <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black/40">
+                        <img
+                          src={data.purposeSection.image}
+                          alt="Vision & Mission diagram"
+                          className="w-full h-auto object-cover max-h-[480px]"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* SECTION 6: CTA BANNER (IMAGE 2) */}
+                  <div className="pt-6 border-t border-white/10">
+                    <div className="relative rounded-3xl overflow-hidden p-8 sm:p-14 text-center shadow-2xl bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/30 space-y-5">
+                      <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/20 text-white/80 border border-white/15">
+                        {data.bannerSection?.tagline?.[previewLang] || "LET'S WORK TOGETHER"}
+                      </div>
+                      <h2 className="text-2xl sm:text-4xl font-extrabold text-white max-w-3xl mx-auto leading-tight">
+                        {data.bannerSection?.title?.[previewLang] || "Let's Build Something That Moves Business Forward."}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-white/80 max-w-2xl mx-auto leading-relaxed">
+                        {data.bannerSection?.description?.[previewLang]}
+                      </p>
+                      <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
+                        <span className="px-6 py-3 rounded-full text-xs font-bold bg-white text-[#701020] shadow-xl hover:bg-white/90 transition-all cursor-pointer">
+                          {data.bannerSection?.primaryButtonText?.[previewLang] || 'Get a Quote'} &rarr;
+                        </span>
+                        <span className="px-6 py-3 rounded-full text-xs font-bold bg-transparent border border-white/40 text-white hover:bg-white/10 transition-all cursor-pointer">
+                          {data.bannerSection?.secondaryButtonText?.[previewLang] || 'Contact Us'}
                         </span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* SECTION 5: PURPOSE, VISION & MISSION (IMAGE 1 BOTTOM HALF) */}
-              <div className="space-y-8 pt-6 border-t border-white/10">
-                <div className="text-center max-w-2xl mx-auto space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">
-                    {data.purposeSection?.tagline?.[previewLang] || 'OUR PURPOSE'}
-                  </span>
-                  <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
-                    {data.purposeSection?.title?.[previewLang] || 'Driven by Vision. Defined by Purpose.'}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-white/60">
-                    {data.purposeSection?.description?.[previewLang]}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {(data.purposeSection?.tags || []).map((tag, idx) => (
-                    <div
-                      key={tag.id || idx}
-                      className="p-6 rounded-2xl bg-[#0b1028]/90 border border-white/10 space-y-2.5 flex items-start gap-4"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                        {idx === 0 ? <Compass className="w-5 h-5" /> : <Target className="w-5 h-5" />}
-                      </div>
-                      <div>
-                        <h4 className="text-base font-bold text-white">
-                          {tag.title[previewLang]}
-                        </h4>
-                        <p className="text-xs text-white/70 leading-relaxed mt-1">
-                          {tag.description[previewLang]}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Infographic Image */}
-                {data.purposeSection?.image && (
-                  <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black/40">
-                    <img
-                      src={data.purposeSection.image}
-                      alt="Vision & Mission diagram"
-                      className="w-full h-auto object-cover max-h-[480px]"
-                    />
                   </div>
-                )}
-              </div>
-
-              {/* SECTION 6: CTA BANNER (IMAGE 2) */}
-              <div className="pt-6 border-t border-white/10">
-                <div className="relative rounded-3xl overflow-hidden p-8 sm:p-14 text-center shadow-2xl bg-gradient-to-r from-[#701020] via-[#851828] to-[#450812] border border-red-500/30 space-y-5">
-                  <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-black/20 text-white/80 border border-white/15">
-                    {data.bannerSection?.tagline?.[previewLang] || "LET'S WORK TOGETHER"}
-                  </div>
-                  <h2 className="text-2xl sm:text-4xl font-extrabold text-white max-w-3xl mx-auto leading-tight">
-                    {data.bannerSection?.title?.[previewLang] || "Let's Build Something That Moves Business Forward."}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-white/80 max-w-2xl mx-auto leading-relaxed">
-                    {data.bannerSection?.description?.[previewLang]}
-                  </p>
-                  <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
-                    <span className="px-6 py-3 rounded-full text-xs font-bold bg-white text-[#701020] shadow-xl hover:bg-white/90 transition-all cursor-pointer">
-                      {data.bannerSection?.primaryButtonText?.[previewLang] || 'Get a Quote'} &rarr;
-                    </span>
-                    <span className="px-6 py-3 rounded-full text-xs font-bold bg-transparent border border-white/40 text-white hover:bg-white/10 transition-all cursor-pointer">
-                      {data.bannerSection?.secondaryButtonText?.[previewLang] || 'Contact Us'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              </>
+                </>
               )}
 
             </div>

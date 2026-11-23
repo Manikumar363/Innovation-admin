@@ -29,6 +29,7 @@ import {
   Truck,
   FileCheck,
   Code2,
+  Lock,
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
@@ -1508,20 +1509,20 @@ export const ServicesPage: React.FC = () => {
 
                   {/* Button Link */}
                   <div>
-                    <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
-                      Button Link / Action Route
+                    <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2 flex items-center justify-between">
+                      <span>Button Link / Action Route</span>
+                      <span className="text-[10px] text-white/40 font-normal normal-case flex items-center gap-1">
+                        <Lock className="w-2.5 h-2.5 text-white/40" />
+                        Fixed Route
+                      </span>
                     </label>
                     <input
                       type="text"
+                      readOnly
+                      disabled
                       value={currentService.ctaBanner.buttonLink || '/quotes'}
-                      onChange={(e) =>
-                        updateCurrentService((prev) => ({
-                          ...prev,
-                          ctaBanner: { ...prev.ctaBanner, buttonLink: e.target.value },
-                        }))
-                      }
-                      placeholder="/quotes or /enquiries"
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500"
+                      title="Target URL is fixed by system navigation and cannot be edited"
+                      className="w-full px-3.5 py-2.5 rounded-lg bg-black/40 border border-white/5 text-white/40 text-sm cursor-not-allowed select-none"
                     />
                   </div>
                 </div>
