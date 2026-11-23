@@ -4722,6 +4722,55 @@ export const cmsService = {
     return result;
   },
 
+  async updateSingleShopProduct(
+    productIdOrSlug: string,
+    updatedProduct: Partial<ShopProductCard>
+  ): Promise<CmsShopData> {
+    const current = await this.getCmsShop();
+    const existingList = current?.headerSection?.products || [];
+    const targetIdx = existingList.findIndex(
+      (p, i) =>
+        (p.id && p.id === productIdOrSlug) ||
+        (p.slug && p.slug === productIdOrSlug) ||
+        `prod-${i}` === productIdOrSlug
+    );
+    let nextList: ShopProductCard[];
+    if (targetIdx !== -1) {
+      nextList = existingList.map((p, i) =>
+        i === targetIdx ? ({ ...p, ...updatedProduct } as ShopProductCard) : p
+      );
+    } else {
+      nextList = [...existingList, updatedProduct as ShopProductCard];
+    }
+    const nextShopData: CmsShopData = {
+      ...current,
+      headerSection: {
+        ...current.headerSection,
+        products: nextList,
+      },
+    };
+    return this.updateCmsShop(nextShopData);
+  },
+
+  async deleteShopProduct(productIdOrSlug: string): Promise<CmsShopData> {
+    const current = await this.getCmsShop();
+    const existingList = current?.headerSection?.products || [];
+    const nextList = existingList.filter(
+      (p, i) =>
+        p.id !== productIdOrSlug &&
+        p.slug !== productIdOrSlug &&
+        `prod-${i}` !== productIdOrSlug
+    );
+    const nextShopData: CmsShopData = {
+      ...current,
+      headerSection: {
+        ...current.headerSection,
+        products: nextList,
+      },
+    };
+    return this.updateCmsShop(nextShopData);
+  },
+
   // CMS Services
   async getCmsServices(): Promise<CmsServicesData> {
     try {

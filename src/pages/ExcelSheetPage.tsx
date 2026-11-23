@@ -17,10 +17,12 @@ import {
   Trash2,
   Eye,
   Table,
+  Edit3,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { ProductEditModal } from '../components/shop/ProductEditModal';
 import {
   downloadShopProductsExcelTemplate,
   parseShopProductsExcelFile,
@@ -47,6 +49,8 @@ export const ExcelSheetPage: React.FC = () => {
   const [activePreviewTab, setActivePreviewTab] = useState<'all' | 'valid' | 'errors'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedProductPreview, setSelectedProductPreview] = useState<ShopProductCard | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ShopProductCard | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     loadShopData();
@@ -64,6 +68,46 @@ export const ExcelSheetPage: React.FC = () => {
       toast.error('Could not load current database products');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenEditModal = (product: ShopProductCard) => {
+    setEditingProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveProduct = async (updatedProduct: ShopProductCard) => {
+    try {
+      const targetIdOrSlug = updatedProduct.id || updatedProduct.slug || '';
+      const resData = await cmsService.updateSingleShopProduct(targetIdOrSlug, updatedProduct);
+      if (resData) {
+        setShopData(resData);
+      } else {
+        await loadShopData();
+      }
+    } catch (err: any) {
+      console.error('Error saving edited product:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteProduct = async (product: ShopProductCard) => {
+    const confirmName = product.name?.en || product.slug || 'this product';
+    if (!window.confirm(`Are you sure you want to delete "${confirmName}" from the database?`)) {
+      return;
+    }
+    try {
+      const targetIdOrSlug = product.id || product.slug || '';
+      const resData = await cmsService.deleteShopProduct(targetIdOrSlug);
+      if (resData) {
+        setShopData(resData);
+      } else {
+        await loadShopData();
+      }
+      toast.success(`Deleted product "${confirmName}"`);
+    } catch (err: any) {
+      console.error('Error deleting product:', err);
+      toast.error(err.message || 'Failed to delete product');
     }
   };
 
@@ -733,15 +777,36 @@ export const ExcelSheetPage: React.FC = () => {
                             </span>
                           </td>
                           <td className="p-3 text-center">
-                            <button
-                              type="button"
-                              onClick={() => setSelectedProductPreview(prod)}
-                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 text-white transition-all inline-flex items-center gap-1 cursor-pointer"
-                              title="Inspect full product specs & HTML description"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              View
-                            </button>
+                            <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditModal(prod)}
+                                className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 transition-all inline-flex items-center gap-1 cursor-pointer shadow-sm"
+                                title="Edit product details and upload multiple images"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                                Edit / Images
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setSelectedProductPreview(prod)}
+                                className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 text-white transition-all inline-flex items-center gap-1 cursor-pointer"
+                                title="Inspect full product specs & HTML description"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                View
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteProduct(prod)}
+                                className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
+                                title="Delete this product from database"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -846,6 +911,17 @@ export const ExcelSheetPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* PRODUCT EDIT & IMAGE GALLERY MODAL */}
+        <ProductEditModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setEditingProduct(null);
+          }}
+          product={editingProduct}
+          onSave={handleSaveProduct}
+        />
       </div>
     </DashboardLayout>
   );

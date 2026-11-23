@@ -21,29 +21,79 @@ export interface ExcelImportParseResult {
   rowResults: ExcelRowValidation[];
 }
 
-// Canonical Column Headers
+/**
+ * EXACT 22 Column Headers matching the official template specifications (Columns A to V):
+ * A: SKU *
+ * B: Shop section *
+ * C: Category *
+ * D: Product name (EN) *
+ * E: Product name (AR)
+ * F: Brand / Manufacturer *
+ * G: Country of origin
+ * H: Short description (EN) * (max 160 characters)
+ * I: Short description (AR)
+ * J: Full description (EN)
+ * K: Key specifications (EN) (one per line)
+ * L: Certifications (CE / FDA / ISO / other)
+ * M: Product type *
+ * N: Price (USD) — Fixed Price only
+ * O: Verification required? *
+ * P: MOH registration no. (pharma only)
+ * Q: Generic name (pharma only)
+ * R: Dosage form / strength (pharma only)
+ * S: Warranty / after-sales (EN)
+ * T: Image file names (comma separated) *
+ * U: Datasheet file name
+ * V: Notes
+ */
+export const OFFICIAL_EXCEL_COLUMNS = {
+  SKU: 'SKU *',
+  SHOP_SECTION: 'Shop section *',
+  CATEGORY: 'Category *',
+  PRODUCT_NAME_EN: 'Product name (EN) *',
+  PRODUCT_NAME_AR: 'Product name (AR)',
+  BRAND_MANUFACTURER: 'Brand / Manufacturer *',
+  COUNTRY_OF_ORIGIN: 'Country of origin',
+  SHORT_DESC_EN: 'Short description (EN) * (max 160 characters)',
+  SHORT_DESC_AR: 'Short description (AR)',
+  FULL_DESC_EN: 'Full description (EN)',
+  KEY_SPECS_EN: 'Key specifications (EN) (one per line)',
+  CERTIFICATIONS: 'Certifications (CE / FDA / ISO / other)',
+  PRODUCT_TYPE: 'Product type *',
+  PRICE_USD: 'Price (USD) — Fixed Price only',
+  VERIFICATION_REQUIRED: 'Verification required? *',
+  MOH_REG_NO: 'MOH registration no. (pharma only)',
+  GENERIC_NAME: 'Generic name (pharma only)',
+  DOSAGE_FORM: 'Dosage form / strength (pharma only)',
+  WARRANTY: 'Warranty / after-sales (EN)',
+  IMAGE_FILE_NAMES: 'Image file names (comma separated) *',
+  DATASHEET_FILE: 'Datasheet file name',
+  NOTES: 'Notes',
+} as const;
+
+// Legacy alias map to guarantee 100% backwards-compatibility
 export const EXCEL_COLUMNS = {
-  NAME_EN: 'Product Name (English) *',
-  NAME_AR: 'Product Name (Arabic) *',
-  BRAND_EN: 'Brand / Category (English)',
+  NAME_EN: OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN,
+  NAME_AR: OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR,
+  BRAND_EN: OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER,
   BRAND_AR: 'Brand / Category (Arabic)',
-  SLUG: 'Product Slug (Optional)',
-  SHORT_DESC_EN: 'Short Summary (English)',
-  SHORT_DESC_AR: 'Short Summary (Arabic)',
-  PRODUCT_DESC_HTML_EN: 'Detailed Description HTML (English)',
+  SLUG: OFFICIAL_EXCEL_COLUMNS.SKU,
+  SHORT_DESC_EN: OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN,
+  SHORT_DESC_AR: OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR,
+  PRODUCT_DESC_HTML_EN: OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN,
   PRODUCT_DESC_HTML_AR: 'Detailed Description HTML (Arabic)',
   PRIMARY_IMAGE: 'Primary Image URL',
-  ADDITIONAL_IMAGES: 'Additional Image URLs (Comma-separated)',
-  SPECS_EN: 'Key Specifications (English) [Label: Value | Label: Value]',
+  ADDITIONAL_IMAGES: OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES,
+  SPECS_EN: OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN,
   SPECS_AR: 'Key Specifications (Arabic) [Label: Value | Label: Value]',
-  BADGES_EN: 'Certification Badges (English) [Comma-separated]',
+  BADGES_EN: OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS,
   BADGES_AR: 'Certification Badges (Arabic) [Comma-separated]',
   BUTTON_TEXT_EN: 'Button Text (English)',
   BUTTON_TEXT_AR: 'Button Text (Arabic)',
   BUTTON_URL: 'Button Link URL',
 };
 
-const toProductSlug = (text: string): string =>
+export const toProductSlug = (text: string): string =>
   text
     .toLowerCase()
     .trim()
@@ -53,7 +103,7 @@ const toProductSlug = (text: string): string =>
 /**
  * Converts plain text into clean HTML if tags are not already present.
  */
-const ensureHtmlContent = (text: string): string => {
+export const ensureHtmlContent = (text: string): string => {
   if (!text || !text.trim()) return '';
   const trimmed = text.trim();
   if (/<[a-z][\s\S]*>/i.test(trimmed)) {
@@ -84,16 +134,19 @@ const ensureHtmlContent = (text: string): string => {
 };
 
 /**
- * Parses pipe-separated or newline-separated key specifications.
- * Format: "Label: Value | Label: Value"
+ * Parses key specifications from newline or pipe separated text:
+ * Format:
+ * Display: 15.6" TFT LCD
+ * Parameters: ECG, SpO2, NIBP, RESP, TEMP
+ * Power Supply: AC 100~240V
  */
-const parseSpecsString = (
+export const parseSpecsString = (
   enStr: string,
-  arStr: string
+  arStr?: string
 ): ShopProductSpecification[] => {
   const parseParts = (raw: string) => {
     if (!raw || !raw.trim()) return [];
-    const tokens = raw.split(/[|\n]/).map((t) => t.trim()).filter(Boolean);
+    const tokens = raw.split(/\r?\n|\|/).map((t) => t.trim()).filter(Boolean);
     return tokens.map((t) => {
       const colonIdx = t.indexOf(':');
       if (colonIdx === -1) {
@@ -107,7 +160,7 @@ const parseSpecsString = (
   };
 
   const enList = parseParts(enStr);
-  const arList = parseParts(arStr);
+  const arList = parseParts(arStr || '');
   const maxLen = Math.max(enList.length, arList.length);
   const specs: ShopProductSpecification[] = [];
 
@@ -126,9 +179,9 @@ const parseSpecsString = (
 };
 
 /**
- * Parses comma-separated badges.
+ * Parses comma-separated badges/certifications.
  */
-const parseBadgesString = (enStr: string, arStr: string): ShopProductBadge[] => {
+export const parseBadgesString = (enStr: string, arStr?: string): ShopProductBadge[] => {
   const enList = (enStr || '')
     .split(/[,|\n]/)
     .map((s) => s.trim())
@@ -157,7 +210,7 @@ const parseBadgesString = (enStr: string, arStr: string): ShopProductBadge[] => 
 /**
  * Finds a row cell value regardless of minor column name variations.
  */
-const getCellValue = (row: Record<string, any>, ...keys: string[]): string => {
+export const getCellValue = (row: Record<string, any>, ...keys: string[]): string => {
   const rowKeys = Object.keys(row);
   for (const targetKey of keys) {
     const targetNorm = targetKey.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -172,118 +225,130 @@ const getCellValue = (row: Record<string, any>, ...keys: string[]): string => {
 };
 
 /**
- * Downloads a pre-formatted Excel template for bulk product import.
+ * Downloads a pre-formatted Excel template for bulk product import
+ * with the EXACT 22 columns from the official specifications (Columns A to V).
  */
 export const downloadShopProductsExcelTemplate = (options?: { withSampleData?: boolean }): void => {
   const withSampleData = options?.withSampleData !== false;
 
-  const templateRows = withSampleData
-    ? [
-        {
-          [EXCEL_COLUMNS.NAME_EN]: 'Philips IntelliVue MX550 Patient Monitor',
-          [EXCEL_COLUMNS.NAME_AR]: 'شاشة مراقبة المريض فيليبس إنتيليفيو MX550',
-          [EXCEL_COLUMNS.BRAND_EN]: 'MedTech Solutions',
-          [EXCEL_COLUMNS.BRAND_AR]: 'حلول ميدتك',
-          [EXCEL_COLUMNS.SLUG]: 'philips-intellivue-mx550',
-          [EXCEL_COLUMNS.SHORT_DESC_EN]:
-            'Advanced bedside monitoring solution designed for high-acuity care units and emergency rooms.',
-          [EXCEL_COLUMNS.SHORT_DESC_AR]:
-            'حل متقدم لمراقبة المرضى بجانب السرير مصمم لوحدات العناية الفائقة وغرف الطوارئ.',
-          [EXCEL_COLUMNS.PRODUCT_DESC_HTML_EN]:
-            '<p>The IntelliVue MX550 provides advanced monitoring capabilities with a user-friendly interface, helping healthcare professionals make faster, more informed decisions.</p><ul><li>15.6" high-resolution display</li><li>Multiple parameter monitoring (ECG, SpO2, NIBP, RESP, TEMP)</li><li>Advanced alarm management</li><li>Network connectivity (HL7, DICOM)</li><li>Ergonomic and compact design</li></ul>',
-          [EXCEL_COLUMNS.PRODUCT_DESC_HTML_AR]:
-            '<p>توفر شاشة إنتيليفيو MX550 إمكانيات مراقبة متقدمة مع واجهة سهلة الاستخدام تساعد الكوادر الطبية على اتخاذ قرارات دقيقة.</p><ul><li>شاشة عالية الدقة مقاس 15.6 بوصة</li><li>مراقبة متعددة المؤشرات (تخطيط القلب، الأكسجين، الضغط، التنفس)</li><li>نظام إنذارات ذكي ومتقدم</li><li>اتصال شبكي بنظام HL7 و DICOM</li></ul>',
-          [EXCEL_COLUMNS.PRIMARY_IMAGE]:
-            'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
-          [EXCEL_COLUMNS.ADDITIONAL_IMAGES]:
-            'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80, https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80',
-          [EXCEL_COLUMNS.SPECS_EN]:
-            'Display: 15.6" TFT LCD | Parameters: ECG, SpO2, NIBP, RESP, TEMP | Power Supply: AC 100~240V, 50/60Hz | Dimensions: 380 x 280 x 180 mm | Weight: 6.5 kg',
-          [EXCEL_COLUMNS.SPECS_AR]:
-            'الشاشة: 15.6 بوصة TFT LCD | المعايير: ECG, SpO2, NIBP, RESP, TEMP | مصدر الطاقة: AC 100~240V, 50/60Hz | الأبعاد: 380 × 280 × 180 مم | الوزن: 6.5 كجم',
-          [EXCEL_COLUMNS.BADGES_EN]: 'CE Certified, FDA Registered, ISO 13485',
-          [EXCEL_COLUMNS.BADGES_AR]: 'معتمد من CE, مسجل لدى FDA, معتمد من ISO 13485',
-          [EXCEL_COLUMNS.BUTTON_TEXT_EN]: 'Request a Quote',
-          [EXCEL_COLUMNS.BUTTON_TEXT_AR]: 'طلب عرض أسعار',
-          [EXCEL_COLUMNS.BUTTON_URL]: '/contact',
-        },
-        {
-          [EXCEL_COLUMNS.NAME_EN]: 'Digital Ultrasound System',
-          [EXCEL_COLUMNS.NAME_AR]: 'نظام الموجات فوق الصوتية الرقمي',
-          [EXCEL_COLUMNS.BRAND_EN]: 'SonoCare',
-          [EXCEL_COLUMNS.BRAND_AR]: 'سونوكير',
-          [EXCEL_COLUMNS.SLUG]: 'digital-ultrasound-system',
-          [EXCEL_COLUMNS.SHORT_DESC_EN]:
-            'A versatile digital ultrasound imaging system for clinical diagnostics and bedside examinations.',
-          [EXCEL_COLUMNS.SHORT_DESC_AR]:
-            'نظام تصوير رقمي متعدد الاستخدامات بالموجات فوق الصوتية للتشخيص السريري وفحوصات المرضى.',
-          [EXCEL_COLUMNS.PRODUCT_DESC_HTML_EN]:
-            '<p>Engineered for high-clarity diagnostic imaging across cardiology, radiology, and point-of-care environments.</p><ul><li>21.5" Full HD LED articulated monitor</li><li>4 active transducer probe ports</li><li>Color Doppler, PW, and CW imaging modes</li></ul>',
-          [EXCEL_COLUMNS.PRODUCT_DESC_HTML_AR]:
-            '<p>مصمم للتصوير التشخيصي فائق الوضوح في أقسام القلب والأشعة والعيادات التخصصية.</p><ul><li>شاشة متحركة مقاس 21.5 بوصة Full HD LED</li><li>4 منافذ نشطة لمجسات الفحص</li><li>أوضاع تصوير دوبلر ملون و PW و CW</li></ul>',
-          [EXCEL_COLUMNS.PRIMARY_IMAGE]:
-            'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80',
-          [EXCEL_COLUMNS.ADDITIONAL_IMAGES]:
-            'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
-          [EXCEL_COLUMNS.SPECS_EN]:
-            'Display: 21.5" Full HD LED | Imaging Modes: B, M, Color Doppler, PW, CW | Probe Ports: 4 Active Ports | Power Supply: AC 100~240V, 50/60Hz',
-          [EXCEL_COLUMNS.SPECS_AR]:
-            'الشاشة: 21.5 بوصة Full HD LED | أوضاع التصوير: B, M, دوبلر ملون, PW, CW | منافذ المجسات: 4 منافذ نشطة | مصدر الطاقة: AC 100~240V, 50/60Hz',
-          [EXCEL_COLUMNS.BADGES_EN]: 'CE Certified, ISO 9001',
-          [EXCEL_COLUMNS.BADGES_AR]: 'معتمد من CE, معتمد من ISO 9001',
-          [EXCEL_COLUMNS.BUTTON_TEXT_EN]: 'Request a Quote',
-          [EXCEL_COLUMNS.BUTTON_TEXT_AR]: 'طلب عرض أسعار',
-          [EXCEL_COLUMNS.BUTTON_URL]: '/contact',
-        },
-      ]
-    : [
-        {
-          [EXCEL_COLUMNS.NAME_EN]: '',
-          [EXCEL_COLUMNS.NAME_AR]: '',
-          [EXCEL_COLUMNS.BRAND_EN]: '',
-          [EXCEL_COLUMNS.BRAND_AR]: '',
-          [EXCEL_COLUMNS.SLUG]: '',
-          [EXCEL_COLUMNS.SHORT_DESC_EN]: '',
-          [EXCEL_COLUMNS.SHORT_DESC_AR]: '',
-          [EXCEL_COLUMNS.PRODUCT_DESC_HTML_EN]: '',
-          [EXCEL_COLUMNS.PRODUCT_DESC_HTML_AR]: '',
-          [EXCEL_COLUMNS.PRIMARY_IMAGE]: '',
-          [EXCEL_COLUMNS.ADDITIONAL_IMAGES]: '',
-          [EXCEL_COLUMNS.SPECS_EN]: '',
-          [EXCEL_COLUMNS.SPECS_AR]: '',
-          [EXCEL_COLUMNS.BADGES_EN]: '',
-          [EXCEL_COLUMNS.BADGES_AR]: '',
-          [EXCEL_COLUMNS.BUTTON_TEXT_EN]: 'Request a Quote',
-          [EXCEL_COLUMNS.BUTTON_TEXT_AR]: 'طلب عرض أسعار',
-          [EXCEL_COLUMNS.BUTTON_URL]: '/contact',
-        },
-      ];
+  const sampleRows = [
+    {
+      [OFFICIAL_EXCEL_COLUMNS.SKU]: 'MED-MON-001',
+      [OFFICIAL_EXCEL_COLUMNS.SHOP_SECTION]: 'Medical Equipment',
+      [OFFICIAL_EXCEL_COLUMNS.CATEGORY]: 'Patient Monitoring',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN]: 'Philips IntelliVue MX550 Patient Monitor',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR]: 'شاشة مراقبة المريض فيليبس إنتيليفيو MX550',
+      [OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER]: 'Philips Healthcare',
+      [OFFICIAL_EXCEL_COLUMNS.COUNTRY_OF_ORIGIN]: 'Germany',
+      [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN]:
+        'Advanced bedside vital signs monitoring solution for high-acuity care units and emergency rooms.',
+      [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR]:
+        'جهاز مراقبة متقدم للعلامات الحيوية بجانب السرير لوحدات العناية المركزة والطوارئ.',
+      [OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN]:
+        'The IntelliVue MX550 provides advanced monitoring capabilities with a user-friendly interface, helping healthcare professionals make faster, more informed decisions. It is suitable for adult, pediatric, and neonatal patients.\n\n- 15.6" high-resolution display\n- Multiple parameter monitoring (ECG, SpO2, NIBP, RESP, TEMP)\n- Advanced alarm management\n- Network connectivity (HL7, DICOM)\n- Ergonomic and compact design',
+      [OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN]:
+        'Display: 15.6" TFT LCD\nParameters: ECG, SpO2, NIBP, RESP, TEMP\nPower Supply: AC 100~240V, 50/60Hz\nDimensions: 380 x 280 x 180 mm\nWeight: 6.5 kg',
+      [OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS]: 'CE Certified, FDA Registered, ISO 13485',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_TYPE]: 'Quote Only',
+      [OFFICIAL_EXCEL_COLUMNS.PRICE_USD]: '',
+      [OFFICIAL_EXCEL_COLUMNS.VERIFICATION_REQUIRED]: 'Yes',
+      [OFFICIAL_EXCEL_COLUMNS.MOH_REG_NO]: 'MOH-MED-2024-8842',
+      [OFFICIAL_EXCEL_COLUMNS.GENERIC_NAME]: 'Multi-Parameter Patient Monitor',
+      [OFFICIAL_EXCEL_COLUMNS.DOSAGE_FORM]: 'N/A',
+      [OFFICIAL_EXCEL_COLUMNS.WARRANTY]: '2 Years Manufacturer Warranty & 24/7 Technical Support',
+      [OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES]:
+        'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80, https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80, https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80',
+      [OFFICIAL_EXCEL_COLUMNS.DATASHEET_FILE]: 'philips-mx550-datasheet.pdf',
+      [OFFICIAL_EXCEL_COLUMNS.NOTES]: 'Requires hospital installation and calibration.',
+    },
+    {
+      [OFFICIAL_EXCEL_COLUMNS.SKU]: 'MED-ULT-002',
+      [OFFICIAL_EXCEL_COLUMNS.SHOP_SECTION]: 'Medical Equipment',
+      [OFFICIAL_EXCEL_COLUMNS.CATEGORY]: 'Ultrasound & Diagnostics',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN]: 'Digital Ultrasound Diagnostic System',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR]: 'نظام الموجات فوق الصوتية الرقمي التشخيصي',
+      [OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER]: 'SonoCare Medical',
+      [OFFICIAL_EXCEL_COLUMNS.COUNTRY_OF_ORIGIN]: 'Japan',
+      [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN]:
+        'A versatile digital ultrasound imaging system for clinical diagnostics and bedside examinations.',
+      [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR]:
+        'نظام تصوير رقمي متعدد الاستخدامات بالموجات فوق الصوتية للتشخيص السريري وفحوصات المرضى.',
+      [OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN]:
+        'Engineered for high-clarity diagnostic imaging across cardiology, radiology, and point-of-care environments.\n\n- 21.5" Full HD LED articulated monitor\n- 4 active transducer probe ports\n- Color Doppler, PW, and CW imaging modes\n- Integrated DICOM archiving and network export',
+      [OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN]:
+        'Display: 21.5" Full HD LED\nImaging Modes: B, M, Color Doppler, PW, CW\nProbe Ports: 4 Active Ports\nPower Supply: AC 100~240V, 50/60Hz\nWeight: 75 kg',
+      [OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS]: 'CE Certified, ISO 9001, ISO 13485',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_TYPE]: 'Quote Only',
+      [OFFICIAL_EXCEL_COLUMNS.PRICE_USD]: '',
+      [OFFICIAL_EXCEL_COLUMNS.VERIFICATION_REQUIRED]: 'Yes',
+      [OFFICIAL_EXCEL_COLUMNS.MOH_REG_NO]: 'MOH-MED-2023-1120',
+      [OFFICIAL_EXCEL_COLUMNS.GENERIC_NAME]: 'Color Doppler Ultrasound System',
+      [OFFICIAL_EXCEL_COLUMNS.DOSAGE_FORM]: 'N/A',
+      [OFFICIAL_EXCEL_COLUMNS.WARRANTY]: '3 Years On-site Warranty & Calibration Included',
+      [OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES]:
+        'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80, https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
+      [OFFICIAL_EXCEL_COLUMNS.DATASHEET_FILE]: 'sonocare-specs.pdf',
+      [OFFICIAL_EXCEL_COLUMNS.NOTES]: 'Standard probe package included.',
+    },
+  ];
+
+  // Blank template: exact 22 headers with empty first row ready for data entry
+  const blankRow = {
+    [OFFICIAL_EXCEL_COLUMNS.SKU]: '',
+    [OFFICIAL_EXCEL_COLUMNS.SHOP_SECTION]: '',
+    [OFFICIAL_EXCEL_COLUMNS.CATEGORY]: '',
+    [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN]: '',
+    [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR]: '',
+    [OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER]: '',
+    [OFFICIAL_EXCEL_COLUMNS.COUNTRY_OF_ORIGIN]: '',
+    [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN]: '',
+    [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR]: '',
+    [OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN]: '',
+    [OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN]: '',
+    [OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS]: '',
+    [OFFICIAL_EXCEL_COLUMNS.PRODUCT_TYPE]: 'Quote Only',
+    [OFFICIAL_EXCEL_COLUMNS.PRICE_USD]: '',
+    [OFFICIAL_EXCEL_COLUMNS.VERIFICATION_REQUIRED]: 'Yes',
+    [OFFICIAL_EXCEL_COLUMNS.MOH_REG_NO]: '',
+    [OFFICIAL_EXCEL_COLUMNS.GENERIC_NAME]: '',
+    [OFFICIAL_EXCEL_COLUMNS.DOSAGE_FORM]: '',
+    [OFFICIAL_EXCEL_COLUMNS.WARRANTY]: '',
+    [OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES]: '',
+    [OFFICIAL_EXCEL_COLUMNS.DATASHEET_FILE]: '',
+    [OFFICIAL_EXCEL_COLUMNS.NOTES]: '',
+  };
+
+  const templateRows = withSampleData ? sampleRows : [blankRow];
 
   const wb = XLSX.utils.book_new();
 
   // Sheet 1: Products Template
   const ws = XLSX.utils.json_to_sheet(templateRows);
 
-  // Column width formatting
+  // Column width formatting for all 22 columns (A to V)
   ws['!cols'] = [
-    { wch: 32 }, // Name EN
-    { wch: 32 }, // Name AR
-    { wch: 22 }, // Brand EN
-    { wch: 22 }, // Brand AR
-    { wch: 24 }, // Slug
-    { wch: 35 }, // Short Desc EN
-    { wch: 35 }, // Short Desc AR
-    { wch: 45 }, // Product Desc HTML EN
-    { wch: 45 }, // Product Desc HTML AR
-    { wch: 35 }, // Primary Image URL
-    { wch: 45 }, // Additional Image URLs
-    { wch: 55 }, // Specs EN
-    { wch: 55 }, // Specs AR
-    { wch: 30 }, // Badges EN
-    { wch: 30 }, // Badges AR
-    { wch: 20 }, // Button Text EN
-    { wch: 20 }, // Button Text AR
-    { wch: 18 }, // Button URL
+    { wch: 18 }, // A: SKU *
+    { wch: 22 }, // B: Shop section *
+    { wch: 22 }, // C: Category *
+    { wch: 38 }, // D: Product name (EN) *
+    { wch: 32 }, // E: Product name (AR)
+    { wch: 26 }, // F: Brand / Manufacturer *
+    { wch: 20 }, // G: Country of origin
+    { wch: 45 }, // H: Short description (EN) * (max 160 characters)
+    { wch: 35 }, // I: Short description (AR)
+    { wch: 55 }, // J: Full description (EN)
+    { wch: 55 }, // K: Key specifications (EN) (one per line)
+    { wch: 38 }, // L: Certifications (CE / FDA / ISO / other)
+    { wch: 20 }, // M: Product type *
+    { wch: 32 }, // N: Price (USD) — Fixed Price only
+    { wch: 24 }, // O: Verification required? *
+    { wch: 35 }, // P: MOH registration no. (pharma only)
+    { wch: 30 }, // Q: Generic name (pharma only)
+    { wch: 35 }, // R: Dosage form / strength (pharma only)
+    { wch: 35 }, // S: Warranty / after-sales (EN)
+    { wch: 45 }, // T: Image file names (comma separated) *
+    { wch: 25 }, // U: Datasheet file name
+    { wch: 30 }, // V: Notes
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, 'Products Template');
@@ -291,76 +356,171 @@ export const downloadShopProductsExcelTemplate = (options?: { withSampleData?: b
   // Sheet 2: Field Instructions & Guide
   const instructions = [
     {
-      Field: 'Product Name (English) *',
+      Column: 'A',
+      Header: OFFICIAL_EXCEL_COLUMNS.SKU,
       Required: 'YES',
-      Description: 'The English commercial name of the medical product or equipment.',
+      Description: 'Unique product SKU or code (used to generate URL slug).',
+      Example: 'MED-MON-001',
+    },
+    {
+      Column: 'B',
+      Header: OFFICIAL_EXCEL_COLUMNS.SHOP_SECTION,
+      Required: 'YES',
+      Description: 'Shop section division (e.g. Medical Equipment, Lab Supplies).',
+      Example: 'Medical Equipment',
+    },
+    {
+      Column: 'C',
+      Header: OFFICIAL_EXCEL_COLUMNS.CATEGORY,
+      Required: 'YES',
+      Description: 'Product category taxonomy.',
+      Example: 'Patient Monitoring',
+    },
+    {
+      Column: 'D',
+      Header: OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN,
+      Required: 'YES',
+      Description: 'Official English commercial name of the product.',
       Example: 'Philips IntelliVue MX550 Patient Monitor',
     },
     {
-      Field: 'Product Name (Arabic) *',
+      Column: 'E',
+      Header: OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR,
       Required: 'Recommended',
-      Description: 'The Arabic name of the product (defaults to English if left empty).',
+      Description: 'Arabic name of the product (defaults to English if empty).',
       Example: 'شاشة مراقبة المريض فيليبس إنتيليفيو MX550',
     },
     {
-      Field: 'Brand / Category (English & Arabic)',
-      Required: 'Optional',
-      Description: 'Manufacturer, brand or device category tag.',
-      Example: 'MedTech / SonoCare',
+      Column: 'F',
+      Header: OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER,
+      Required: 'YES',
+      Description: 'Manufacturer or brand name.',
+      Example: 'Philips Healthcare',
     },
     {
-      Field: 'Product Slug (Optional)',
+      Column: 'G',
+      Header: OFFICIAL_EXCEL_COLUMNS.COUNTRY_OF_ORIGIN,
       Required: 'Optional',
-      Description: 'URL-friendly slug. If left blank, it will be automatically generated from the English name.',
-      Example: 'philips-intellivue-mx550',
+      Description: 'Country where the equipment is manufactured.',
+      Example: 'Germany / Japan',
     },
     {
-      Field: 'Short Summary (English & Arabic)',
-      Required: 'Optional',
-      Description: 'Brief 1-2 sentence description displayed on the shop catalog card.',
-      Example: 'A medical monitoring device designed to track vital signs.',
+      Column: 'H',
+      Header: OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN,
+      Required: 'YES',
+      Description: 'Short 1-2 sentence overview for catalog cards (max 160 chars).',
+      Example: 'Advanced vital signs monitoring for high-acuity care units.',
     },
     {
-      Field: 'Detailed Description HTML (English & Arabic)',
+      Column: 'I',
+      Header: OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR,
       Required: 'Optional',
-      Description: 'Full rich HTML or plain text with bullet points for the Product Details page.',
-      Example: '<p>Overview</p><ul><li>Feature 1</li><li>Feature 2</li></ul>',
+      Description: 'Short Arabic overview description.',
+      Example: 'جهاز مراقبة متقدم للعلامات الحيوية بجانب السرير.',
     },
     {
-      Field: 'Primary Image URL',
-      Required: 'Optional',
-      Description: 'Main product image URL (https://...).',
-      Example: 'https://images.unsplash.com/...',
+      Column: 'J',
+      Header: OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN,
+      Required: 'Recommended',
+      Description: 'Full detailed product description (paragraphs or bullet points).',
+      Example: 'Provides advanced clinical monitoring capabilities...\n- High-resolution display',
     },
     {
-      Field: 'Additional Image URLs',
-      Required: 'Optional',
-      Description: 'Multiple gallery images separated by commas or line breaks.',
-      Example: 'https://image1.jpg, https://image2.jpg',
+      Column: 'K',
+      Header: OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN,
+      Required: 'Recommended',
+      Description: 'One specification per line in "Label: Value" format.',
+      Example: 'Display: 15.6" LCD\nPower: AC 100~240V\nWeight: 6.5 kg',
     },
     {
-      Field: 'Key Specifications',
+      Column: 'L',
+      Header: OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS,
       Required: 'Optional',
-      Description: 'Label and Value pairs separated by pipe (|). Format: Label: Value | Label: Value',
-      Example: 'Display: 15.6" LCD | Power Supply: AC 100~240V | Weight: 6.5 kg',
-    },
-    {
-      Field: 'Certification Badges',
-      Required: 'Optional',
-      Description: 'Certification tags separated by commas.',
+      Description: 'Certifications and regulatory badges separated by commas.',
       Example: 'CE Certified, FDA Registered, ISO 13485',
     },
     {
-      Field: 'Button Text & Link URL',
+      Column: 'M',
+      Header: OFFICIAL_EXCEL_COLUMNS.PRODUCT_TYPE,
+      Required: 'YES',
+      Description: 'Catalog product type: "Quote Only" or "Fixed Price".',
+      Example: 'Quote Only',
+    },
+    {
+      Column: 'N',
+      Header: OFFICIAL_EXCEL_COLUMNS.PRICE_USD,
       Required: 'Optional',
-      Description: 'Call-to-action button text and target link (defaults to "Request a Quote" / "/contact").',
-      Example: 'Request a Quote | /contact',
+      Description: 'Price in USD (only if Product Type is Fixed Price).',
+      Example: '4500.00',
+    },
+    {
+      Column: 'O',
+      Header: OFFICIAL_EXCEL_COLUMNS.VERIFICATION_REQUIRED,
+      Required: 'YES',
+      Description: 'Whether administrative verification is required (Yes / No).',
+      Example: 'Yes',
+    },
+    {
+      Column: 'P',
+      Header: OFFICIAL_EXCEL_COLUMNS.MOH_REG_NO,
+      Required: 'Optional',
+      Description: 'Ministry of Health registration number (for pharma products).',
+      Example: 'MOH-MED-2024-8842',
+    },
+    {
+      Column: 'Q',
+      Header: OFFICIAL_EXCEL_COLUMNS.GENERIC_NAME,
+      Required: 'Optional',
+      Description: 'International generic scientific/device name.',
+      Example: 'Multi-Parameter Patient Monitor',
+    },
+    {
+      Column: 'R',
+      Header: OFFICIAL_EXCEL_COLUMNS.DOSAGE_FORM,
+      Required: 'Optional',
+      Description: 'Dosage form or strength (pharma products only).',
+      Example: 'N/A',
+    },
+    {
+      Column: 'S',
+      Header: OFFICIAL_EXCEL_COLUMNS.WARRANTY,
+      Required: 'Optional',
+      Description: 'Warranty period and after-sales service terms.',
+      Example: '2 Years Manufacturer Warranty',
+    },
+    {
+      Column: 'T',
+      Header: OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES,
+      Required: 'YES',
+      Description:
+        'Image URLs or comma-separated image file names. After import, you can upload actual image files directly using the Edit button on each product!',
+      Example: 'https://images.unsplash.com/... OR product-main.jpg, product-side.jpg',
+    },
+    {
+      Column: 'U',
+      Header: OFFICIAL_EXCEL_COLUMNS.DATASHEET_FILE,
+      Required: 'Optional',
+      Description: 'Technical PDF datasheet file name or URL.',
+      Example: 'product-datasheet.pdf',
+    },
+    {
+      Column: 'V',
+      Header: OFFICIAL_EXCEL_COLUMNS.NOTES,
+      Required: 'Optional',
+      Description: 'Internal notes or special hospital delivery instructions.',
+      Example: 'Requires technical installation.',
     },
   ];
 
   const wsInstructions = XLSX.utils.json_to_sheet(instructions);
-  wsInstructions['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 55 }, { wch: 45 }];
-  XLSX.utils.book_append_sheet(wb, wsInstructions, 'Instructions & Guide');
+  wsInstructions['!cols'] = [
+    { wch: 8 },
+    { wch: 35 },
+    { wch: 14 },
+    { wch: 55 },
+    { wch: 45 },
+  ];
+  XLSX.utils.book_append_sheet(wb, wsInstructions, 'Instructions & Field Guide');
 
   const fileName = withSampleData
     ? 'Shop_Products_Bulk_Import_Sample_Template.xlsx'
@@ -370,7 +530,7 @@ export const downloadShopProductsExcelTemplate = (options?: { withSampleData?: b
 };
 
 /**
- * Parses and validates an uploaded Excel file.
+ * Parses and validates an uploaded Excel file using the 22 canonical columns.
  */
 export const parseShopProductsExcelFile = async (
   file: File
@@ -409,60 +569,222 @@ export const parseShopProductsExcelFile = async (
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    const nameEn = getCellValue(row, EXCEL_COLUMNS.NAME_EN, 'name_en', 'nameEn', 'Product Name', 'Name');
-    const nameAr = getCellValue(row, EXCEL_COLUMNS.NAME_AR, 'name_ar', 'nameAr', 'اسم المنتج');
+    // 1. Product Name (EN & AR) - Column D & E
+    const nameEn = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN,
+      'Product name (EN)',
+      'Product Name (English) *',
+      'Product Name (English)',
+      'Product Name',
+      'name_en',
+      'nameEn',
+      'Name'
+    );
+    const nameAr = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR,
+      'Product name (AR)',
+      'Product Name (Arabic) *',
+      'Product Name (Arabic)',
+      'name_ar',
+      'nameAr',
+      'اسم المنتج'
+    );
 
     if (!nameEn && !nameAr) {
-      errors.push('Product Name is required (either English or Arabic).');
+      errors.push('Product Name (EN) is required.');
     }
 
-    const brandEn = getCellValue(row, EXCEL_COLUMNS.BRAND_EN, 'brand_en', 'brandEn', 'Brand', 'Category');
-    const brandAr = getCellValue(row, EXCEL_COLUMNS.BRAND_AR, 'brand_ar', 'brandAr', 'العلامة التجارية');
+    // 2. Brand / Manufacturer - Column F
+    const brandEn = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER,
+      'Brand / Manufacturer',
+      'Brand / Category (English)',
+      'Brand',
+      'Manufacturer',
+      'brand_en'
+    );
+    const brandAr = getCellValue(
+      row,
+      'Brand / Category (Arabic)',
+      'Brand (Arabic)',
+      'brand_ar',
+      'العلامة التجارية'
+    );
 
-    const customSlug = getCellValue(row, EXCEL_COLUMNS.SLUG, 'slug', 'Product Slug', 'Slug');
-    const slug = customSlug
-      ? toProductSlug(customSlug)
+    // 3. Category & Section - Column B & C
+    const shopSection = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.SHOP_SECTION,
+      'Shop section',
+      'Section'
+    );
+    const category = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.CATEGORY,
+      'Category'
+    );
+
+    // 4. SKU & Slug - Column A
+    const sku = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.SKU,
+      'SKU',
+      'Product Slug (Optional)',
+      'Slug'
+    );
+    const slug = sku
+      ? toProductSlug(sku)
       : nameEn
       ? toProductSlug(nameEn)
       : `prod-${Date.now()}-${idx + 1}`;
 
-    const shortDescEn = getCellValue(row, EXCEL_COLUMNS.SHORT_DESC_EN, 'short_description_en', 'description_en', 'Summary');
-    const shortDescAr = getCellValue(row, EXCEL_COLUMNS.SHORT_DESC_AR, 'short_description_ar', 'description_ar', 'الوصف');
+    // 5. Short Descriptions - Column H & I
+    const shortDescEn = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN,
+      'Short description (EN)',
+      'Short Summary (English)',
+      'short_description_en',
+      'Summary'
+    );
+    const shortDescAr = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR,
+      'Short description (AR)',
+      'Short Summary (Arabic)',
+      'short_description_ar',
+      'الوصف'
+    );
 
-    const productDescHtmlEnRaw = getCellValue(row, EXCEL_COLUMNS.PRODUCT_DESC_HTML_EN, 'product_description_html_en', 'productDescription_en', 'HTML Description');
-    const productDescHtmlArRaw = getCellValue(row, EXCEL_COLUMNS.PRODUCT_DESC_HTML_AR, 'product_description_html_ar', 'productDescription_ar', 'الوصف التفصيلي');
+    // 6. Full Description (HTML) - Column J
+    const fullDescEnRaw = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN,
+      'Full description',
+      'Detailed Description HTML (English)',
+      'product_description_html_en',
+      'Description'
+    );
+    const productDescHtmlEn = ensureHtmlContent(fullDescEnRaw || shortDescEn);
+    const productDescHtmlAr = ensureHtmlContent(shortDescAr || fullDescEnRaw || shortDescEn);
 
-    const productDescHtmlEn = ensureHtmlContent(productDescHtmlEnRaw || shortDescEn);
-    const productDescHtmlAr = ensureHtmlContent(productDescHtmlArRaw || shortDescAr);
+    // 7. Images - Column T
+    const imageNamesRaw = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES,
+      'Image file names',
+      'Primary Image URL',
+      'Additional Image URLs (Comma-separated)',
+      'images',
+      'image'
+    );
 
-    const primaryImage = getCellValue(row, EXCEL_COLUMNS.PRIMARY_IMAGE, 'primary_image_url', 'image', 'Image URL');
-    const additionalImagesRaw = getCellValue(row, EXCEL_COLUMNS.ADDITIONAL_IMAGES, 'additional_images_urls', 'images', 'Gallery');
-
-    const additionalImages = (additionalImagesRaw || '')
+    const parsedImages = (imageNamesRaw || '')
       .split(/[,|\n]/)
       .map((u) => u.trim())
       .filter(Boolean);
 
-    const allImages = [
-      ...(primaryImage ? [primaryImage] : []),
-      ...additionalImages.filter((u) => u !== primaryImage),
-    ];
+    // Filter to real URLs vs placeholder filenames
+    const validUrlImages = parsedImages.filter((img) => /^https?:\/\//i.test(img));
 
-    if (allImages.length === 0) {
-      warnings.push('No product images provided (can be uploaded later in admin).');
+    if (validUrlImages.length === 0) {
+      if (parsedImages.length > 0) {
+        warnings.push(
+          `Image filenames specified: "${parsedImages.slice(0, 2).join(', ')}". Click the Edit button on this product to upload actual image files.`
+        );
+      } else {
+        warnings.push('No images specified. Use the Edit button to upload product images.');
+      }
     }
 
-    const specsEnStr = getCellValue(row, EXCEL_COLUMNS.SPECS_EN, 'specifications_en', 'specs_en', 'Specifications');
-    const specsArStr = getCellValue(row, EXCEL_COLUMNS.SPECS_AR, 'specifications_ar', 'specs_ar', 'المواصفات');
-    const specifications = parseSpecsString(specsEnStr, specsArStr);
+    // 8. Key Specifications - Column K
+    const keySpecsRaw = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN,
+      'Key specifications (EN)',
+      'Key Specifications (English) [Label: Value | Label: Value]',
+      'specifications_en',
+      'specs_en'
+    );
+    const specifications = parseSpecsString(keySpecsRaw);
 
-    const badgesEnStr = getCellValue(row, EXCEL_COLUMNS.BADGES_EN, 'badges_en', 'Badges', 'Certifications');
-    const badgesArStr = getCellValue(row, EXCEL_COLUMNS.BADGES_AR, 'badges_ar', 'الشهادات');
-    const badges = parseBadgesString(badgesEnStr, badgesArStr);
+    // Incorporate auxiliary fields into specifications if present
+    const countryOfOrigin = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.COUNTRY_OF_ORIGIN);
+    if (countryOfOrigin && !specifications.some((s) => /country/i.test(s.label.en))) {
+      specifications.push({
+        id: `spec-${Date.now()}-origin`,
+        label: { en: 'Country of Origin', ar: 'بلد المنشأ' },
+        value: { en: countryOfOrigin, ar: countryOfOrigin },
+      });
+    }
 
-    const buttonTextEn = getCellValue(row, EXCEL_COLUMNS.BUTTON_TEXT_EN, 'button_text_en', 'buttonText_en') || 'Request a Quote';
-    const buttonTextAr = getCellValue(row, EXCEL_COLUMNS.BUTTON_TEXT_AR, 'button_text_ar', 'buttonText_ar') || 'طلب عرض أسعار';
-    const buttonUrl = getCellValue(row, EXCEL_COLUMNS.BUTTON_URL, 'button_url', 'buttonUrl') || '/contact';
+    const warranty = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.WARRANTY);
+    if (warranty && !specifications.some((s) => /warranty/i.test(s.label.en))) {
+      specifications.push({
+        id: `spec-${Date.now()}-warranty`,
+        label: { en: 'Warranty', ar: 'الضمان' },
+        value: { en: warranty, ar: warranty },
+      });
+    }
+
+    const mohReg = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.MOH_REG_NO);
+    if (mohReg && !specifications.some((s) => /moh/i.test(s.label.en))) {
+      specifications.push({
+        id: `spec-${Date.now()}-moh`,
+        label: { en: 'MOH Registration', ar: 'رقم تسجيل وزارة الصحة' },
+        value: { en: mohReg, ar: mohReg },
+      });
+    }
+
+    const genericName = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.GENERIC_NAME);
+    if (genericName && !specifications.some((s) => /generic/i.test(s.label.en))) {
+      specifications.push({
+        id: `spec-${Date.now()}-generic`,
+        label: { en: 'Generic Name', ar: 'الاسم العلمي' },
+        value: { en: genericName, ar: genericName },
+      });
+    }
+
+    const dosage = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.DOSAGE_FORM);
+    if (dosage && !specifications.some((s) => /dosage/i.test(s.label.en))) {
+      specifications.push({
+        id: `spec-${Date.now()}-dosage`,
+        label: { en: 'Dosage Form / Strength', ar: 'الشكل الصيدلاني والتركيز' },
+        value: { en: dosage, ar: dosage },
+      });
+    }
+
+    // 9. Badges / Certifications - Column L
+    const certsRaw = getCellValue(
+      row,
+      OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS,
+      'Certifications',
+      'Certification Badges (English) [Comma-separated]',
+      'badges_en',
+      'Badges'
+    );
+    const badges = parseBadgesString(certsRaw);
+
+    // If category is provided, append as category badge if not present
+    if (category && !badges.some((b) => b.en.toLowerCase() === category.toLowerCase())) {
+      badges.push({
+        id: `badge-${Date.now()}-cat`,
+        en: category,
+        ar: category,
+      });
+    }
+
+    // 10. Product Type & Pricing - Column M & N
+    const productType = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.PRODUCT_TYPE, 'Product type');
+    const price = getCellValue(row, OFFICIAL_EXCEL_COLUMNS.PRICE_USD, 'Price (USD)');
+
+    const isFixedPrice = /fixed/i.test(productType) && price && Number(price) > 0;
+    const buttonTextEn = isFixedPrice ? `Order ($${price})` : 'Request a Quote';
+    const buttonTextAr = isFixedPrice ? `طلب ($${price})` : 'طلب عرض أسعار';
+    const buttonUrl = '/contact';
 
     const isValid = errors.length === 0;
 
@@ -471,11 +793,11 @@ export const parseShopProductsExcelFile = async (
       product = {
         id: `prod-${Date.now()}-${idx + 1}`,
         slug,
-        image: allImages[0] || '',
-        images: allImages,
+        image: validUrlImages[0] || (parsedImages[0] ? parsedImages[0] : ''),
+        images: validUrlImages.length > 0 ? validUrlImages : parsedImages,
         brand: {
-          en: brandEn,
-          ar: brandAr || brandEn,
+          en: brandEn || shopSection || 'Mubtaker Medical',
+          ar: brandAr || brandEn || shopSection || 'مبتكر الطبية',
         },
         name: {
           en: nameEn || nameAr,
@@ -519,60 +841,74 @@ export const parseShopProductsExcelFile = async (
 };
 
 /**
- * Exports current shop products catalog to an Excel file.
+ * Exports current shop products catalog to an Excel file using the 22 canonical columns.
  */
 export const exportCurrentShopProductsToExcel = (products: ShopProductCard[]): void => {
   if (!products || products.length === 0) {
     throw new Error('There are no products in the catalog to export.');
   }
 
-  const exportRows = products.map((prod) => ({
-    [EXCEL_COLUMNS.NAME_EN]: prod.name?.en || '',
-    [EXCEL_COLUMNS.NAME_AR]: prod.name?.ar || '',
-    [EXCEL_COLUMNS.BRAND_EN]: prod.brand?.en || '',
-    [EXCEL_COLUMNS.BRAND_AR]: prod.brand?.ar || '',
-    [EXCEL_COLUMNS.SLUG]: prod.slug || '',
-    [EXCEL_COLUMNS.SHORT_DESC_EN]: prod.description?.en || '',
-    [EXCEL_COLUMNS.SHORT_DESC_AR]: prod.description?.ar || '',
-    [EXCEL_COLUMNS.PRODUCT_DESC_HTML_EN]: prod.productDescription?.en || '',
-    [EXCEL_COLUMNS.PRODUCT_DESC_HTML_AR]: prod.productDescription?.ar || '',
-    [EXCEL_COLUMNS.PRIMARY_IMAGE]: prod.image || prod.images?.[0] || '',
-    [EXCEL_COLUMNS.ADDITIONAL_IMAGES]: (prod.images || []).slice(1).join(', '),
-    [EXCEL_COLUMNS.SPECS_EN]: (prod.specifications || [])
+  const exportRows = products.map((prod) => {
+    const specsString = (prod.specifications || [])
       .map((s) => `${s.label.en}: ${s.value.en}`)
-      .join(' | '),
-    [EXCEL_COLUMNS.SPECS_AR]: (prod.specifications || [])
-      .map((s) => `${s.label.ar || s.label.en}: ${s.value.ar || s.value.en}`)
-      .join(' | '),
-    [EXCEL_COLUMNS.BADGES_EN]: (prod.badges || []).map((b) => b.en).join(', '),
-    [EXCEL_COLUMNS.BADGES_AR]: (prod.badges || []).map((b) => b.ar || b.en).join(', '),
-    [EXCEL_COLUMNS.BUTTON_TEXT_EN]: prod.buttonText?.en || 'Request a Quote',
-    [EXCEL_COLUMNS.BUTTON_TEXT_AR]: prod.buttonText?.ar || 'طلب عرض أسعار',
-    [EXCEL_COLUMNS.BUTTON_URL]: prod.buttonUrl || '/contact',
-  }));
+      .join('\n');
+    const badgesString = (prod.badges || []).map((b) => b.en).join(', ');
+    const allImages = (prod.images && prod.images.length > 0)
+      ? prod.images.join(', ')
+      : (prod.image || '');
+
+    return {
+      [OFFICIAL_EXCEL_COLUMNS.SKU]: prod.slug || prod.id || '',
+      [OFFICIAL_EXCEL_COLUMNS.SHOP_SECTION]: 'Medical Equipment',
+      [OFFICIAL_EXCEL_COLUMNS.CATEGORY]: prod.badges?.[0]?.en || prod.brand?.en || '',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_EN]: prod.name?.en || '',
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_NAME_AR]: prod.name?.ar || '',
+      [OFFICIAL_EXCEL_COLUMNS.BRAND_MANUFACTURER]: prod.brand?.en || '',
+      [OFFICIAL_EXCEL_COLUMNS.COUNTRY_OF_ORIGIN]: '',
+      [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_EN]: prod.description?.en || '',
+      [OFFICIAL_EXCEL_COLUMNS.SHORT_DESC_AR]: prod.description?.ar || '',
+      [OFFICIAL_EXCEL_COLUMNS.FULL_DESC_EN]: prod.productDescription?.en || '',
+      [OFFICIAL_EXCEL_COLUMNS.KEY_SPECS_EN]: specsString,
+      [OFFICIAL_EXCEL_COLUMNS.CERTIFICATIONS]: badgesString,
+      [OFFICIAL_EXCEL_COLUMNS.PRODUCT_TYPE]: 'Quote Only',
+      [OFFICIAL_EXCEL_COLUMNS.PRICE_USD]: '',
+      [OFFICIAL_EXCEL_COLUMNS.VERIFICATION_REQUIRED]: 'Yes',
+      [OFFICIAL_EXCEL_COLUMNS.MOH_REG_NO]: '',
+      [OFFICIAL_EXCEL_COLUMNS.GENERIC_NAME]: '',
+      [OFFICIAL_EXCEL_COLUMNS.DOSAGE_FORM]: '',
+      [OFFICIAL_EXCEL_COLUMNS.WARRANTY]: '',
+      [OFFICIAL_EXCEL_COLUMNS.IMAGE_FILE_NAMES]: allImages,
+      [OFFICIAL_EXCEL_COLUMNS.DATASHEET_FILE]: '',
+      [OFFICIAL_EXCEL_COLUMNS.NOTES]: '',
+    };
+  });
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(exportRows);
 
   ws['!cols'] = [
-    { wch: 32 },
-    { wch: 32 },
+    { wch: 18 },
     { wch: 22 },
     { wch: 22 },
+    { wch: 38 },
+    { wch: 32 },
+    { wch: 26 },
+    { wch: 20 },
+    { wch: 45 },
+    { wch: 35 },
+    { wch: 55 },
+    { wch: 55 },
+    { wch: 38 },
+    { wch: 20 },
+    { wch: 32 },
     { wch: 24 },
     { wch: 35 },
+    { wch: 30 },
+    { wch: 35 },
     { wch: 35 },
     { wch: 45 },
-    { wch: 45 },
-    { wch: 35 },
-    { wch: 45 },
-    { wch: 55 },
-    { wch: 55 },
+    { wch: 25 },
     { wch: 30 },
-    { wch: 30 },
-    { wch: 20 },
-    { wch: 20 },
-    { wch: 18 },
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, 'Shop Products');

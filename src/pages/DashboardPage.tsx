@@ -119,7 +119,7 @@ export const DashboardPage: React.FC = () => {
   const [userName, setUserName] = useState<string>('Administrator');
 
   useEffect(() => {
-    document.title = 'Dashboard | Mobtaker Group';
+    document.title = 'Mobtaker Group Admin panel';
     const user = getStoredUserData();
     if (user) {
       const name = user.fullName || user.name || (user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : '');
