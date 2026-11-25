@@ -1,11 +1,14 @@
 import { API_BASE } from '../config/api';
 
 export type EnquiryStatus = 'pending' | 'in_review' | 'contacted' | 'resolved' | 'cancelled';
+export type EnquiryType = 'General' | 'Request Price' | 'Investment' | 'Partnership' | 'Careers';
 
 export interface EnquiryItem {
   _id: string;
   fullName: string;
   email: string;
+  company?: string;
+  enquiryType?: EnquiryType;
   subject: string;
   message: string;
   status: EnquiryStatus;
@@ -22,6 +25,13 @@ export interface EnquiryStats {
   contacted: number;
   resolved: number;
   cancelled: number;
+  byType?: {
+    general?: number;
+    requestPrice?: number;
+    investment?: number;
+    partnership?: number;
+    careers?: number;
+  };
 }
 
 export interface GetEnquiriesResponse {
@@ -35,6 +45,9 @@ export interface GetEnquiriesResponse {
 export interface CreateEnquiryPayload {
   fullName: string;
   email: string;
+  company?: string;
+  companyOrInstitution?: string;
+  enquiryType?: EnquiryType;
   subject: string;
   message: string;
   source?: string;
@@ -42,16 +55,18 @@ export interface CreateEnquiryPayload {
 
 export const enquiryService = {
   /**
-   * Fetch all enquiries with optional status filter, search, and pagination
+   * Fetch all enquiries with optional status filter, enquiryType filter, search, and pagination
    */
   async getEnquiries(params?: {
     status?: string;
+    enquiryType?: string;
     search?: string;
     page?: number;
     limit?: number;
   }): Promise<GetEnquiriesResponse> {
     const query = new URLSearchParams();
     if (params?.status && params.status !== 'all') query.append('status', params.status);
+    if (params?.enquiryType && params.enquiryType !== 'all') query.append('enquiryType', params.enquiryType);
     if (params?.search && params.search.trim()) query.append('search', params.search.trim());
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());

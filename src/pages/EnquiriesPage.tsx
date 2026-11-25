@@ -14,6 +14,7 @@ import {
   Send,
   X,
   MessageSquare,
+  Building2,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
@@ -23,6 +24,7 @@ import {
   type EnquiryItem,
   type EnquiryStatus,
   type EnquiryStats,
+  type EnquiryType,
 } from '../services/enquiryService';
 
 export const EnquiriesPage: React.FC = () => {
@@ -39,6 +41,7 @@ export const EnquiriesPage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeStatusTab, setActiveStatusTab] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedEnquiryType, setSelectedEnquiryType] = useState<string>('all');
 
   // Modals state
   const [isTestModalOpen, setIsTestModalOpen] = useState(false);
@@ -59,6 +62,7 @@ export const EnquiriesPage: React.FC = () => {
       const res = await enquiryService.getEnquiries({
         status: activeStatusTab,
         search: searchQuery,
+        enquiryType: selectedEnquiryType !== 'all' ? (selectedEnquiryType as EnquiryType) : undefined,
       });
       setEnquiries(res.data || []);
       if (res.stats) setStats(res.stats);
@@ -69,7 +73,7 @@ export const EnquiriesPage: React.FC = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [activeStatusTab, searchQuery]);
+  }, [activeStatusTab, searchQuery, selectedEnquiryType]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -149,6 +153,8 @@ export const EnquiriesPage: React.FC = () => {
     const headers = [
       'Full Name',
       'Email Address',
+      'Company / Institution',
+      'Enquiry Type',
       'Subject',
       'Message',
       'Status',
@@ -158,6 +164,8 @@ export const EnquiriesPage: React.FC = () => {
     const rows = enquiries.map((e) => [
       `"${(e.fullName || '').replace(/"/g, '""')}"`,
       `"${(e.email || '').replace(/"/g, '""')}"`,
+      `"${(e.company || '').replace(/"/g, '""')}"`,
+      `"${(e.enquiryType || 'General').replace(/"/g, '""')}"`,
       `"${(e.subject || '').replace(/"/g, '""')}"`,
       `"${(e.message || '').replace(/"/g, '""')}"`,
       e.status || 'pending',
@@ -176,6 +184,22 @@ export const EnquiriesPage: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     toast.success('Enquiries exported to CSV');
+  };
+
+  const getEnquiryTypeBadge = (type?: EnquiryType | string) => {
+    switch (type) {
+      case 'Request Price':
+        return 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+      case 'Investment':
+        return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+      case 'Partnership':
+        return 'bg-purple-500/15 text-purple-300 border-purple-500/30';
+      case 'Careers':
+        return 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
+      case 'General':
+      default:
+        return 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+    }
   };
 
   const formatStatus = (s: EnquiryStatus | string) => {
@@ -359,24 +383,41 @@ export const EnquiriesPage: React.FC = () => {
             })}
           </div>
 
-          {/* Search Input */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search name, email, subject..."
-              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] transition-colors"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
+          {/* Search & Type Filter */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+            {/* Enquiry Type Filter Dropdown */}
+            <select
+              value={selectedEnquiryType}
+              onChange={(e) => setSelectedEnquiryType(e.target.value)}
+              className="px-3 py-1.5 text-xs rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D] transition-colors cursor-pointer"
+            >
+              <option value="all" className="bg-[#0f1429]">All Types (الكل)</option>
+              <option value="General" className="bg-[#0f1429]">General</option>
+              <option value="Request Price" className="bg-[#0f1429]">Request Price</option>
+              <option value="Investment" className="bg-[#0f1429]">Investment</option>
+              <option value="Partnership" className="bg-[#0f1429]">Partnership</option>
+              <option value="Careers" className="bg-[#0f1429]">Careers</option>
+            </select>
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-64">
+              <Search className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search name, company, email..."
+                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -394,7 +435,7 @@ export const EnquiriesPage: React.FC = () => {
               </div>
               <h3 className="text-base font-bold text-white">No Enquiries Found</h3>
               <p className="text-xs text-white/50 max-w-sm">
-                {searchQuery || activeStatusTab !== 'all'
+                {searchQuery || activeStatusTab !== 'all' || selectedEnquiryType !== 'all'
                   ? 'No enquiries match your current search or filter criteria. Try resetting filters.'
                   : 'No customer enquiries have been submitted yet. Click "Submit Test Enquiry" to create a sample.'}
               </p>
@@ -410,7 +451,8 @@ export const EnquiriesPage: React.FC = () => {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.02] text-white/50 text-[11px] uppercase tracking-wider">
-                    <th className="py-3.5 px-4 font-semibold">Customer</th>
+                    <th className="py-3.5 px-4 font-semibold">Customer & Company</th>
+                    <th className="py-3.5 px-4 font-semibold">Type</th>
                     <th className="py-3.5 px-4 font-semibold">Subject</th>
                     <th className="py-3.5 px-4 font-semibold">Message Preview</th>
                     <th className="py-3.5 px-4 font-semibold">Submitted</th>
@@ -437,6 +479,23 @@ export const EnquiriesPage: React.FC = () => {
                           <Mail className="w-3 h-3 shrink-0" />
                           <span className="truncate max-w-[180px]">{enquiry.email}</span>
                         </a>
+                        {enquiry.company && (
+                          <div className="flex items-center gap-1 text-white/50 text-[11px] mt-0.5" title="Company / Institution">
+                            <Building2 className="w-3 h-3 text-[#F68E2D] shrink-0" />
+                            <span className="truncate max-w-[180px]">{enquiry.company}</span>
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Enquiry Type */}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${getEnquiryTypeBadge(
+                            enquiry.enquiryType
+                          )}`}
+                        >
+                          {enquiry.enquiryType || 'General'}
+                        </span>
                       </td>
 
                       {/* Subject */}
@@ -616,6 +675,27 @@ export const EnquiriesPage: React.FC = () => {
                     <Mail className="w-3.5 h-3.5" />
                     {selectedEnquiry.email}
                   </a>
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-white/40 block mb-1">
+                    Company / Institution
+                  </span>
+                  <div className="text-sm font-medium text-white/80 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#F68E2D]" />
+                    {selectedEnquiry.company || '—'}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-white/40 block mb-1">
+                    Enquiry Type
+                  </span>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getEnquiryTypeBadge(
+                      selectedEnquiry.enquiryType
+                    )}`}
+                  >
+                    {selectedEnquiry.enquiryType || 'General'}
+                  </span>
                 </div>
               </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { enquiryService, type EnquiryItem } from '../../services/enquiryService';
+import { enquiryService, type EnquiryItem, type EnquiryType } from '../../services/enquiryService';
 
 interface SendEnquiryModalProps {
   isOpen: boolean;
@@ -19,6 +19,8 @@ export const SendEnquiryModal: React.FC<SendEnquiryModalProps> = ({
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    company: '',
+    enquiryType: 'General' as EnquiryType,
     subject: defaultSubject || '',
     message: '',
   });
@@ -39,7 +41,7 @@ export const SendEnquiryModal: React.FC<SendEnquiryModalProps> = ({
   if (!isOpen) return null;
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -75,6 +77,8 @@ export const SendEnquiryModal: React.FC<SendEnquiryModalProps> = ({
       const created = await enquiryService.submitEnquiry({
         fullName: formData.fullName,
         email: formData.email,
+        company: formData.company,
+        enquiryType: formData.enquiryType,
         subject: formData.subject,
         message: formData.message,
         source: 'website',
@@ -89,6 +93,8 @@ export const SendEnquiryModal: React.FC<SendEnquiryModalProps> = ({
         setFormData({
           fullName: '',
           email: '',
+          company: '',
+          enquiryType: 'General',
           subject: '',
           message: '',
         });
@@ -174,7 +180,42 @@ export const SendEnquiryModal: React.FC<SendEnquiryModalProps> = ({
                 </div>
               </div>
 
-              {/* Row 2: Subject */}
+              {/* Row 2: Company / Institution & Enquiry Type */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1.5">
+                    Company / Institution
+                  </label>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    placeholder="e.g. Al-Mansour Medical Center"
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#171c2e] border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-red-500/80 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-white/90 mb-1.5">
+                    Enquiry Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="enquiryType"
+                    value={formData.enquiryType}
+                    onChange={handleChange}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#171c2e] border border-white/10 text-white focus:outline-none focus:border-red-500/80 transition-colors cursor-pointer"
+                  >
+                    <option value="General">General</option>
+                    <option value="Request Price">Request Price</option>
+                    <option value="Investment">Investment</option>
+                    <option value="Partnership">Partnership</option>
+                    <option value="Careers">Careers</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 3: Subject */}
               <div>
                 <label className="block text-xs font-medium text-white/90 mb-1.5">
                   Subject <span className="text-red-500">*</span>
@@ -190,7 +231,7 @@ export const SendEnquiryModal: React.FC<SendEnquiryModalProps> = ({
                 />
               </div>
 
-              {/* Row 3: Message */}
+              {/* Row 4: Message */}
               <div>
                 <label className="block text-xs font-medium text-white/90 mb-1.5">
                   Message <span className="text-red-500">*</span>

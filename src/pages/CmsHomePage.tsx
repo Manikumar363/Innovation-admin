@@ -44,7 +44,9 @@ import {
   ArrowUp,
   ArrowDown,
   FileSpreadsheet,
-  FileDown
+  FileDown,
+  Clock,
+  Share2
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -103,9 +105,11 @@ import {
   initialCmsProjectsData,
   type CmsPartnersData,
   type PartnerCard,
+  type BilingualText,
   initialCmsPartnersData,
   type CmsContactData,
   initialCmsContactData,
+  type OfficeLocation,
   type CmsInvestmentData,
   type InvestmentDriverItem,
   type InvestmentSectorItem,
@@ -420,24 +424,65 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     corporateOfficeSection: {
       ...initialCmsContactData.corporateOfficeSection,
       ...(res?.corporateOfficeSection || {}),
+      locations:
+        res?.corporateOfficeSection?.locations && res.corporateOfficeSection.locations.length > 0
+          ? res.corporateOfficeSection.locations
+          : initialCmsContactData.corporateOfficeSection.locations || [],
+      workingHoursLabel: {
+        en: res?.corporateOfficeSection?.workingHoursLabel?.en || initialCmsContactData.corporateOfficeSection.workingHoursLabel.en,
+        ar: res?.corporateOfficeSection?.workingHoursLabel?.ar || initialCmsContactData.corporateOfficeSection.workingHoursLabel.ar,
+      },
+      workingHoursValue: {
+        en: res?.corporateOfficeSection?.workingHoursValue?.en || initialCmsContactData.corporateOfficeSection.workingHoursValue.en,
+        ar: res?.corporateOfficeSection?.workingHoursValue?.ar || initialCmsContactData.corporateOfficeSection.workingHoursValue.ar,
+      },
+      workingHoursNotes: {
+        en: res?.corporateOfficeSection?.workingHoursNotes?.en || initialCmsContactData.corporateOfficeSection.workingHoursNotes.en,
+        ar: res?.corporateOfficeSection?.workingHoursNotes?.ar || initialCmsContactData.corporateOfficeSection.workingHoursNotes.ar,
+      },
+      socialMediaLabel: {
+        en: res?.corporateOfficeSection?.socialMediaLabel?.en || initialCmsContactData.corporateOfficeSection.socialMediaLabel.en,
+        ar: res?.corporateOfficeSection?.socialMediaLabel?.ar || initialCmsContactData.corporateOfficeSection.socialMediaLabel.ar,
+      },
+      socialMediaNotes: {
+        en: res?.corporateOfficeSection?.socialMediaNotes?.en || initialCmsContactData.corporateOfficeSection.socialMediaNotes.en,
+        ar: res?.corporateOfficeSection?.socialMediaNotes?.ar || initialCmsContactData.corporateOfficeSection.socialMediaNotes.ar,
+      },
+      socialMedia: {
+        linkedin: res?.corporateOfficeSection?.socialMedia?.linkedin || initialCmsContactData.corporateOfficeSection.socialMedia.linkedin,
+        facebook: res?.corporateOfficeSection?.socialMedia?.facebook || initialCmsContactData.corporateOfficeSection.socialMedia.facebook,
+        instagram: res?.corporateOfficeSection?.socialMedia?.instagram || initialCmsContactData.corporateOfficeSection.socialMedia.instagram,
+        twitter: res?.corporateOfficeSection?.socialMedia?.twitter || initialCmsContactData.corporateOfficeSection.socialMedia.twitter,
+        youtube: res?.corporateOfficeSection?.socialMedia?.youtube || initialCmsContactData.corporateOfficeSection.socialMedia.youtube,
+      },
     },
   });
 
-  const ensurePartnersDefaults = (res: CmsPartnersData): CmsPartnersData => ({
-    ...initialCmsPartnersData,
-    ...res,
-    headerSection: {
-      ...initialCmsPartnersData.headerSection,
-      ...(res?.headerSection || {}),
-      partners: res?.headerSection?.partners && res.headerSection.partners.length > 0
-        ? res.headerSection.partners
-        : initialCmsPartnersData.headerSection.partners,
-    },
-    bannerSection: {
-      ...initialCmsPartnersData.bannerSection,
-      ...(res?.bannerSection || {}),
-    },
-  });
+  const ensurePartnersDefaults = (res: CmsPartnersData): CmsPartnersData => {
+    const rawPartners = res?.headerSection?.partners || [];
+    // If backend returns grouped partners, flatten them for the CMS editor grid
+    const flatPartners: PartnerCard[] = res?.headerSection?.flatPartners
+      ? res.headerSection.flatPartners
+      : Array.isArray(rawPartners) && rawPartners.length > 0 && 'partners' in (rawPartners[0] as any) && Array.isArray((rawPartners[0] as any).partners)
+        ? (rawPartners as any[]).flatMap((g: any) => g.partners || [])
+        : (rawPartners as PartnerCard[]);
+
+    return {
+      ...initialCmsPartnersData,
+      ...res,
+      headerSection: {
+        ...initialCmsPartnersData.headerSection,
+        ...(res?.headerSection || {}),
+        partners: flatPartners && flatPartners.length > 0
+          ? flatPartners
+          : initialCmsPartnersData.headerSection.partners,
+      },
+      bannerSection: {
+        ...initialCmsPartnersData.bannerSection,
+        ...(res?.bannerSection || {}),
+      },
+    };
+  };
 
   const ensureProjectsDefaults = (res: CmsProjectsData): CmsProjectsData => ({
     ...initialCmsProjectsData,
@@ -534,6 +579,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [tabsConfig, setTabsConfig] = useState<CmsTabConfig[]>(ALL_CMS_TABS);
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
+  const [postingLocations, setPostingLocations] = useState<boolean>(false);
   const [activeLangTab, setActiveLangTab] = useState<'en' | 'ar'>('en');
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [previewLang, setPreviewLang] = useState<'en' | 'ar'>('en');
@@ -2108,7 +2154,12 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       | 'phoneValue'
       | 'mapLocationUrl'
       | 'mapEmbedUrl'
-      | 'mapButtonText',
+      | 'mapButtonText'
+      | 'workingHoursLabel'
+      | 'workingHoursValue'
+      | 'workingHoursNotes'
+      | 'socialMediaLabel'
+      | 'socialMediaNotes',
     langOrVal: string,
     val?: string
   ) => {
@@ -2123,14 +2174,19 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         field === 'addressCityCountry' ||
         field === 'emailLabel' ||
         field === 'phoneLabel' ||
-        field === 'mapButtonText'
+        field === 'mapButtonText' ||
+        field === 'workingHoursLabel' ||
+        field === 'workingHoursValue' ||
+        field === 'workingHoursNotes' ||
+        field === 'socialMediaLabel' ||
+        field === 'socialMediaNotes'
       ) {
         return {
           ...prev,
           corporateOfficeSection: {
             ...prev.corporateOfficeSection,
             [field]: {
-              ...prev.corporateOfficeSection[field],
+              ...(((prev.corporateOfficeSection as any)[field]) || {}),
               [langOrVal as 'en' | 'ar']: val || '',
             },
           },
@@ -2144,6 +2200,170 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
         },
       };
     });
+  };
+
+  const handleContactSocialChange = (
+    platform: 'linkedin' | 'facebook' | 'instagram' | 'twitter' | 'youtube',
+    val: string
+  ) => {
+    setContactData((prev) => ({
+      ...prev,
+      corporateOfficeSection: {
+        ...prev.corporateOfficeSection,
+        socialMedia: {
+          ...(prev.corporateOfficeSection.socialMedia || {
+            linkedin: '',
+            facebook: '',
+            instagram: '',
+            twitter: '',
+            youtube: '',
+          }),
+          [platform]: val,
+        },
+      },
+    }));
+  };
+
+  // Contact Multiple Office Locations & Emails Handlers
+  const handleAddContactLocation = () => {
+    const newLoc: OfficeLocation = {
+      id: `loc_${Date.now()}`,
+      label: { en: 'Branch Office', ar: 'فرع المكتب' },
+      name: { en: '', ar: '' },
+      addressLine2: { en: '', ar: '' },
+      cityCountry: { en: '', ar: '' },
+      emailLabel: { en: 'Email Address', ar: 'البريد الإلكتروني' },
+      email: '',
+      phoneLabel: { en: 'Phone Number', ar: 'رقم الهاتف' },
+      phone: '',
+      isPrimary: false,
+    };
+    setContactData((prev) => ({
+      ...prev,
+      corporateOfficeSection: {
+        ...prev.corporateOfficeSection,
+        locations: [...(prev.corporateOfficeSection.locations || []), newLoc],
+      },
+    }));
+  };
+
+  const handleRemoveContactLocation = (index: number) => {
+    setContactData((prev) => {
+      const currentLocs = prev.corporateOfficeSection.locations || [];
+      if (currentLocs.length <= 1) {
+        toast.warning('At least one office location and email contact is required.');
+        return prev;
+      }
+      const updated = currentLocs.filter((_: OfficeLocation, i: number) => i !== index);
+      if (currentLocs[index]?.isPrimary && updated.length > 0) {
+        updated[0] = { ...updated[0], isPrimary: true };
+      }
+      return {
+        ...prev,
+        corporateOfficeSection: {
+          ...prev.corporateOfficeSection,
+          locations: updated,
+        },
+      };
+    });
+  };
+
+  const handleContactLocationChange = (
+    index: number,
+    field: 'label' | 'name' | 'addressLine2' | 'cityCountry' | 'emailLabel' | 'email' | 'phoneLabel' | 'phone',
+    langOrVal: string,
+    val?: string
+  ) => {
+    setContactData((prev) => {
+      const currentLocs = [...(prev.corporateOfficeSection.locations || [])];
+      if (!currentLocs[index]) return prev;
+      const target = { ...currentLocs[index] };
+
+      if (
+        field === 'label' ||
+        field === 'name' ||
+        field === 'addressLine2' ||
+        field === 'cityCountry' ||
+        field === 'emailLabel' ||
+        field === 'phoneLabel'
+      ) {
+        const lang = langOrVal as 'en' | 'ar';
+        target[field] = {
+          ...(target[field] || { en: '', ar: '' }),
+          [lang]: val !== undefined ? val : '',
+        };
+      } else {
+        target[field] = langOrVal;
+      }
+
+      currentLocs[index] = target;
+
+      const isPrimary = target.isPrimary || index === 0;
+      return {
+        ...prev,
+        corporateOfficeSection: {
+          ...prev.corporateOfficeSection,
+          locations: currentLocs,
+          ...(isPrimary
+            ? {
+                ...(field === 'label' ? { addressLabel: target.label } : {}),
+                ...(field === 'name' ? { addressLine1: target.name } : {}),
+                ...(field === 'addressLine2' ? { addressLine2: target.addressLine2 } : {}),
+                ...(field === 'cityCountry' ? { addressCityCountry: target.cityCountry } : {}),
+                ...(field === 'emailLabel' ? { emailLabel: target.emailLabel } : {}),
+                ...(field === 'email' ? { emailValue: target.email } : {}),
+                ...(field === 'phoneLabel' ? { phoneLabel: target.phoneLabel } : {}),
+                ...(field === 'phone' ? { phoneValue: target.phone } : {}),
+              }
+            : {}),
+        },
+      };
+    });
+  };
+
+  const handleSetPrimaryContactLocation = (index: number) => {
+    setContactData((prev) => {
+      const currentLocs = (prev.corporateOfficeSection.locations || []).map((loc: OfficeLocation, i: number) => ({
+        ...loc,
+        isPrimary: i === index,
+      }));
+      const primaryLoc = currentLocs[index];
+      return {
+        ...prev,
+        corporateOfficeSection: {
+          ...prev.corporateOfficeSection,
+          locations: currentLocs,
+          ...(primaryLoc
+            ? {
+                addressLabel: primaryLoc.label || prev.corporateOfficeSection.addressLabel,
+                addressLine1: primaryLoc.name || prev.corporateOfficeSection.addressLine1,
+                addressLine2: primaryLoc.addressLine2 || prev.corporateOfficeSection.addressLine2,
+                addressCityCountry: primaryLoc.cityCountry || prev.corporateOfficeSection.addressCityCountry,
+                emailLabel: primaryLoc.emailLabel || prev.corporateOfficeSection.emailLabel,
+                emailValue: primaryLoc.email || prev.corporateOfficeSection.emailValue,
+                phoneLabel: primaryLoc.phoneLabel || prev.corporateOfficeSection.phoneLabel,
+                phoneValue: primaryLoc.phone || prev.corporateOfficeSection.phoneValue,
+              }
+            : {}),
+        },
+      };
+    });
+    toast.info('Primary location updated');
+  };
+
+  const handlePostContactLocations = async () => {
+    try {
+      setPostingLocations(true);
+      const locs = contactData.corporateOfficeSection.locations || [];
+      const updated = await cmsService.updateContactLocations(locs);
+      setContactData(ensureContactDefaults(updated));
+      toast.success('Office physical addresses and emails updated successfully (POST)!');
+    } catch (err) {
+      console.error('Failed to post contact locations:', err);
+      toast.error('Failed to update office addresses and email contacts.');
+    } finally {
+      setPostingLocations(false);
+    }
   };
 
   const handleSaveCompanyData = async () => {
@@ -12241,159 +12461,301 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       )}
                     </div>
 
-                    {/* Address Box */}
-                    <div className="p-4 rounded-xl bg-[#12162e] border border-white/10 space-y-4">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-red-500" />
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                          Office Physical Address (العنوان الفعلي)
-                        </h4>
+                    {/* Combined Office Physical Addresses & Email Contacts */}
+                    <div className="p-5 rounded-2xl bg-[#12162e] border border-white/10 space-y-5 shadow-lg">
+                      {/* Section Header with Actions & POST button */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                            <Building2 className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white tracking-wide">
+                              Office Physical Addresses & Email Contacts
+                            </h4>
+                            <p className="text-[11px] text-white/50">
+                              العناوين الفعلية للمكاتب وجهات اتصال البريد الإلكتروني (إدارة الفروع والمقرات المتعددة)
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={handleAddContactLocation}
+                            className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-all border border-white/15 cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add Location & Email</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handlePostContactLocations}
+                            disabled={postingLocations}
+                            className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-red-600/30 cursor-pointer"
+                          >
+                            {postingLocations ? (
+                              <>
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                <span>Posting...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Save className="w-3.5 h-3.5" />
+                                <span>Update Addresses & Emails (POST)</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {activeLangTab === 'en' ? (
-                          <>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-white/70">🇬🇧 Address Label</label>
-                              <input
-                                type="text"
-                                value={contactData.corporateOfficeSection.addressLabel.en}
-                                onChange={(e) => handleContactCorporateChange('addressLabel', 'en', e.target.value)}
-                                placeholder="Office Address"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                              />
+
+                      {/* Locations List */}
+                      <div className="space-y-4">
+                        {(contactData.corporateOfficeSection.locations || []).map((loc: OfficeLocation, idx: number) => (
+                          <div
+                            key={loc.id || `loc_${idx}`}
+                            className={`p-4 rounded-xl border transition-all ${
+                              loc.isPrimary
+                                ? 'bg-red-950/20 border-red-500/40 shadow-sm ring-1 ring-red-500/20'
+                                : 'bg-black/30 border-white/10 hover:border-white/20'
+                            }`}
+                          >
+                            {/* Card Item Header */}
+                            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-full bg-red-500/20 text-red-400 text-xs font-bold flex items-center justify-center">
+                                  {idx + 1}
+                                </span>
+                                <span className="text-xs font-bold text-white">
+                                  {loc.name?.[activeLangTab] || loc.label?.[activeLangTab] || `Office Branch ${idx + 1}`}
+                                </span>
+                                {loc.isPrimary ? (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-500/40">
+                                    ★ Primary Location
+                                  </span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSetPrimaryContactLocation(idx)}
+                                    className="px-2 py-0.5 rounded text-[10px] font-semibold text-white/50 hover:text-white bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                                  >
+                                    Set as Primary
+                                  </button>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveContactLocation(idx)}
+                                  title="Remove this location"
+                                  className="p-1 rounded-md text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-white/70">🇬🇧 Headquarters Name</label>
-                              <input
-                                type="text"
-                                value={contactData.corporateOfficeSection.addressLine1.en}
-                                onChange={(e) => handleContactCorporateChange('addressLine1', 'en', e.target.value)}
-                                placeholder="Mobtaker Group Headquarters"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                              />
+
+                            {/* Dual Column: Physical Address and Email Contact */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                              {/* Left: Office Physical Address */}
+                              <div className="p-3.5 rounded-lg bg-black/20 border border-white/5 space-y-3">
+                                <div className="flex items-center gap-1.5">
+                                  <MapPin className="w-3.5 h-3.5 text-red-400" />
+                                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                    Physical Address (العنوان الفعلي)
+                                  </span>
+                                </div>
+                                {activeLangTab === 'en' ? (
+                                  <div className="space-y-2">
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-white/70">🇬🇧 Address Label</label>
+                                      <input
+                                        type="text"
+                                        value={loc.label?.en || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'label', 'en', e.target.value)}
+                                        placeholder="Office Address"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-white/70">🇬🇧 Building / Headquarters Name</label>
+                                      <input
+                                        type="text"
+                                        value={loc.name?.en || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'name', 'en', e.target.value)}
+                                        placeholder="Mobtaker Group Headquarters"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-white/70">🇬🇧 District / Area</label>
+                                      <input
+                                        type="text"
+                                        value={loc.addressLine2?.en || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'addressLine2', 'en', e.target.value)}
+                                        placeholder="Al-Mansour District"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-white/70">🇬🇧 City & Country</label>
+                                      <input
+                                        type="text"
+                                        value={loc.cityCountry?.en || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'cityCountry', 'en', e.target.value)}
+                                        placeholder="Baghdad, Iraq"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-2">
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-[#F68E2D] block text-right">🇸🇦 تسمية العنوان</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={loc.label?.ar || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'label', 'ar', e.target.value)}
+                                        placeholder="عنوان المكتب"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-[#F68E2D] block text-right">🇸🇦 اسم المقر بالعربية</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={loc.name?.ar || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'name', 'ar', e.target.value)}
+                                        placeholder="المقر الرئيسي لمجموعة مبتكر"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-[#F68E2D] block text-right">🇸🇦 المنطقة / الحي بالعربية</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={loc.addressLine2?.ar || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'addressLine2', 'ar', e.target.value)}
+                                        placeholder="حي المنصور"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-[#F68E2D] block text-right">🇸🇦 المدينة والدولة بالعربية</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={loc.cityCountry?.ar || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'cityCountry', 'ar', e.target.value)}
+                                        placeholder="بغداد، العراق"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Right: Email Contact & Branch Phone */}
+                              <div className="p-3.5 rounded-lg bg-black/20 border border-white/5 space-y-3">
+                                <div className="flex items-center gap-1.5">
+                                  <Mail className="w-3.5 h-3.5 text-red-400" />
+                                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                    Email Contact (جهة اتصال البريد)
+                                  </span>
+                                </div>
+                                <div className="space-y-2">
+                                  {activeLangTab === 'en' ? (
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-white/70">🇬🇧 Email Label</label>
+                                      <input
+                                        type="text"
+                                        value={loc.emailLabel?.en || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'emailLabel', 'en', e.target.value)}
+                                        placeholder="Email Address"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-semibold text-[#F68E2D] block text-right">🇸🇦 تسمية البريد بالعربية</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={loc.emailLabel?.ar || ''}
+                                        onChange={(e) => handleContactLocationChange(idx, 'emailLabel', 'ar', e.target.value)}
+                                        placeholder="البريد الإلكتروني"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                  )}
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-semibold text-white/70">Email Address Value</label>
+                                    <input
+                                      type="email"
+                                      value={loc.email || ''}
+                                      onChange={(e) => handleContactLocationChange(idx, 'email', e.target.value)}
+                                      placeholder="info@mobtakergroup.com"
+                                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                    />
+                                  </div>
+                                  {/* Optional Branch Phone */}
+                                  <div className="pt-2 border-t border-white/5 space-y-1">
+                                    <label className="text-[10px] font-semibold text-white/50">Branch Phone / Direct Line (Optional)</label>
+                                    <input
+                                      type="text"
+                                      value={loc.phone || ''}
+                                      onChange={(e) => handleContactLocationChange(idx, 'phone', e.target.value)}
+                                      placeholder="+964 (0) 123 456 789"
+                                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-white/70">🇬🇧 District / Area</label>
-                              <input
-                                type="text"
-                                value={contactData.corporateOfficeSection.addressLine2.en}
-                                onChange={(e) => handleContactCorporateChange('addressLine2', 'en', e.target.value)}
-                                placeholder="Al-Mansour District"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-white/70">🇬🇧 City & Country</label>
-                              <input
-                                type="text"
-                                value={contactData.corporateOfficeSection.addressCityCountry.en}
-                                onChange={(e) => handleContactCorporateChange('addressCityCountry', 'en', e.target.value)}
-                                placeholder="Baghdad, Iraq"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 تسمية العنوان</label>
-                              <input
-                                type="text"
-                                dir="rtl"
-                                value={contactData.corporateOfficeSection.addressLabel.ar}
-                                onChange={(e) => handleContactCorporateChange('addressLabel', 'ar', e.target.value)}
-                                placeholder="عنوان المكتب"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 اسم المقر بالعربية</label>
-                              <input
-                                type="text"
-                                dir="rtl"
-                                value={contactData.corporateOfficeSection.addressLine1.ar}
-                                onChange={(e) => handleContactCorporateChange('addressLine1', 'ar', e.target.value)}
-                                placeholder="المقر الرئيسي لمجموعة مبتكر"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 المنطقة / الحي بالعربية</label>
-                              <input
-                                type="text"
-                                dir="rtl"
-                                value={contactData.corporateOfficeSection.addressLine2.ar}
-                                onChange={(e) => handleContactCorporateChange('addressLine2', 'ar', e.target.value)}
-                                placeholder="حي المنصور"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                              />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 المدينة والدولة بالعربية</label>
-                              <input
-                                type="text"
-                                dir="rtl"
-                                value={contactData.corporateOfficeSection.addressCityCountry.ar}
-                                onChange={(e) => handleContactCorporateChange('addressCityCountry', 'ar', e.target.value)}
-                                placeholder="بغداد، العراق"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                              />
-                            </div>
-                          </>
-                        )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Bottom Quick Actions */}
+                      <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={handleAddContactLocation}
+                          className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all border border-white/10 cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Another Location & Email</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handlePostContactLocations}
+                          disabled={postingLocations}
+                          className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-red-600/30 cursor-pointer"
+                        >
+                          {postingLocations ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                              <span>Posting Locations & Emails...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Save className="w-4 h-4" />
+                              <span>Post / Update Addresses & Emails</span>
+                            </>
+                          )}
+                        </button>
                       </div>
                     </div>
 
-                    {/* Email and Phone */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Email Box */}
-                      <div className="p-4 rounded-xl bg-[#12162e] border border-white/10 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-red-500" />
-                          <span className="text-xs font-bold text-white uppercase">Email Contact</span>
-                        </div>
-                        {activeLangTab === 'en' ? (
-                          <div className="space-y-1">
-                            <label className="text-[11px] font-semibold text-white/70">🇬🇧 Label</label>
-                            <input
-                              type="text"
-                              value={contactData.corporateOfficeSection.emailLabel.en}
-                              onChange={(e) => handleContactCorporateChange('emailLabel', 'en', e.target.value)}
-                              placeholder="Email Address"
-                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                            />
-                          </div>
-                        ) : (
-                          <div className="space-y-1">
-                            <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 التسمية بالعربية</label>
-                            <input
-                              type="text"
-                              dir="rtl"
-                              value={contactData.corporateOfficeSection.emailLabel.ar}
-                              onChange={(e) => handleContactCorporateChange('emailLabel', 'ar', e.target.value)}
-                              placeholder="البريد الإلكتروني"
-                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                            />
-                          </div>
-                        )}
-                        <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-white/70">Email Address Value</label>
-                          <input
-                            type="email"
-                            value={contactData.corporateOfficeSection.emailValue}
-                            onChange={(e) => handleContactCorporateChange('emailValue', e.target.value)}
-                            placeholder="info@mobtakergroup.com"
-                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                          />
-                        </div>
+                    {/* Phone Helpline Box */}
+                    <div className="p-4 rounded-xl bg-[#12162e] border border-white/10 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-red-500" />
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">Phone Helpline (خط المساعدة الهاتفي)</span>
                       </div>
-
-                      {/* Phone Box */}
-                      <div className="p-4 rounded-xl bg-[#12162e] border border-white/10 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-red-500" />
-                          <span className="text-xs font-bold text-white uppercase">Phone Helpline</span>
-                        </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {activeLangTab === 'en' ? (
                           <div className="space-y-1">
                             <label className="text-[11px] font-semibold text-white/70">🇬🇧 Label</label>
@@ -12481,6 +12843,230 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                             />
                           </div>
                         )}
+                      </div>
+                    </div>
+
+                    {/* Working Hours Settings */}
+                    <div className="p-4 rounded-xl bg-[#12162e] border border-white/10 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-[#F68E2D]" />
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                            Working Hours Settings (أوقات وساعات العمل)
+                          </h4>
+                        </div>
+                        <span className="text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                          Contact Info
+                        </span>
+                      </div>
+
+                      {activeLangTab === 'en' ? (
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-white/70">🇬🇧 Working Hours Section Label</label>
+                            <input
+                              type="text"
+                              value={contactData.corporateOfficeSection.workingHoursLabel?.en || ''}
+                              onChange={(e) => handleContactCorporateChange('workingHoursLabel', 'en', e.target.value)}
+                              placeholder="Working Hours"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-white/70">🇬🇧 Working Hours Timing / Schedule</label>
+                            <input
+                              type="text"
+                              value={contactData.corporateOfficeSection.workingHoursValue?.en || ''}
+                              onChange={(e) => handleContactCorporateChange('workingHoursValue', 'en', e.target.value)}
+                              placeholder="Sunday to Thursday, 9:00 AM to 5:00 PM (Baghdad time)"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-white/70">🇬🇧 Internal / Confirmation Note</label>
+                            <input
+                              type="text"
+                              value={contactData.corporateOfficeSection.workingHoursNotes?.en || ''}
+                              onChange={(e) => handleContactCorporateChange('workingHoursNotes', 'en', e.target.value)}
+                              placeholder="[Owner to confirm. Suggested: Sunday to Thursday, 9:00 AM to 5:00 PM (Baghdad time).]"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 تسمية قسم ساعات العمل بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={contactData.corporateOfficeSection.workingHoursLabel?.ar || ''}
+                              onChange={(e) => handleContactCorporateChange('workingHoursLabel', 'ar', e.target.value)}
+                              placeholder="ساعات العمل"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 أوقات وساعات الدوام بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={contactData.corporateOfficeSection.workingHoursValue?.ar || ''}
+                              onChange={(e) => handleContactCorporateChange('workingHoursValue', 'ar', e.target.value)}
+                              placeholder="من الأحد إلى الخميس، 9:00 صباحاً حتى 5:00 مساءً (توقيت بغداد)"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 ملاحظة وتأكيد المالك بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={contactData.corporateOfficeSection.workingHoursNotes?.ar || ''}
+                              onChange={(e) => handleContactCorporateChange('workingHoursNotes', 'ar', e.target.value)}
+                              placeholder="[بانتظار تأكيد المالك. المقترح: من الأحد إلى الخميس، 9:00 صباحاً حتى 5:00 مساءً (توقيت بغداد).]"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Social Media Links Settings */}
+                    <div className="p-4 rounded-xl bg-[#12162e] border border-white/10 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Share2 className="w-4 h-4 text-[#F68E2D]" />
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                            Social Media Links (روابط وسائل التواصل الاجتماعي)
+                          </h4>
+                        </div>
+                        <span className="text-[11px] text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded-full">
+                          Social Channels
+                        </span>
+                      </div>
+
+                      {activeLangTab === 'en' ? (
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-white/70">🇬🇧 Social Media Section Title</label>
+                            <input
+                              type="text"
+                              value={contactData.corporateOfficeSection.socialMediaLabel?.en || ''}
+                              onChange={(e) => handleContactCorporateChange('socialMediaLabel', 'en', e.target.value)}
+                              placeholder="Follow Us on Social Media"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-white/70">🇬🇧 Social Media Notes</label>
+                            <input
+                              type="text"
+                              value={contactData.corporateOfficeSection.socialMediaNotes?.en || ''}
+                              onChange={(e) => handleContactCorporateChange('socialMediaNotes', 'en', e.target.value)}
+                              placeholder="[Owner to provide links.]"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 عنوان قسم التواصل الاجتماعي بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={contactData.corporateOfficeSection.socialMediaLabel?.ar || ''}
+                              onChange={(e) => handleContactCorporateChange('socialMediaLabel', 'ar', e.target.value)}
+                              placeholder="تابعنا على وسائل التواصل الاجتماعي"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 ملاحظة روابط التواصل بالعربية</label>
+                            <input
+                              type="text"
+                              dir="rtl"
+                              value={contactData.corporateOfficeSection.socialMediaNotes?.ar || ''}
+                              onChange={(e) => handleContactCorporateChange('socialMediaNotes', 'ar', e.target.value)}
+                              placeholder="[بانتظار تزويد الروابط من قبل المالك.]"
+                              className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Social Platforms URL Inputs */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-white/5">
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                            LinkedIn URL
+                          </label>
+                          <input
+                            type="text"
+                            value={contactData.corporateOfficeSection.socialMedia?.linkedin || ''}
+                            onChange={(e) => handleContactSocialChange('linkedin', e.target.value)}
+                            placeholder="https://linkedin.com/company/mobtakergroup"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                            Facebook URL
+                          </label>
+                          <input
+                            type="text"
+                            value={contactData.corporateOfficeSection.socialMedia?.facebook || ''}
+                            onChange={(e) => handleContactSocialChange('facebook', e.target.value)}
+                            placeholder="https://facebook.com/mobtakergroup"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                            Instagram URL
+                          </label>
+                          <input
+                            type="text"
+                            value={contactData.corporateOfficeSection.socialMedia?.instagram || ''}
+                            onChange={(e) => handleContactSocialChange('instagram', e.target.value)}
+                            placeholder="https://instagram.com/mobtakergroup"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                            Twitter / X URL
+                          </label>
+                          <input
+                            type="text"
+                            value={contactData.corporateOfficeSection.socialMedia?.twitter || ''}
+                            onChange={(e) => handleContactSocialChange('twitter', e.target.value)}
+                            placeholder="https://x.com/mobtakergroup"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
+
+                        <div className="space-y-1 md:col-span-2">
+                          <label className="text-[11px] font-semibold text-white/70 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                            YouTube URL
+                          </label>
+                          <input
+                            type="text"
+                            value={contactData.corporateOfficeSection.socialMedia?.youtube || ''}
+                            onChange={(e) => handleContactSocialChange('youtube', e.target.value)}
+                            placeholder="https://youtube.com/@mobtakergroup"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                          />
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -16393,55 +16979,83 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       {partnersData.headerSection.description[previewLang]}
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
-                      {partnersData.headerSection.partners.map((partner, idx) => (
-                        <div
-                          key={partner.id || idx}
-                          className="rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all p-6 flex flex-col justify-between shadow-2xl group min-h-[300px]"
-                        >
-                          <div>
-                            {/* Inset Logo Box */}
-                            <div className="w-full h-28 rounded-xl bg-[#0b0e17] border border-white/5 flex items-center justify-center p-4 mb-5 overflow-hidden">
-                              {partner.logoUrl ? (
-                                <img
-                                  src={partner.logoUrl}
-                                  alt={partner.name[previewLang]}
-                                  className="max-h-full max-w-full object-contain filter group-hover:scale-105 transition-all duration-300"
-                                />
-                              ) : (
-                                <span className="text-white/30 text-xs font-semibold tracking-wider uppercase">
-                                  {partner.name[previewLang] || 'Partner Logo'}
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Category Tag */}
-                            <span className="text-xs font-semibold text-red-500 tracking-wider block mb-1">
-                              {partner.category[previewLang]}
-                            </span>
-
-                            {/* Partner Name */}
-                            <h3 className="text-xl font-bold text-white group-hover:text-red-400 transition-colors mb-2">
-                              {partner.name[previewLang]}
+                    {/* Partners Categorized Groups */}
+                    <div className="space-y-10 pt-6">
+                      {Object.entries(
+                        partnersData.headerSection.partners.reduce<Record<string, { category: BilingualText; partners: typeof partnersData.headerSection.partners }>>((acc, partner) => {
+                          const tag = (previewLang === 'ar' ? (partner.category?.ar || partner.category?.en) : (partner.category?.en || partner.category?.ar)) || (previewLang === 'ar' ? 'عام' : 'General');
+                          if (!acc[tag]) {
+                            acc[tag] = {
+                              category: partner.category || { en: 'General', ar: 'عام' },
+                              partners: [],
+                            };
+                          }
+                          acc[tag].partners.push(partner);
+                          return acc;
+                        }, {})
+                      ).map(([catName, group], gIdx) => (
+                        <div key={catName || gIdx} className="space-y-4">
+                          <div className="flex items-center gap-3 border-b border-white/10 pb-2">
+                            <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                              <span>{group.category[previewLang] || catName}</span>
                             </h3>
-
-                            {/* Description */}
-                            <p className="text-xs text-white/60 leading-relaxed mb-4 line-clamp-3">
-                              {partner.description[previewLang]}
-                            </p>
+                            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-semibold">
+                              {group.partners.length} {previewLang === 'ar' ? 'شركاء' : (group.partners.length === 1 ? 'Partner' : 'Partners')}
+                            </span>
                           </div>
 
-                          {/* Link */}
-                          <div className="pt-3 border-t border-white/5">
-                            <a
-                              href={partner.websiteUrl || '#'}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-400 transition-colors cursor-pointer"
-                            >
-                              <span>{partner.linkText[previewLang] || (previewLang === 'ar' ? 'زيارة الموقع' : 'Visit website')}</span>
-                              <ArrowUpRight className="w-3.5 h-3.5" />
-                            </a>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {group.partners.map((partner, idx) => (
+                              <div
+                                key={partner.id || idx}
+                                className="rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all p-6 flex flex-col justify-between shadow-2xl group min-h-[300px]"
+                              >
+                                <div>
+                                  {/* Inset Logo Box */}
+                                  <div className="w-full h-28 rounded-xl bg-[#0b0e17] border border-white/5 flex items-center justify-center p-4 mb-5 overflow-hidden">
+                                    {partner.logoUrl ? (
+                                      <img
+                                        src={partner.logoUrl}
+                                        alt={partner.name[previewLang]}
+                                        className="max-h-full max-w-full object-contain filter group-hover:scale-105 transition-all duration-300"
+                                      />
+                                    ) : (
+                                      <span className="text-white/30 text-xs font-semibold tracking-wider uppercase">
+                                        {partner.name[previewLang] || 'Partner Logo'}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Category Tag */}
+                                  <span className="text-xs font-semibold text-red-500 tracking-wider block mb-1">
+                                    {partner.category[previewLang]}
+                                  </span>
+
+                                  {/* Partner Name */}
+                                  <h3 className="text-xl font-bold text-white group-hover:text-red-400 transition-colors mb-2">
+                                    {partner.name[previewLang]}
+                                  </h3>
+
+                                  {/* Description */}
+                                  <p className="text-xs text-white/60 leading-relaxed mb-4 line-clamp-3">
+                                    {partner.description[previewLang]}
+                                  </p>
+                                </div>
+
+                                {/* Link */}
+                                <div className="pt-3 border-t border-white/5">
+                                  <a
+                                    href={partner.websiteUrl || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-400 transition-colors cursor-pointer"
+                                  >
+                                    <span>{partner.linkText[previewLang] || (previewLang === 'ar' ? 'زيارة الموقع' : 'Visit website')}</span>
+                                    <ArrowUpRight className="w-3.5 h-3.5" />
+                                  </a>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       ))}
@@ -16598,44 +17212,98 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                       {/* Left: Contact Info Card (5 cols) */}
                       <div className="lg:col-span-5 rounded-3xl bg-[#141824] border border-white/10 p-6 sm:p-8 flex flex-col justify-between shadow-2xl space-y-6">
-                        {/* Address */}
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
-                            <MapPin className="w-5 h-5" />
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-sm font-bold text-white">
-                              {contactData.corporateOfficeSection.addressLabel[previewLang] || 'Office Address'}
-                            </p>
-                            <div className="text-xs text-white/70 leading-relaxed">
-                              <p>{contactData.corporateOfficeSection.addressLine1[previewLang]}</p>
-                              <p>{contactData.corporateOfficeSection.addressLine2[previewLang]}</p>
-                              <p>{contactData.corporateOfficeSection.addressCityCountry[previewLang]}</p>
+                        {/* Office Physical Addresses & Email Contacts */}
+                        {contactData.corporateOfficeSection.locations && contactData.corporateOfficeSection.locations.length > 0 ? (
+                          contactData.corporateOfficeSection.locations.map((loc: OfficeLocation, idx: number) => (
+                            <div key={loc.id || `preview_loc_${idx}`} className="space-y-4">
+                              {/* Address */}
+                              <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                                  <MapPin className="w-5 h-5" />
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2">
+                                    <p className="text-sm font-bold text-white">
+                                      {loc.label?.[previewLang] || 'Office Address'}
+                                    </p>
+                                    {loc.isPrimary && (
+                                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-500/20 text-red-300 border border-red-500/30">
+                                        Primary
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-white/70 leading-relaxed">
+                                    <p className="font-semibold text-white/90">{loc.name?.[previewLang]}</p>
+                                    {loc.addressLine2?.[previewLang] && <p>{loc.addressLine2[previewLang]}</p>}
+                                    {loc.cityCountry?.[previewLang] && <p>{loc.cityCountry[previewLang]}</p>}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Email */}
+                              <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                                  <Mail className="w-5 h-5" />
+                                </div>
+                                <div className="space-y-1">
+                                  <p className="text-sm font-bold text-white">
+                                    {loc.emailLabel?.[previewLang] || 'Email Address'}
+                                  </p>
+                                  <a
+                                    href={`mailto:${loc.email || contactData.corporateOfficeSection.emailValue}`}
+                                    className="text-xs text-white/70 hover:text-red-400 transition-colors block"
+                                  >
+                                    {loc.email || contactData.corporateOfficeSection.emailValue || 'info@mobtakergroup.com'}
+                                  </a>
+                                </div>
+                              </div>
+
+                              {/* Divider between locations */}
+                              <div className="border-t border-white/5" />
                             </div>
-                          </div>
-                        </div>
+                          ))
+                        ) : (
+                          <>
+                            {/* Address */}
+                            <div className="flex items-start gap-4">
+                              <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                                <MapPin className="w-5 h-5" />
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-sm font-bold text-white">
+                                  {contactData.corporateOfficeSection.addressLabel[previewLang] || 'Office Address'}
+                                </p>
+                                <div className="text-xs text-white/70 leading-relaxed">
+                                  <p>{contactData.corporateOfficeSection.addressLine1[previewLang]}</p>
+                                  <p>{contactData.corporateOfficeSection.addressLine2[previewLang]}</p>
+                                  <p>{contactData.corporateOfficeSection.addressCityCountry[previewLang]}</p>
+                                </div>
+                              </div>
+                            </div>
 
-                        <div className="border-t border-white/5" />
+                            <div className="border-t border-white/5" />
 
-                        {/* Email */}
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
-                            <Mail className="w-5 h-5" />
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-sm font-bold text-white">
-                              {contactData.corporateOfficeSection.emailLabel[previewLang] || 'Email Address'}
-                            </p>
-                            <a
-                              href={`mailto:${contactData.corporateOfficeSection.emailValue}`}
-                              className="text-xs text-white/70 hover:text-red-400 transition-colors block"
-                            >
-                              {contactData.corporateOfficeSection.emailValue || 'info@mobtakergroup.com'}
-                            </a>
-                          </div>
-                        </div>
+                            {/* Email */}
+                            <div className="flex items-start gap-4">
+                              <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+                                <Mail className="w-5 h-5" />
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-sm font-bold text-white">
+                                  {contactData.corporateOfficeSection.emailLabel[previewLang] || 'Email Address'}
+                                </p>
+                                <a
+                                  href={`mailto:${contactData.corporateOfficeSection.emailValue}`}
+                                  className="text-xs text-white/70 hover:text-red-400 transition-colors block"
+                                >
+                                  {contactData.corporateOfficeSection.emailValue || 'info@mobtakergroup.com'}
+                                </a>
+                              </div>
+                            </div>
 
-                        <div className="border-t border-white/5" />
+                            <div className="border-t border-white/5" />
+                          </>
+                        )}
 
                         {/* Phone */}
                         <div className="flex items-start gap-4">
@@ -16652,6 +17320,99 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                             >
                               {contactData.corporateOfficeSection.phoneValue || '+964 (0) 123 456 789'}
                             </a>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-white/5" />
+
+                        {/* Working Hours */}
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                            <Clock className="w-5 h-5" />
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-sm font-bold text-white">
+                              {contactData.corporateOfficeSection.workingHoursLabel?.[previewLang] || (previewLang === 'ar' ? 'ساعات العمل' : 'Working Hours')}
+                            </p>
+                            <p className="text-xs text-white/80 font-medium">
+                              {contactData.corporateOfficeSection.workingHoursValue?.[previewLang] || (previewLang === 'ar' ? 'من الأحد إلى الخميس، 9:00 صباحاً حتى 5:00 مساءً (توقيت بغداد)' : 'Sunday to Thursday, 9:00 AM to 5:00 PM (Baghdad time)')}
+                            </p>
+                            {contactData.corporateOfficeSection.workingHoursNotes?.[previewLang] && (
+                              <p className="text-[10px] text-amber-400/70 italic">
+                                {contactData.corporateOfficeSection.workingHoursNotes[previewLang]}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="border-t border-white/5" />
+
+                        {/* Social Media */}
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                            <Share2 className="w-5 h-5" />
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm font-bold text-white">
+                              {contactData.corporateOfficeSection.socialMediaLabel?.[previewLang] || (previewLang === 'ar' ? 'وسائل التواصل الاجتماعي' : 'Social Media')}
+                            </p>
+                            <div className="flex items-center flex-wrap gap-2">
+                              {contactData.corporateOfficeSection.socialMedia?.linkedin ? (
+                                <a
+                                  href={contactData.corporateOfficeSection.socialMedia.linkedin}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:text-white text-xs font-semibold transition-colors"
+                                >
+                                  LinkedIn
+                                </a>
+                              ) : null}
+                              {contactData.corporateOfficeSection.socialMedia?.facebook ? (
+                                <a
+                                  href={contactData.corporateOfficeSection.socialMedia.facebook}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-blue-500/20 border border-blue-400/30 text-blue-300 hover:text-white text-xs font-semibold transition-colors"
+                                >
+                                  Facebook
+                                </a>
+                              ) : null}
+                              {contactData.corporateOfficeSection.socialMedia?.instagram ? (
+                                <a
+                                  href={contactData.corporateOfficeSection.socialMedia.instagram}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-pink-500/20 border border-pink-400/30 text-pink-300 hover:text-white text-xs font-semibold transition-colors"
+                                >
+                                  Instagram
+                                </a>
+                              ) : null}
+                              {contactData.corporateOfficeSection.socialMedia?.twitter ? (
+                                <a
+                                  href={contactData.corporateOfficeSection.socialMedia.twitter}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-sky-500/20 border border-sky-400/30 text-sky-300 hover:text-white text-xs font-semibold transition-colors"
+                                >
+                                  X / Twitter
+                                </a>
+                              ) : null}
+                              {contactData.corporateOfficeSection.socialMedia?.youtube ? (
+                                <a
+                                  href={contactData.corporateOfficeSection.socialMedia.youtube}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg bg-red-600/20 border border-red-500/30 text-red-300 hover:text-white text-xs font-semibold transition-colors"
+                                >
+                                  YouTube
+                                </a>
+                              ) : null}
+                            </div>
+                            {contactData.corporateOfficeSection.socialMediaNotes?.[previewLang] && (
+                              <p className="text-[10px] text-white/40 italic">
+                                {contactData.corporateOfficeSection.socialMediaNotes[previewLang]}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>

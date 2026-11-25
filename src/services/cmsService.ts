@@ -1470,6 +1470,7 @@ export interface PartnersHeaderSection {
   title: BilingualText;
   description: BilingualText;
   partners: PartnerCard[];
+  flatPartners?: PartnerCard[];
 }
 
 export interface PartnersBannerSection {
@@ -1497,6 +1498,20 @@ export interface ContactHeaderSection {
   enquiryDescription: BilingualText;
 }
 
+export interface OfficeLocation {
+  id?: string;
+  label: BilingualText;
+  name: BilingualText;
+  addressLine1?: BilingualText;
+  addressLine2: BilingualText;
+  cityCountry: BilingualText;
+  email: string;
+  emailLabel: BilingualText;
+  phone?: string;
+  phoneLabel?: BilingualText;
+  isPrimary?: boolean;
+}
+
 export interface ContactCorporateOfficeSection {
   tagline: BilingualText;
   title: BilingualText;
@@ -1509,6 +1524,19 @@ export interface ContactCorporateOfficeSection {
   emailValue: string;
   phoneLabel: BilingualText;
   phoneValue: string;
+  locations?: OfficeLocation[];
+  workingHoursLabel: BilingualText;
+  workingHoursValue: BilingualText;
+  workingHoursNotes: BilingualText;
+  socialMediaLabel: BilingualText;
+  socialMediaNotes: BilingualText;
+  socialMedia: {
+    linkedin: string;
+    facebook: string;
+    instagram: string;
+    twitter: string;
+    youtube: string;
+  };
   mapLocationUrl: string;
   mapEmbedUrl: string;
   mapButtonText: BilingualText;
@@ -2569,6 +2597,48 @@ export const initialCmsContactData: CmsContactData = {
       ar: 'رقم الهاتف',
     },
     phoneValue: '+964 (0) 123 456 789',
+    locations: [
+      {
+        id: 'loc_headquarters',
+        label: { en: 'Office Address', ar: 'عنوان المكتب' },
+        name: { en: 'Mobtaker Group Headquarters', ar: 'المقر الرئيسي لمجموعة مبتكر' },
+        addressLine1: { en: 'Mobtaker Group Headquarters', ar: 'المقر الرئيسي لمجموعة مبتكر' },
+        addressLine2: { en: 'Al-Mansour District', ar: 'حي المنصور' },
+        cityCountry: { en: 'Baghdad, Iraq', ar: 'بغداد، العراق' },
+        emailLabel: { en: 'Email Address', ar: 'البريد الإلكتروني' },
+        email: 'info@mobtakergroup.com',
+        phoneLabel: { en: 'Phone Number', ar: 'رقم الهاتف' },
+        phone: '+964 (0) 123 456 789',
+        isPrimary: true,
+      },
+    ],
+    workingHoursLabel: {
+      en: 'Working Hours',
+      ar: 'ساعات العمل',
+    },
+    workingHoursValue: {
+      en: 'Sunday to Thursday, 9:00 AM to 5:00 PM (Baghdad time)',
+      ar: 'الأحد إلى الخميس، 9:00 صباحاً حتى 5:00 مساءً (بتوقيت بغداد)',
+    },
+    workingHoursNotes: {
+      en: '[Owner to confirm. Suggested: Sunday to Thursday, 9:00 AM to 5:00 PM (Baghdad time).]',
+      ar: '[بانتظار تأكيد المالك. المقترح: الأحد إلى الخميس، 9:00 صباحاً حتى 5:00 مساءً (بتوقيت بغداد).]',
+    },
+    socialMediaLabel: {
+      en: 'Follow Us on Social Media',
+      ar: 'تابعنا على وسائل التواصل الاجتماعي',
+    },
+    socialMediaNotes: {
+      en: '[Owner to provide links.]',
+      ar: '[بانتظار تزويد الروابط من قبل المالك.]',
+    },
+    socialMedia: {
+      linkedin: 'https://linkedin.com/company/mobtakergroup',
+      facebook: 'https://facebook.com/mobtakergroup',
+      instagram: 'https://instagram.com/mobtakergroup',
+      twitter: 'https://twitter.com/mobtakergroup',
+      youtube: 'https://youtube.com/@mobtakergroup',
+    },
     mapLocationUrl: 'https://maps.google.com/?q=Al-Mansour,Baghdad,Iraq',
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d106637.74798679462!2d44.31688691512807!3d33.31524103134958!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15577f67a0a74193%3A0x9a7d3298c92a95c4!2sBaghdad%2C%20Iraq!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s',
     mapButtonText: {
@@ -4387,6 +4457,57 @@ export const cmsService = {
     } catch (err) {
       console.warn('Backend save failed, saved to local cache:', err);
       return data;
+    }
+  },
+
+  async updateContactLocations(locations: OfficeLocation[]): Promise<CmsContactData> {
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/contact/locations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ locations }),
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const result = await res.json();
+      if (result && result.success && result.data) {
+        localStorage.setItem(CONTACT_CACHE_KEY, JSON.stringify(result.data));
+        return result.data;
+      }
+      const current = await this.getCmsContact();
+      const updated = {
+        ...current,
+        corporateOfficeSection: {
+          ...current.corporateOfficeSection,
+          locations,
+        },
+      };
+      return await this.updateCmsContact(updated);
+    } catch (err) {
+      console.warn('Backend location update failed, falling back to full CMS contact update:', err);
+      const current = await this.getCmsContact();
+      const primaryLoc = locations.find((l) => l.isPrimary) || locations[0];
+      const updated: CmsContactData = {
+        ...current,
+        corporateOfficeSection: {
+          ...current.corporateOfficeSection,
+          locations,
+          ...(primaryLoc
+            ? {
+                addressLabel: primaryLoc.label || current.corporateOfficeSection.addressLabel,
+                addressLine1: primaryLoc.name || current.corporateOfficeSection.addressLine1,
+                addressLine2: primaryLoc.addressLine2 || current.corporateOfficeSection.addressLine2,
+                addressCityCountry: primaryLoc.cityCountry || current.corporateOfficeSection.addressCityCountry,
+                emailLabel: primaryLoc.emailLabel || current.corporateOfficeSection.emailLabel,
+                emailValue: primaryLoc.email || current.corporateOfficeSection.emailValue,
+              }
+            : {}),
+        },
+      };
+      return await this.updateCmsContact(updated);
     }
   },
 
