@@ -67,7 +67,6 @@ import {
   COMPANY_CARD_ICONS,
   SERVICES_SOLUTION_ICONS,
   BUSINESS_AREA_ICONS,
-  ALL_LUCIDE_ICONS,
 } from '../components/ui/LucideIconSelect';
 import {
   cmsService,
@@ -726,7 +725,10 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       ...initialCmsInvestmentData.environmentSection,
       ...(res?.environmentSection || {}),
       factors: res?.environmentSection?.factors && res.environmentSection.factors.length > 0
-        ? res.environmentSection.factors
+        ? res.environmentSection.factors.map((f: any) => ({
+            id: f.id,
+            title: f.title || { en: '', ar: '' },
+          }))
         : initialCmsInvestmentData.environmentSection.factors,
       foundationBox: {
         ...initialCmsInvestmentData.environmentSection.foundationBox,
@@ -2021,9 +2023,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const handleAddInvestmentFactor = () => {
     const newFactor: InvestmentFactorItem = {
       id: `factor-${Date.now()}`,
-      icon: 'Shield',
       title: { en: '', ar: '' },
-      description: { en: '', ar: '' },
     };
     setInvestmentData((prev) => ({
       ...prev,
@@ -2047,26 +2047,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
   const handleInvestmentFactorChange = (
     index: number,
-    field: 'icon' | 'title' | 'description',
-    langOrVal: string,
-    val?: string
+    lang: 'en' | 'ar',
+    val: string
   ) => {
     setInvestmentData((prev) => {
       const list = [...prev.environmentSection.factors];
-      if (field === 'title' || field === 'description') {
-        list[index] = {
-          ...list[index],
-          [field]: {
-            ...list[index][field],
-            [langOrVal as 'en' | 'ar']: val || '',
-          },
-        };
-      } else {
-        list[index] = {
-          ...list[index],
-          icon: langOrVal,
-        };
-      }
+      list[index] = {
+        ...list[index],
+        title: {
+          ...(list[index]?.title || { en: '', ar: '' }),
+          [lang]: val,
+        },
+      };
       return {
         ...prev,
         environmentSection: {
@@ -13964,7 +13956,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           >
                             <div className="flex items-center justify-between pb-2 border-b border-white/10">
                               <div className="flex items-center gap-2">
-                                <LucideIcon name={factor.icon || 'Shield'} className="w-4 h-4 text-red-500" />
                                 <span className="text-xs text-white/60 font-semibold">Factor #{idx + 1}</span>
                               </div>
                               <button
@@ -13977,64 +13968,29 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               </button>
                             </div>
 
-                            {/* Lucide Icon Selector */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
-                              <LucideIconSelect
-                                value={factor.icon || 'Shield'}
-                                onChange={(newIcon) => handleInvestmentFactorChange(idx, 'icon', newIcon)}
-                                options={ALL_LUCIDE_ICONS}
-                              />
-                            </div>
-
                             {activeLangTab === 'en' ? (
-                              <>
-                                <div className="space-y-1">
-                                  <label className="text-[11px] text-white/60">🇬🇧 Title</label>
-                                  <input
-                                    type="text"
-                                    value={factor.title.en}
-                                    onChange={(e) => handleInvestmentFactorChange(idx, 'title', 'en', e.target.value)}
-                                    placeholder="e.g. Improving Business Environment"
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                  />
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-[11px] text-white/60">🇬🇧 Description</label>
-                                  <textarea
-                                    rows={3}
-                                    value={factor.description.en}
-                                    onChange={(e) => handleInvestmentFactorChange(idx, 'description', 'en', e.target.value)}
-                                    placeholder="Ongoing development and institutional initiatives..."
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                  />
-                                </div>
-                              </>
+                              <div className="space-y-1">
+                                <label className="text-[11px] text-white/60">🇬🇧 Title</label>
+                                <input
+                                  type="text"
+                                  value={factor.title.en}
+                                  onChange={(e) => handleInvestmentFactorChange(idx, 'en', e.target.value)}
+                                  placeholder="e.g. Improving Business Environment"
+                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                />
+                              </div>
                             ) : (
-                              <>
-                                <div className="space-y-1">
-                                  <label className="text-[11px] text-[#F68E2D] block text-right">🇸🇦 العنوان بالعربية</label>
-                                  <input
-                                    type="text"
-                                    dir="rtl"
-                                    value={factor.title.ar}
-                                    onChange={(e) => handleInvestmentFactorChange(idx, 'title', 'ar', e.target.value)}
-                                    placeholder="تحسين بيئة الأعمال"
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                  />
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-[11px] text-[#F68E2D] block text-right">🇸🇦 الوصف بالعربية</label>
-                                  <textarea
-                                    rows={3}
-                                    dir="rtl"
-                                    value={factor.description.ar}
-                                    onChange={(e) => handleInvestmentFactorChange(idx, 'description', 'ar', e.target.value)}
-                                    placeholder="تساهم المبادرات المؤسسية..."
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                  />
-                                </div>
-                              </>
+                              <div className="space-y-1">
+                                <label className="text-[11px] text-[#F68E2D] block text-right">🇸🇦 العنوان بالعربية</label>
+                                <input
+                                  type="text"
+                                  dir="rtl"
+                                  value={factor.title.ar}
+                                  onChange={(e) => handleInvestmentFactorChange(idx, 'ar', e.target.value)}
+                                  placeholder="تحسين بيئة الأعمال"
+                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                />
+                              </div>
                             )}
                           </div>
                         ))}

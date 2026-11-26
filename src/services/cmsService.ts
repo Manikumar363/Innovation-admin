@@ -1443,6 +1443,7 @@ export interface ProjectsHeaderSection {
   description: BilingualText;
   projects: ProjectCard[];
   allProjects?: ProjectCard[];
+  categories?: ProjectCategoryTag[];
   availableCategories?: ProjectCategoryTag[];
   categoryTags?: string[];
   totalProjects?: number;
@@ -1463,6 +1464,11 @@ export interface CmsProjectsData {
   _id?: string;
   headerSection: ProjectsHeaderSection;
   bannerSection: ProjectsBannerSection;
+  categories?: ProjectCategoryTag[];
+  categoryTags?: string[];
+  activeCategory?: string;
+  totalProjects?: number;
+  filteredCount?: number;
   updatedAt?: string;
 }
 
@@ -1677,9 +1683,7 @@ export interface InvestmentSectorsSection {
 
 export interface InvestmentFactorItem {
   id?: string;
-  icon: string;
   title: BilingualText;
-  description: BilingualText;
 }
 
 export interface InvestmentFoundationBox {
@@ -3078,74 +3082,44 @@ export const initialCmsInvestmentData: CmsInvestmentData = {
     factors: [
       {
         id: 'factor-1',
-        icon: 'Shield',
         title: {
           en: 'Improving Business Environment',
           ar: 'تحسين بيئة الأعمال',
         },
-        description: {
-          en: 'Ongoing development and institutional initiatives can help create a more supportive environment for business and investment.',
-          ar: 'تساهم المبادرات المؤسسية والتنموية المستمرة في خلق بيئة أكثر دعماً للأعمال والاستثمار.',
-        },
       },
       {
         id: 'factor-2',
-        icon: 'Shield',
         title: {
           en: 'Strategic Location',
           ar: 'موقع استراتيجي',
         },
-        description: {
-          en: "Iraq's location connects regional markets and offers potential opportunities for trade, logistics, and commercial development.",
-          ar: 'يربط موقع العراق بين الأسواق الإقليمية ويوفر فرصاً واعدة للتجارة والخدمات اللوجستية والتطوير التجاري.',
-        },
       },
       {
         id: 'factor-3',
-        icon: 'Shield',
         title: {
           en: 'Natural Resources',
           ar: 'الموارد الطبيعية',
         },
-        description: {
-          en: "The country's natural resource base supports opportunities in energy and industries connected to resource development.",
-          ar: 'تدعم قاعدة الموارد الطبيعية في البلاد الفرص المتاحة في مجال الطاقة والصناعات المرتبطة بتطوير الموارد.',
-        },
       },
       {
         id: 'factor-4',
-        icon: 'Shield',
         title: {
           en: 'Market Potential',
           ar: 'إمكانات السوق',
         },
-        description: {
-          en: 'Demand for housing, infrastructure, consumer goods, and essential services can create opportunities across multiple sectors.',
-          ar: 'يمكن للطلب المتزايد على الإسكان والبنية التحتية والسلع الاستهلاكية والخدمات الأساسية خلق فرص عبر قطاعات متعددة.',
-        },
       },
       {
         id: 'factor-5',
-        icon: 'Shield',
         title: {
           en: 'Development Initiatives',
           ar: 'مبادرات التنمية',
         },
-        description: {
-          en: 'Reconstruction and economic development programs may create demand for private-sector expertise, capital, and services.',
-          ar: 'قد تؤدي برامج إعادة الإعمار والتنمية الاقتصادية إلى خلق طلب متزايد على خبرات القطاع الخاص ورؤوس الأموال والخدمات.',
-        },
       },
       {
         id: 'factor-6',
-        icon: 'Shield',
         title: {
           en: 'Strategic Partnerships',
           ar: 'شراكات استراتيجية',
-        },
-        description: {
-          en: 'Collaboration between local businesses, international investors, and financial institutions can help develop investment opportunities.',
-          ar: 'التعاون بين الشركات المحلية والمستثمرين الدوليين والمؤسسات المالية يمكن أن يسهم في تطوير فرص استثمارية ناجحة.',
         },
       },
     ],
@@ -4773,65 +4747,26 @@ export const cmsService = {
   },
 
   async filterProjects(
-    categoryTag: string,
-    status?: string
+    categoryTag: string
   ): Promise<{
     projects: ProjectCard[];
     total: number;
     availableCategories: ProjectCategoryTag[];
     data: CmsProjectsData;
   }> {
-    try {
-      const params = new URLSearchParams();
-      if (categoryTag && categoryTag.toLowerCase() !== 'all') {
-        params.append('category', categoryTag);
-      }
-      if (status) {
-        params.append('status', status);
-      }
-      const qs = params.toString() ? `?${params.toString()}` : '';
-      const res = await cmsFetch(`${API_BASE}/api/cms/projects/filter${qs}`);
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}`);
-      }
-      const result = await res.json();
-      if (result && result.success && result.data) {
-        return {
-          projects: result.data.projects || [],
-          total: result.data.total || 0,
-          availableCategories: result.data.availableCategories || [],
-          data: result.data,
-        };
-      }
-      throw new Error('Invalid response structure');
-    } catch (err) {
-      console.warn('Filter API failed, using client-side fallback:', err);
-      const fullData = await this.getCmsProjects(categoryTag);
-      return {
-        projects: fullData.headerSection?.projects || [],
-        total: (fullData.headerSection?.projects || []).length,
-        availableCategories: fullData.headerSection?.availableCategories || [],
-        data: fullData,
-      };
-    }
+    const fullData = await this.getCmsProjects(categoryTag);
+    return {
+      projects: fullData.headerSection?.projects || [],
+      total: (fullData.headerSection?.projects || []).length,
+      availableCategories:
+        fullData.headerSection?.categories || fullData.headerSection?.availableCategories || [],
+      data: fullData,
+    };
   },
 
   async getProjectCategories(): Promise<ProjectCategoryTag[]> {
-    try {
-      const res = await cmsFetch(`${API_BASE}/api/cms/projects/categories`);
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}`);
-      }
-      const result = await res.json();
-      if (result && result.success && result.data?.categories) {
-        return result.data.categories;
-      }
-      return [];
-    } catch (err) {
-      console.warn('Categories API failed, falling back to local extraction:', err);
-      const fullData = await this.getCmsProjects();
-      return fullData.headerSection?.availableCategories || [];
-    }
+    const fullData = await this.getCmsProjects();
+    return fullData.headerSection?.categories || fullData.headerSection?.availableCategories || [];
   },
 
   async updateCmsProjects(data: CmsProjectsData): Promise<CmsProjectsData> {
