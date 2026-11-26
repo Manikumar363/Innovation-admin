@@ -583,6 +583,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
   const [activeLangTab, setActiveLangTab] = useState<'en' | 'ar'>('en');
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [previewLang, setPreviewLang] = useState<'en' | 'ar'>('en');
+  const [previewProjectCategory, setPreviewProjectCategory] = useState<string>('all');
+  const [editorProjectCategoryFilter, setEditorProjectCategoryFilter] = useState<string>('all');
   const [previewShopProductIndex, setPreviewShopProductIndex] = useState<number | null>(null);
   const [previewShopGalleryIndex, setPreviewShopGalleryIndex] = useState<number>(0);
   const [isExcelImportModalOpen, setIsExcelImportModalOpen] = useState<boolean>(false);
@@ -11348,8 +11350,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     </div>
 
                     {/* Projects Grid Manager */}
-                    <div className="pt-4 border-t border-white/10">
-                      <div className="flex items-center justify-between mb-4">
+                    <div className="pt-4 border-t border-white/10 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-semibold text-white">
                             Project Initiatives ({projectsData.headerSection.projects.length} Cards)
@@ -11368,8 +11370,63 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         </button>
                       </div>
 
+                      {/* Category Tag Filter Chips in Admin Editor */}
+                      {(() => {
+                        const catMap = new Map<string, { tag: string; count: number }>();
+                        for (const p of projectsData.headerSection.projects) {
+                          const tag = (p.category?.en || p.category?.ar || 'General').trim();
+                          const key = tag.toLowerCase();
+                          if (!catMap.has(key)) {
+                            catMap.set(key, { tag, count: 0 });
+                          }
+                          catMap.get(key)!.count += 1;
+                        }
+                        const cats = Array.from(catMap.values());
+                        if (cats.length === 0) return null;
+
+                        return (
+                          <div className="flex items-center flex-wrap gap-1.5 p-2 rounded-xl bg-black/20 border border-white/5 text-xs">
+                            <span className="text-[11px] font-semibold text-white/50 px-1">Filter by Tag:</span>
+                            <button
+                              type="button"
+                              onClick={() => setEditorProjectCategoryFilter('all')}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                                editorProjectCategoryFilter === 'all'
+                                  ? 'bg-[#F68E2D] text-white shadow-sm'
+                                  : 'bg-white/5 text-white/70 hover:text-white'
+                              }`}
+                            >
+                              All ({projectsData.headerSection.projects.length})
+                            </button>
+                            {cats.map((cat) => (
+                              <button
+                                key={cat.tag}
+                                type="button"
+                                onClick={() => setEditorProjectCategoryFilter(cat.tag)}
+                                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                                  editorProjectCategoryFilter.toLowerCase() === cat.tag.toLowerCase()
+                                    ? 'bg-[#F68E2D] text-white shadow-sm'
+                                    : 'bg-white/5 text-white/70 hover:text-white'
+                                }`}
+                              >
+                                {cat.tag} ({cat.count})
+                              </button>
+                            ))}
+                          </div>
+                        );
+                      })()}
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {projectsData.headerSection.projects.map((project, pIdx) => (
+                        {projectsData.headerSection.projects
+                          .map((project, pIdx) => ({ project, pIdx }))
+                          .filter(({ project }) => {
+                            if (editorProjectCategoryFilter === 'all') return true;
+                            const norm = editorProjectCategoryFilter.toLowerCase().trim();
+                            const en = (project.category?.en || '').toLowerCase().trim();
+                            const ar = (project.category?.ar || '').toLowerCase().trim();
+                            return en === norm || ar === norm || en.includes(norm) || ar.includes(norm);
+                          })
+                          .map(({ project, pIdx }) => (
                           <div
                             key={project.id || `proj-${pIdx}`}
                             className="bg-[#12162e] border border-white/10 hover:border-white/20 rounded-xl p-5 space-y-4 transition-all shadow-lg flex flex-col justify-between"
@@ -16873,51 +16930,131 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       {projectsData.headerSection.description[previewLang]}
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
-                      {projectsData.headerSection.projects.map((project, idx) => (
-                        <div
-                          key={project.id || idx}
-                          className="rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all p-6 flex flex-col justify-between shadow-2xl group min-h-[200px]"
-                        >
-                          <div>
-                            {/* Card Top Row: Category in Red, Status Badge in Pill on Right */}
-                            <div className="flex items-center justify-between gap-2 mb-3">
-                              <span className="text-xs font-semibold text-red-500 tracking-wider">
-                                {project.category[previewLang]}
+                    {/* Category Filter Pills in Preview */}
+                    {(() => {
+                      const allCards = projectsData.headerSection.projects || [];
+                      const catMap = new Map<string, { tag: string; labelEn: string; labelAr: string; count: number }>();
+                      for (const p of allCards) {
+                        const en = (p.category?.en || '').trim();
+                        const ar = (p.category?.ar || '').trim();
+                        const tag = en || ar || 'General';
+                        const key = tag.toLowerCase();
+                        if (!catMap.has(key)) {
+                          catMap.set(key, { tag, labelEn: en || tag, labelAr: ar || tag, count: 0 });
+                        }
+                        catMap.get(key)!.count += 1;
+                      }
+                      const availableCats = Array.from(catMap.values());
+
+                      const displayedProjects = previewProjectCategory === 'all'
+                        ? allCards
+                        : allCards.filter((p) => {
+                            const en = (p.category?.en || '').toLowerCase().trim();
+                            const ar = (p.category?.ar || '').toLowerCase().trim();
+                            const norm = previewProjectCategory.toLowerCase().trim();
+                            return en === norm || ar === norm || en.includes(norm) || ar.includes(norm);
+                          });
+
+                      return (
+                        <div className="space-y-6 pt-2">
+                          {/* Filter Pills Bar */}
+                          <div className="flex items-center flex-wrap gap-2 pb-2">
+                            <button
+                              type="button"
+                              onClick={() => setPreviewProjectCategory('all')}
+                              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                                previewProjectCategory === 'all'
+                                  ? 'bg-red-600 text-white shadow-md shadow-red-600/30 ring-1 ring-red-400'
+                                  : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10'
+                              }`}
+                            >
+                              <span>{previewLang === 'ar' ? 'جميع المشاريع' : 'All Projects'}</span>
+                              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white">
+                                {allCards.length}
                               </span>
-                              <span
-                                className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${project.statusType === 'completed'
-                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                  : project.statusType === 'planned'
-                                    ? 'bg-sky-500/10 border-sky-500/30 text-sky-400'
-                                    : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                                  }`}
+                            </button>
+                            {availableCats.map((cat) => (
+                              <button
+                                key={cat.tag}
+                                type="button"
+                                onClick={() => setPreviewProjectCategory(cat.tag)}
+                                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                                  previewProjectCategory.toLowerCase() === cat.tag.toLowerCase()
+                                    ? 'bg-red-600 text-white shadow-md shadow-red-600/30 ring-1 ring-red-400'
+                                    : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10'
+                                }`}
                               >
-                                {project.status[previewLang] || (project.statusType === 'completed' ? 'Completed' : project.statusType === 'planned' ? 'Planned' : 'Ongoing')}
-                              </span>
-                            </div>
-
-                            {/* Project Title */}
-                            <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors mb-2">
-                              {project.title[previewLang]}
-                            </h3>
-
-                            {/* Project Description */}
-                            <p className="text-xs text-white/60 leading-relaxed">
-                              {project.description[previewLang]}
-                            </p>
+                                <span>{previewLang === 'ar' ? cat.labelAr : cat.labelEn}</span>
+                                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white">
+                                  {cat.count}
+                                </span>
+                              </button>
+                            ))}
                           </div>
 
-                          {project.linkUrl && (
-                            <div className="pt-4 mt-2 flex items-center justify-end">
-                              <span className="text-[11px] text-white/40 group-hover:text-red-400 flex items-center gap-1 transition-colors">
-                                Explore <ArrowUpRight className="w-3.5 h-3.5" />
-                              </span>
-                            </div>
-                          )}
+                          {/* Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {displayedProjects.length === 0 ? (
+                              <div className="col-span-full py-12 text-center text-white/40 text-xs rounded-2xl bg-white/5 border border-white/10">
+                                {previewLang === 'ar'
+                                  ? 'لا توجد مشاريع متوفرة في هذا القسم حالياً.'
+                                  : 'No projects found in this category tag.'}
+                              </div>
+                            ) : (
+                              displayedProjects.map((project, idx) => (
+                                <div
+                                  key={project.id || idx}
+                                  className="rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all p-6 flex flex-col justify-between shadow-2xl group min-h-[200px]"
+                                >
+                                  <div>
+                                    {/* Card Top Row: Category in Red, Status Badge in Pill on Right */}
+                                    <div className="flex items-center justify-between gap-2 mb-3">
+                                      <span className="text-xs font-semibold text-red-500 tracking-wider">
+                                        {project.category[previewLang]}
+                                      </span>
+                                      <span
+                                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                                          project.statusType === 'completed'
+                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                            : project.statusType === 'planned'
+                                              ? 'bg-sky-500/10 border-sky-500/30 text-sky-400'
+                                              : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                                        }`}
+                                      >
+                                        {project.status[previewLang] ||
+                                          (project.statusType === 'completed'
+                                            ? 'Completed'
+                                            : project.statusType === 'planned'
+                                              ? 'Planned'
+                                              : 'Ongoing')}
+                                      </span>
+                                    </div>
+
+                                    {/* Project Title */}
+                                    <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors mb-2">
+                                      {project.title[previewLang]}
+                                    </h3>
+
+                                    {/* Project Description */}
+                                    <p className="text-xs text-white/60 leading-relaxed">
+                                      {project.description[previewLang]}
+                                    </p>
+                                  </div>
+
+                                  {project.linkUrl && (
+                                    <div className="pt-4 mt-2 flex items-center justify-end">
+                                      <span className="text-[11px] text-white/40 group-hover:text-red-400 flex items-center gap-1 transition-colors">
+                                        Explore <ArrowUpRight className="w-3.5 h-3.5" />
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ))
+                            )}
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                      );
+                    })()}
                   </div>
 
                   {/* SECTION 2: LET'S WORK TOGETHER BANNER (IMAGE 2) */}

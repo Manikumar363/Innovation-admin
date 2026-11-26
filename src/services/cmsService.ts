@@ -1432,10 +1432,21 @@ export interface ProjectCard {
   linkUrl?: string;
 }
 
+export interface ProjectCategoryTag {
+  tag: string;
+  category: BilingualText;
+  count: number;
+}
+
 export interface ProjectsHeaderSection {
   title: BilingualText;
   description: BilingualText;
   projects: ProjectCard[];
+  allProjects?: ProjectCard[];
+  availableCategories?: ProjectCategoryTag[];
+  categoryTags?: string[];
+  totalProjects?: number;
+  filteredCount?: number;
 }
 
 export interface ProjectsBannerSection {
@@ -4720,29 +4731,106 @@ export const cmsService = {
   },
 
   // CMS Projects Services
-  async getCmsProjects(): Promise<CmsProjectsData> {
+  async getCmsProjects(categoryTag?: string): Promise<CmsProjectsData> {
     try {
-      const res = await cmsFetch(`${API_BASE}/api/cms/projects`);
+      const url =
+        categoryTag && categoryTag.toLowerCase() !== 'all'
+          ? `${API_BASE}/api/cms/projects?category=${encodeURIComponent(categoryTag)}`
+          : `${API_BASE}/api/cms/projects`;
+      const res = await cmsFetch(url);
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
       const data = await res.json();
       if (data && data.success && data.data) {
-        localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify(data.data));
+        if (!categoryTag || categoryTag.toLowerCase() === 'all') {
+          localStorage.setItem(PROJECTS_CACHE_KEY, JSON.stringify(data.data));
+        }
         return data.data;
       }
       throw new Error('Invalid response structure');
     } catch (err) {
       console.warn('Backend unavailable, falling back to cached or default projects data:', err);
       const cached = localStorage.getItem(PROJECTS_CACHE_KEY);
-      if (cached) {
-        try {
-          return JSON.parse(cached);
-        } catch {
-          // ignore
-        }
+      const baseData: CmsProjectsData = cached ? JSON.parse(cached) : initialCmsProjectsData;
+      if (categoryTag && categoryTag.toLowerCase() !== 'all') {
+        const norm = categoryTag.toLowerCase().trim();
+        const filtered = (baseData.headerSection?.projects || []).filter((p: ProjectCard) => {
+          const en = (p.category?.en || '').toLowerCase().trim();
+          const ar = (p.category?.ar || '').toLowerCase().trim();
+          return en === norm || ar === norm || en.includes(norm) || ar.includes(norm);
+        });
+        return {
+          ...baseData,
+          headerSection: {
+            ...baseData.headerSection,
+            projects: filtered,
+          },
+        };
       }
-      return initialCmsProjectsData;
+      return baseData;
+    }
+  },
+
+  async filterProjects(
+    categoryTag: string,
+    status?: string
+  ): Promise<{
+    projects: ProjectCard[];
+    total: number;
+    availableCategories: ProjectCategoryTag[];
+    data: CmsProjectsData;
+  }> {
+    try {
+      const params = new URLSearchParams();
+      if (categoryTag && categoryTag.toLowerCase() !== 'all') {
+        params.append('category', categoryTag);
+      }
+      if (status) {
+        params.append('status', status);
+      }
+      const qs = params.toString() ? `?${params.toString()}` : '';
+      const res = await cmsFetch(`${API_BASE}/api/cms/projects/filter${qs}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const result = await res.json();
+      if (result && result.success && result.data) {
+        return {
+          projects: result.data.projects || [],
+          total: result.data.total || 0,
+          availableCategories: result.data.availableCategories || [],
+          data: result.data,
+        };
+      }
+      throw new Error('Invalid response structure');
+    } catch (err) {
+      console.warn('Filter API failed, using client-side fallback:', err);
+      const fullData = await this.getCmsProjects(categoryTag);
+      return {
+        projects: fullData.headerSection?.projects || [],
+        total: (fullData.headerSection?.projects || []).length,
+        availableCategories: fullData.headerSection?.availableCategories || [],
+        data: fullData,
+      };
+    }
+  },
+
+  async getProjectCategories(): Promise<ProjectCategoryTag[]> {
+    try {
+      const res = await cmsFetch(`${API_BASE}/api/cms/projects/categories`);
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      const result = await res.json();
+      if (result && result.success && result.data?.categories) {
+        return result.data.categories;
+      }
+      return [];
+    } catch (err) {
+      console.warn('Categories API failed, falling back to local extraction:', err);
+      const fullData = await this.getCmsProjects();
+      return fullData.headerSection?.availableCategories || [];
     }
   },
 
