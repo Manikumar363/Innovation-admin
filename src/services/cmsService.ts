@@ -1354,11 +1354,18 @@ export interface ServiceFeatureCard {
   description: BilingualText;
 }
 
+export interface ServiceCardBulletPoint {
+  id?: string;
+  text: BilingualText;
+}
+
 export interface BusinessAreaCard {
   id?: string;
-  icon: string;
+  icon?: string;
   title: BilingualText;
   description: BilingualText;
+  shortDescription?: BilingualText;
+  bulletPoints?: ServiceCardBulletPoint[];
   linkUrl: string;
 }
 
@@ -2032,7 +2039,6 @@ export const initialCmsServicesData: CmsServicesData = {
     cards: [
       {
         id: 'card-area-1',
-        icon: 'Microscope',
         title: {
           en: 'Medical & Laboratory Equipment',
           ar: 'المعدات الطبية والمخبرية',
@@ -2041,11 +2047,37 @@ export const initialCmsServicesData: CmsServicesData = {
           en: 'Comprehensive medical device solutions and laboratory testing equipment.',
           ar: 'حلول شاملة للأجهزة الطبية ومعدات الفحص المخبري.',
         },
+        shortDescription: {
+          en: 'Comprehensive medical device solutions and laboratory testing equipment.',
+          ar: 'حلول شاملة للأجهزة الطبية ومعدات الفحص المخبري.',
+        },
+        bulletPoints: [
+          {
+            id: 'bp-1-1',
+            text: {
+              en: 'Diagnostic & imaging devices',
+              ar: 'أجهزة التشخيص والتصوير الطبي',
+            },
+          },
+          {
+            id: 'bp-1-2',
+            text: {
+              en: 'Clinical laboratory analyzers',
+              ar: 'أجهزة التحليل المخبري السريري',
+            },
+          },
+          {
+            id: 'bp-1-3',
+            text: {
+              en: 'Maintenance & calibration services',
+              ar: 'خدمات الصيانة والمعايرة الدورية',
+            },
+          },
+        ],
         linkUrl: '/services/medical-equipment',
       },
       {
         id: 'card-area-2',
-        icon: 'FlaskConical',
         title: {
           en: 'Laboratory Supplies',
           ar: 'المستلزمات المخبرية',
@@ -2054,11 +2086,37 @@ export const initialCmsServicesData: CmsServicesData = {
           en: 'Reliable laboratory supplies and essential equipment for research, testing, and diagnostic facilities.',
           ar: 'مستلزمات مخبرية موثوقة ومعدات أساسية لمرافق الأبحاث والاختبار والتشخيص.',
         },
+        shortDescription: {
+          en: 'Reliable laboratory supplies and essential equipment for research, testing, and diagnostic facilities.',
+          ar: 'مستلزمات مخبرية موثوقة ومعدات أساسية لمرافق الأبحاث والاختبار والتشخيص.',
+        },
+        bulletPoints: [
+          {
+            id: 'bp-2-1',
+            text: {
+              en: 'Reagents & chemical consumables',
+              ar: 'الكواشف والمستهلكات الكيميائية',
+            },
+          },
+          {
+            id: 'bp-2-2',
+            text: {
+              en: 'Specimen collection & storage',
+              ar: 'أدوات جمع العينات وحفظها',
+            },
+          },
+          {
+            id: 'bp-2-3',
+            text: {
+              en: 'Safety & protective laboratory wear',
+              ar: 'معدات السلامة والوقاية المخبرية',
+            },
+          },
+        ],
         linkUrl: '/services/laboratory-supplies',
       },
       {
         id: 'card-area-3',
-        icon: 'Stethoscope',
         title: {
           en: 'Healthcare Solutions',
           ar: 'حلول الرعاية الصحية',
@@ -2067,11 +2125,37 @@ export const initialCmsServicesData: CmsServicesData = {
           en: 'Quality healthcare products and solutions designed to support medical professionals and healthcare facilities.',
           ar: 'منتجات وحلول رعاية صحية عالية الجودة مصممة لدعم المتخصصين في المجال الطبي والمرافق الصحية.',
         },
+        shortDescription: {
+          en: 'Quality healthcare products and solutions designed to support medical professionals and healthcare facilities.',
+          ar: 'منتجات وحلول رعاية صحية عالية الجودة مصممة لدعم المتخصصين في المجال الطبي والمرافق الصحية.',
+        },
+        bulletPoints: [
+          {
+            id: 'bp-3-1',
+            text: {
+              en: 'Hospital & clinic turnkey setup',
+              ar: 'تجهيز المستشفيات والعيادات بالكامل',
+            },
+          },
+          {
+            id: 'bp-3-2',
+            text: {
+              en: 'Infection control & sterilization',
+              ar: 'مكافحة العدوى وأنظمة التعقيم',
+            },
+          },
+          {
+            id: 'bp-3-3',
+            text: {
+              en: 'Healthcare IT & monitoring systems',
+              ar: 'أنظمة المراقبة وتكنولوجيا الرعاية الصحية',
+            },
+          },
+        ],
         linkUrl: '/services/healthcare-solutions',
       },
       {
         id: 'card-area-4',
-        icon: 'ShieldCheck',
         title: {
           en: 'Quality & Safety Standards',
           ar: 'معايير الجودة والسلامة',
@@ -2080,6 +2164,33 @@ export const initialCmsServicesData: CmsServicesData = {
           en: 'Products selected with a focus on quality, reliability, and compliance with applicable safety standards.',
           ar: 'منتجات مختارة مع التركيز على الجودة والموثوقية والامتثال لمعايير السلامة المعمول بها.',
         },
+        shortDescription: {
+          en: 'Products selected with a focus on quality, reliability, and compliance with applicable safety standards.',
+          ar: 'منتجات مختارة مع التركيز على الجودة والموثوقية والامتثال لمعايير السلامة المعمول بها.',
+        },
+        bulletPoints: [
+          {
+            id: 'bp-4-1',
+            text: {
+              en: 'ISO & CE certified products',
+              ar: 'منتجات حاصلة على شهادات ISO و CE',
+            },
+          },
+          {
+            id: 'bp-4-2',
+            text: {
+              en: 'Regulatory compliance verification',
+              ar: 'التحقق من الامتثال للمعايير التنظيمية',
+            },
+          },
+          {
+            id: 'bp-4-3',
+            text: {
+              en: 'Comprehensive warranty & support',
+              ar: 'ضمان شامل ودعم فني متكامل',
+            },
+          },
+        ],
         linkUrl: '/services/standards',
       },
     ],

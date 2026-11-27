@@ -30,6 +30,7 @@ import {
   FileCheck,
   Code2,
   Lock,
+  ArrowUpRight,
 } from 'lucide-react';
 import { DashboardLayout } from '../components/ui/dashboard-layout';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
@@ -41,6 +42,7 @@ import {
   initialCmsServicesData,
   type CmsServicesData,
   type ServiceFeatureCard,
+  type BusinessAreaCard,
 } from '../services/cmsService';
 
 // Lucide icon helper mapping
@@ -96,6 +98,7 @@ export const ServicesPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [savingHeader, setSavingHeader] = useState<boolean>(false);
+  const [savingBusinessAreas, setSavingBusinessAreas] = useState<boolean>(false);
   const [landingHeaderData, setLandingHeaderData] = useState<CmsServicesData>(initialCmsServicesData);
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
@@ -152,8 +155,25 @@ export const ServicesPage: React.FC = () => {
             setServices(servicesData);
             setActiveSlug((prev) => (servicesData.some((s) => s.slug === prev) ? prev : servicesData[0].slug));
           }
-          if (headerCmsData && headerCmsData.headerSection) {
-            setLandingHeaderData(headerCmsData);
+          if (headerCmsData) {
+            setLandingHeaderData({
+              ...initialCmsServicesData,
+              ...headerCmsData,
+              headerSection: {
+                ...initialCmsServicesData.headerSection,
+                ...(headerCmsData.headerSection || {}),
+                cards: headerCmsData.headerSection?.cards?.length
+                  ? headerCmsData.headerSection.cards
+                  : initialCmsServicesData.headerSection.cards,
+              },
+              businessAreasSection: {
+                ...initialCmsServicesData.businessAreasSection,
+                ...(headerCmsData.businessAreasSection || {}),
+                cards: headerCmsData.businessAreasSection?.cards?.length
+                  ? headerCmsData.businessAreasSection.cards
+                  : initialCmsServicesData.businessAreasSection.cards,
+              },
+            });
           }
         }
       } catch (err) {
@@ -246,6 +266,183 @@ export const ServicesPage: React.FC = () => {
         ...prev,
         headerSection: {
           ...prev.headerSection,
+          cards,
+        },
+      };
+    });
+  };
+
+  // Save Our Business Areas section
+  const handleSaveBusinessAreas = async () => {
+    try {
+      setSavingBusinessAreas(true);
+      await cmsService.updateCmsServices(landingHeaderData);
+      toast.success('Our Business Areas section saved successfully!');
+    } catch (err: any) {
+      console.error('Failed to save business areas:', err);
+      toast.error('Failed to save business areas: ' + (err.message || 'Unknown error'));
+    } finally {
+      setSavingBusinessAreas(false);
+    }
+  };
+
+  // Add service card
+  const handleAddBusinessAreaCard = () => {
+    const newCard: BusinessAreaCard = {
+      id: `card-area-${Date.now()}`,
+      title: { en: 'New Service Card', ar: 'بطاقة خدمة جديدة' },
+      description: {
+        en: 'Description of the service provided.',
+        ar: 'وصف للخدمة المقدمة.',
+      },
+      shortDescription: {
+        en: 'Short description of the service provided.',
+        ar: 'وصف قصير للخدمة المقدمة.',
+      },
+      bulletPoints: [],
+      linkUrl: '/services',
+    };
+    setLandingHeaderData((prev) => ({
+      ...prev,
+      businessAreasSection: {
+        ...prev.businessAreasSection,
+        cards: [...(prev.businessAreasSection?.cards || []), newCard],
+      },
+    }));
+    toast.success('New service card added');
+  };
+
+  // Delete business area card
+  const handleDeleteBusinessAreaCard = (cardId?: string, index?: number) => {
+    setLandingHeaderData((prev) => ({
+      ...prev,
+      businessAreasSection: {
+        ...prev.businessAreasSection,
+        cards: (prev.businessAreasSection?.cards || []).filter((c, i) =>
+          cardId ? c.id !== cardId : i !== index
+        ),
+      },
+    }));
+  };
+
+  // Add bullet point to card
+  const handleAddBusinessAreaBulletPoint = (cardIndex: number) => {
+    setLandingHeaderData((prev) => {
+      const cards = [...(prev.businessAreasSection?.cards || [])];
+      const card = cards[cardIndex];
+      if (!card) return prev;
+      const bulletPoints = [...(card.bulletPoints || [])];
+      bulletPoints.push({
+        id: `bp-${Date.now()}`,
+        text: { en: '', ar: '' },
+      });
+      cards[cardIndex] = {
+        ...card,
+        bulletPoints,
+      };
+      return {
+        ...prev,
+        businessAreasSection: {
+          ...prev.businessAreasSection,
+          cards,
+        },
+      };
+    });
+  };
+
+  // Remove bullet point from card
+  const handleRemoveBusinessAreaBulletPoint = (cardIndex: number, bpIndex: number) => {
+    setLandingHeaderData((prev) => {
+      const cards = [...(prev.businessAreasSection?.cards || [])];
+      const card = cards[cardIndex];
+      if (!card) return prev;
+      const bulletPoints = (card.bulletPoints || []).filter((_, i) => i !== bpIndex);
+      cards[cardIndex] = {
+        ...card,
+        bulletPoints,
+      };
+      return {
+        ...prev,
+        businessAreasSection: {
+          ...prev.businessAreasSection,
+          cards,
+        },
+      };
+    });
+  };
+
+  // Change bullet point text
+  const handleBusinessAreaBulletPointChange = (
+    cardIndex: number,
+    bpIndex: number,
+    lang: 'en' | 'ar',
+    val: string
+  ) => {
+    setLandingHeaderData((prev) => {
+      const cards = [...(prev.businessAreasSection?.cards || [])];
+      const card = cards[cardIndex];
+      if (!card) return prev;
+      const bulletPoints = [...(card.bulletPoints || [])];
+      const currentBp = bulletPoints[bpIndex] || { id: `bp-${Date.now()}`, text: { en: '', ar: '' } };
+      bulletPoints[bpIndex] = {
+        ...currentBp,
+        text: {
+          ...(currentBp.text || { en: '', ar: '' }),
+          [lang]: val,
+        },
+      };
+      cards[cardIndex] = {
+        ...card,
+        bulletPoints,
+      };
+      return {
+        ...prev,
+        businessAreasSection: {
+          ...prev.businessAreasSection,
+          cards,
+        },
+      };
+    });
+  };
+
+  // Update card field in business areas section
+  const handleUpdateBusinessAreaCard = (
+    index: number,
+    field: 'icon' | 'title' | 'description' | 'shortDescription' | 'linkUrl',
+    value: string
+  ) => {
+    setLandingHeaderData((prev) => {
+      const cards = [...(prev.businessAreasSection?.cards || [])];
+      if (!cards[index]) return prev;
+      if (field === 'icon' || field === 'linkUrl') {
+        cards[index] = { ...cards[index], [field]: value };
+      } else if (field === 'description' || field === 'shortDescription') {
+        const currentDesc = cards[index].description || cards[index].shortDescription || { en: '', ar: '' };
+        const currentShortDesc = cards[index].shortDescription || cards[index].description || { en: '', ar: '' };
+        cards[index] = {
+          ...cards[index],
+          description: {
+            ...currentDesc,
+            [activeLangTab]: value,
+          },
+          shortDescription: {
+            ...currentShortDesc,
+            [activeLangTab]: value,
+          },
+        };
+      } else {
+        cards[index] = {
+          ...cards[index],
+          [field]: {
+            ...cards[index][field],
+            [activeLangTab]: value,
+          },
+        };
+      }
+      return {
+        ...prev,
+        businessAreasSection: {
+          ...prev.businessAreasSection,
           cards,
         },
       };
@@ -686,6 +883,250 @@ export const ServicesPage: React.FC = () => {
                         onChange={(e) => handleUpdateLandingCard(idx, 'description', e.target.value)}
                         placeholder="Solution Description"
                         className="w-full px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-[#F68E2D]"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* SECTION: OUR BUSINESS AREAS (CMS BUSINESS AREAS SECTION) */}
+        <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden mb-6">
+          <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-700 text-white font-bold text-xs flex items-center justify-center border border-purple-500/30">
+                2
+              </span>
+              <div>
+                <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                  <span>Our Business Areas</span>
+                </CardTitle>
+                <p className="text-xs text-white/50">
+                  Sectors and service divisions forming the Projects Innovator group ({landingHeaderData.businessAreasSection?.cards?.length || 0} business areas).
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                onClick={handleAddBusinessAreaCard}
+                size="sm"
+                className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-red-600/20"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add Business Area
+              </Button>
+
+              <Button
+                type="button"
+                onClick={handleSaveBusinessAreas}
+                disabled={savingBusinessAreas}
+                size="sm"
+                className="bg-[#F68E2D] hover:bg-[#e28124] text-white text-xs font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#F68E2D]/20"
+              >
+                <Save className="w-3.5 h-3.5" />
+                {savingBusinessAreas ? 'Saving...' : 'Save Business Areas'}
+              </Button>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-6 space-y-6">
+            {/* Main Title & Description */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                  Main Section Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                </label>
+                <input
+                  type="text"
+                  dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                  value={landingHeaderData.businessAreasSection?.title?.[activeLangTab] || ''}
+                  onChange={(e) =>
+                    setLandingHeaderData((prev) => ({
+                      ...prev,
+                      businessAreasSection: {
+                        ...prev.businessAreasSection,
+                        title: {
+                          ...prev.businessAreasSection?.title,
+                          [activeLangTab]: e.target.value,
+                        },
+                      },
+                    }))
+                  }
+                  placeholder="e.g. Our Business Areas"
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+                  Main Section Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                </label>
+                <textarea
+                  rows={2}
+                  dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                  value={landingHeaderData.businessAreasSection?.description?.[activeLangTab] || ''}
+                  onChange={(e) =>
+                    setLandingHeaderData((prev) => ({
+                      ...prev,
+                      businessAreasSection: {
+                        ...prev.businessAreasSection,
+                        description: {
+                          ...prev.businessAreasSection?.description,
+                          [activeLangTab]: e.target.value,
+                        },
+                      },
+                    }))
+                  }
+                  placeholder="e.g. Explore the sectors and services that form the Projects Innovator group."
+                  className="w-full px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
+                />
+              </div>
+            </div>
+
+            {/* Repeating Service Cards */}
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                  Service Cards ({landingHeaderData.businessAreasSection?.cards?.length || 0} Cards)
+                </span>
+                <Button
+                  type="button"
+                  onClick={handleAddBusinessAreaCard}
+                  variant="outline"
+                  size="sm"
+                  className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10 text-xs flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add Service Card
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(landingHeaderData.businessAreasSection?.cards || []).map((card, aIdx) => (
+                  <div
+                    key={card.id || aIdx}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-4"
+                  >
+                    <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                      <span className="text-xs font-bold text-purple-400">
+                        Service #{aIdx + 1}
+                      </span>
+                      {(landingHeaderData.businessAreasSection?.cards?.length || 0) > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteBusinessAreaCard(card.id, aIdx)}
+                          className="text-white/40 hover:text-red-400 p-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
+                          title="Delete service card"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <label className="block text-[10px] font-semibold text-white/60 uppercase mb-1">
+                        Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                      </label>
+                      <input
+                        type="text"
+                        dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                        value={card.title?.[activeLangTab] || ''}
+                        onChange={(e) => handleUpdateBusinessAreaCard(aIdx, 'title', e.target.value)}
+                        placeholder="e.g. Medical & Laboratory Equipment"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                      />
+                    </div>
+
+                    {/* Short Description */}
+                    <div>
+                      <label className="block text-[10px] font-semibold text-white/60 uppercase mb-1">
+                        Short Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
+                      </label>
+                      <textarea
+                        rows={3}
+                        dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                        value={card.shortDescription?.[activeLangTab] || card.description?.[activeLangTab] || ''}
+                        onChange={(e) => handleUpdateBusinessAreaCard(aIdx, 'shortDescription', e.target.value)}
+                        placeholder="e.g. Comprehensive medical device solutions..."
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
+                      />
+                    </div>
+
+                    {/* Bullet Points with Add Button */}
+                    <div className="space-y-2 pt-2 border-t border-white/10">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-semibold text-purple-300 flex items-center gap-1.5">
+                          <span>Bullet Points</span>
+                          <span className="text-[10px] text-white/40">
+                            ({card.bulletPoints?.length || 0})
+                          </span>
+                        </label>
+                        <Button
+                          type="button"
+                          onClick={() => handleAddBusinessAreaBulletPoint(aIdx)}
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-[10px] text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded flex items-center gap-1 cursor-pointer"
+                        >
+                          <Plus className="w-3 h-3" />
+                          Add Point
+                        </Button>
+                      </div>
+
+                      <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                        {(card.bulletPoints || []).map((bp, bpIdx) => (
+                          <div key={bp.id || bpIdx} className="flex items-center gap-1.5">
+                            <span className="text-purple-400 text-xs shrink-0">•</span>
+                            <input
+                              type="text"
+                              dir={activeLangTab === 'ar' ? 'rtl' : 'ltr'}
+                              value={bp.text?.[activeLangTab] || ''}
+                              onChange={(e) =>
+                                handleBusinessAreaBulletPointChange(aIdx, bpIdx, activeLangTab, e.target.value)
+                              }
+                              placeholder={`Bullet point #${bpIdx + 1}`}
+                              className="w-full px-2 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#F68E2D]"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveBusinessAreaBulletPoint(aIdx, bpIdx)}
+                              className="p-1 text-white/30 hover:text-red-400 rounded transition-colors shrink-0 cursor-pointer"
+                              title="Remove point"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                        {(!card.bulletPoints || card.bulletPoints.length === 0) && (
+                          <p className="text-[10px] text-white/30 italic py-1">
+                            No bullet points yet. Click &quot;Add Point&quot; above.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Navigation Target Link (Restricted / Readonly) */}
+                    <div>
+                      <label className="text-[10px] font-semibold text-white/60 flex items-center justify-between mb-1">
+                        <span>Target Route / URL</span>
+                        <span className="text-[10px] text-amber-400/80 font-normal flex items-center gap-1">
+                          <Lock className="w-2.5 h-2.5" />
+                          Fixed Route
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        readOnly
+                        disabled
+                        value={card.linkUrl || '/services'}
+                        title="Target URL is fixed by system navigation and cannot be edited"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
                       />
                     </div>
                   </div>
@@ -1856,6 +2297,54 @@ export const ServicesPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* BUSINESS AREAS SECTION PREVIEW */}
+                {landingHeaderData.businessAreasSection && (
+                  <div className="mt-12 pt-10 border-t border-white/10">
+                    <div className="mb-6">
+                      <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-2">
+                        {landingHeaderData.businessAreasSection.title?.[previewLang] ||
+                          landingHeaderData.businessAreasSection.title?.en ||
+                          'Our Business Areas'}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-white/70 max-w-2xl leading-relaxed">
+                        {landingHeaderData.businessAreasSection.description?.[previewLang] ||
+                          landingHeaderData.businessAreasSection.description?.en}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {(landingHeaderData.businessAreasSection.cards || []).map((card, idx) => (
+                        <div
+                          key={card.id || idx}
+                          className="p-6 rounded-2xl bg-[#0f1422] border border-white/10 hover:border-purple-500/40 transition-colors flex flex-col justify-between space-y-4"
+                        >
+                          <div className="flex items-center justify-end">
+                            <ArrowUpRight className="w-4 h-4 text-white/40" />
+                          </div>
+                          <div className="space-y-2">
+                            <h3 className="text-sm font-bold text-white leading-snug">
+                              {card.title?.[previewLang] || card.title?.en}
+                            </h3>
+                            <p className="text-xs text-white/60 leading-relaxed">
+                              {card.shortDescription?.[previewLang] || card.shortDescription?.en || card.description?.[previewLang] || card.description?.en}
+                            </p>
+                            {card.bulletPoints && card.bulletPoints.length > 0 && (
+                              <ul className="space-y-1 pt-1.5 border-t border-white/10">
+                                {card.bulletPoints.map((bp, bpI) => (
+                                  <li key={bp.id || bpI} className="text-[11px] text-white/70 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
+                                    <span>{bp.text?.[previewLang] || bp.text?.en}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* SERVICE PAGE DETAIL DIVIDER */}
