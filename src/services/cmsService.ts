@@ -1383,6 +1383,9 @@ export interface ServicesBusinessAreasSection {
 
 export interface CmsServicesData {
   _id?: string;
+  title?: BilingualText;
+  description?: BilingualText;
+  cards?: BusinessAreaCard[];
   headerSection: ServicesHeaderSection;
   businessAreasSection: ServicesBusinessAreasSection;
   updatedAt?: string;
@@ -1966,6 +1969,14 @@ export const initialCmsHomeData: CmsHomeData = {
 
 
 export const initialCmsServicesData: CmsServicesData = {
+  title: {
+    en: 'Our Business Areas',
+    ar: 'مجالات أعمالنا',
+  },
+  description: {
+    en: 'Explore the sectors and services that form the Projects Innovator group.',
+    ar: 'استكشف القطاعات والخدمات التي تشكل مجموعة مبتكر المشاريع.',
+  },
   headerSection: {
     title: {
       en: 'Our Services',
@@ -5029,47 +5040,180 @@ export const cmsService = {
   // CMS Services
   async getCmsServices(): Promise<CmsServicesData> {
     try {
-      const res = await cmsFetch(`${API_BASE}/api/cms/services`);
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}`);
-      }
-      const data = await res.json();
-      if (data && data.success && data.data) {
-        localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(data.data));
-        return data.data;
-      }
-      throw new Error('Invalid response structure');
-    } catch (err) {
-      console.warn('Backend unavailable, falling back to cached or default services data:', err);
-      const cached = localStorage.getItem(SERVICES_CACHE_KEY);
-      if (cached) {
-        try {
-          return JSON.parse(cached);
-        } catch {
-          // ignore
+      const res = await cmsFetch(`${API_BASE}/services`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) {
+          const mainTitle =
+            data.title ||
+            (data.data && !Array.isArray(data.data) ? data.data.title : undefined) ||
+            initialCmsServicesData.title;
+          const mainDesc =
+            data.description ||
+            (data.data && !Array.isArray(data.data) ? data.data.description : undefined) ||
+            initialCmsServicesData.description;
+          const payload: CmsServicesData = {
+            ...initialCmsServicesData,
+            title: mainTitle,
+            description: mainDesc,
+            headerSection: {
+              ...initialCmsServicesData.headerSection,
+              title: mainTitle,
+              description: mainDesc,
+            },
+            businessAreasSection: {
+              ...initialCmsServicesData.businessAreasSection,
+              title: mainTitle,
+              description: mainDesc,
+              cards: [],
+            },
+            cards: [],
+          };
+          localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(payload));
+          return payload;
         }
       }
-      return initialCmsServicesData;
+    } catch (err) {
+      console.warn('Backend /services unavailable, trying /api/services or cache:', err);
     }
+
+    try {
+      const res2 = await cmsFetch(`${API_BASE}/api/services`);
+      if (res2.ok) {
+        const data = await res2.json();
+        if (data && data.success) {
+          const mainTitle =
+            data.title ||
+            (data.data && !Array.isArray(data.data) ? data.data.title : undefined) ||
+            initialCmsServicesData.title;
+          const mainDesc =
+            data.description ||
+            (data.data && !Array.isArray(data.data) ? data.data.description : undefined) ||
+            initialCmsServicesData.description;
+          const payload: CmsServicesData = {
+            ...initialCmsServicesData,
+            title: mainTitle,
+            description: mainDesc,
+            headerSection: {
+              ...initialCmsServicesData.headerSection,
+              title: mainTitle,
+              description: mainDesc,
+            },
+            businessAreasSection: {
+              ...initialCmsServicesData.businessAreasSection,
+              title: mainTitle,
+              description: mainDesc,
+              cards: [],
+            },
+            cards: [],
+          };
+          localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(payload));
+          return payload;
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    const cached = localStorage.getItem(SERVICES_CACHE_KEY);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch {
+        // ignore
+      }
+    }
+    return initialCmsServicesData;
   },
 
   async updateCmsServices(data: CmsServicesData): Promise<CmsServicesData> {
     try {
       localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(data));
-      const res = await cmsFetch(`${API_BASE}/api/cms/services`, {
+      const res = await cmsFetch(`${API_BASE}/services`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}`);
+      if (res.ok) {
+        const result = await res.json();
+        if (result && result.success) {
+          const mainTitle =
+            result.title ||
+            data.title ||
+            data.businessAreasSection?.title ||
+            initialCmsServicesData.title;
+          const mainDesc =
+            result.description ||
+            data.description ||
+            data.businessAreasSection?.description ||
+            initialCmsServicesData.description;
+          const payload: CmsServicesData = {
+            ...initialCmsServicesData,
+            ...data,
+            title: mainTitle,
+            description: mainDesc,
+            headerSection: {
+              ...initialCmsServicesData.headerSection,
+              title: mainTitle,
+              description: mainDesc,
+            },
+            businessAreasSection: {
+              ...initialCmsServicesData.businessAreasSection,
+              title: mainTitle,
+              description: mainDesc,
+              cards: [],
+            },
+            cards: [],
+          };
+          localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(payload));
+          return payload;
+        }
       }
-      const result = await res.json();
-      if (result && result.success && result.data) {
-        localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(result.data));
-        return result.data;
+
+      // Fallback: /api/services
+      const res2 = await cmsFetch(`${API_BASE}/api/services`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (res2.ok) {
+        const result = await res2.json();
+        if (result && result.success) {
+          const mainTitle =
+            result.title ||
+            data.title ||
+            data.businessAreasSection?.title ||
+            initialCmsServicesData.title;
+          const mainDesc =
+            result.description ||
+            data.description ||
+            data.businessAreasSection?.description ||
+            initialCmsServicesData.description;
+          const payload: CmsServicesData = {
+            ...initialCmsServicesData,
+            ...data,
+            title: mainTitle,
+            description: mainDesc,
+            headerSection: {
+              ...initialCmsServicesData.headerSection,
+              title: mainTitle,
+              description: mainDesc,
+            },
+            businessAreasSection: {
+              ...initialCmsServicesData.businessAreasSection,
+              title: mainTitle,
+              description: mainDesc,
+              cards: [],
+            },
+            cards: [],
+          };
+          localStorage.setItem(SERVICES_CACHE_KEY, JSON.stringify(payload));
+          return payload;
+        }
       }
       return data;
     } catch (err) {
@@ -5476,9 +5620,14 @@ export const cmsService = {
       const res = await cmsFetch(`${API_BASE}/services`, undefined, true);
       if (res.ok) {
         const json = await res.json();
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          localStorage.setItem(SERVICES_PAGES_CACHE, JSON.stringify(json.data));
-          return json.data;
+        if (json.success) {
+          const list = Array.isArray(json.data)
+            ? json.data
+            : (json.data?.services || json.services || []);
+          if (Array.isArray(list) && list.length > 0) {
+            localStorage.setItem(SERVICES_PAGES_CACHE, JSON.stringify(list));
+            return list;
+          }
         }
       }
     } catch (err) {
@@ -5489,9 +5638,14 @@ export const cmsService = {
       const res2 = await cmsFetch(`${API_BASE}/api/services`, undefined, true);
       if (res2.ok) {
         const json = await res2.json();
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          localStorage.setItem(SERVICES_PAGES_CACHE, JSON.stringify(json.data));
-          return json.data;
+        if (json.success) {
+          const list = Array.isArray(json.data)
+            ? json.data
+            : (json.data?.services || json.services || []);
+          if (Array.isArray(list) && list.length > 0) {
+            localStorage.setItem(SERVICES_PAGES_CACHE, JSON.stringify(list));
+            return list;
+          }
         }
       }
     } catch {

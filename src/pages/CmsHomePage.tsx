@@ -65,7 +65,6 @@ import {
   PURPOSE_ICONS,
   OBJECTIVES_ICONS,
   COMPANY_CARD_ICONS,
-  SERVICES_SOLUTION_ICONS,
 } from '../components/ui/LucideIconSelect';
 import {
   cmsService,
@@ -90,8 +89,6 @@ import {
   type CompanyCard,
   type CompanyPrincipleItem,
   type CmsServicesData,
-  type ServiceFeatureCard,
-  type BusinessAreaCard,
   initialCmsServicesData,
   type CmsShopData,
   type ShopProductCard,
@@ -943,220 +940,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     } finally {
       setSaving(false);
     }
-  };
-
-  // Section 1: Solution Feature Cards
-  const handleAddServiceCard = () => {
-    const newCard: ServiceFeatureCard = {
-      id: `card-serv-${Date.now()}`,
-      icon: 'Microscope',
-      title: { en: '', ar: '' },
-      description: { en: '', ar: '' },
-    };
-    setServicesData((prev) => ({
-      ...prev,
-      headerSection: {
-        ...prev.headerSection,
-        cards: [...(prev.headerSection?.cards || []), newCard],
-      },
-    }));
-    toast.success('New service solution card added');
-  };
-
-  const handleRemoveServiceCard = (index: number) => {
-    setServicesData((prev) => ({
-      ...prev,
-      headerSection: {
-        ...prev.headerSection,
-        cards: prev.headerSection.cards.filter((_, i) => i !== index),
-      },
-    }));
-  };
-
-  const handleServiceCardChange = (
-    index: number,
-    field: 'icon' | 'title' | 'description',
-    langOrVal: string,
-    val?: string
-  ) => {
-    setServicesData((prev) => {
-      const list = [...(prev.headerSection?.cards || [])];
-      if (field === 'title' || field === 'description') {
-        list[index] = {
-          ...list[index],
-          [field]: {
-            ...list[index][field],
-            [langOrVal as 'en' | 'ar']: val || '',
-          },
-        };
-      } else {
-        list[index] = {
-          ...list[index],
-          [field]: langOrVal,
-        };
-      }
-      return {
-        ...prev,
-        headerSection: {
-          ...prev.headerSection,
-          cards: list,
-        },
-      };
-    });
-  };
-
-  // Section 2: Business Area Cards
-  const handleAddBusinessAreaCard = () => {
-    const newCard: BusinessAreaCard = {
-      id: `card-area-${Date.now()}`,
-      title: { en: '', ar: '' },
-      description: { en: '', ar: '' },
-      shortDescription: { en: '', ar: '' },
-      bulletPoints: [],
-      linkUrl: '/services',
-    };
-    setServicesData((prev) => ({
-      ...prev,
-      businessAreasSection: {
-        ...prev.businessAreasSection,
-        cards: [...(prev.businessAreasSection?.cards || []), newCard],
-      },
-    }));
-    toast.success('New service card added');
-  };
-
-  const handleRemoveBusinessAreaCard = (index: number) => {
-    setServicesData((prev) => ({
-      ...prev,
-      businessAreasSection: {
-        ...prev.businessAreasSection,
-        cards: prev.businessAreasSection.cards.filter((_, i) => i !== index),
-      },
-    }));
-  };
-
-  const handleAddBusinessAreaBulletPoint = (cardIndex: number) => {
-    setServicesData((prev) => {
-      const list = [...(prev.businessAreasSection?.cards || [])];
-      const card = list[cardIndex];
-      if (!card) return prev;
-      const bulletPoints = [...(card.bulletPoints || [])];
-      bulletPoints.push({
-        id: `bp-${Date.now()}`,
-        text: { en: '', ar: '' },
-      });
-      list[cardIndex] = {
-        ...card,
-        bulletPoints,
-      };
-      return {
-        ...prev,
-        businessAreasSection: {
-          ...prev.businessAreasSection,
-          cards: list,
-        },
-      };
-    });
-  };
-
-  const handleRemoveBusinessAreaBulletPoint = (cardIndex: number, bpIndex: number) => {
-    setServicesData((prev) => {
-      const list = [...(prev.businessAreasSection?.cards || [])];
-      const card = list[cardIndex];
-      if (!card) return prev;
-      const bulletPoints = (card.bulletPoints || []).filter((_, i) => i !== bpIndex);
-      list[cardIndex] = {
-        ...card,
-        bulletPoints,
-      };
-      return {
-        ...prev,
-        businessAreasSection: {
-          ...prev.businessAreasSection,
-          cards: list,
-        },
-      };
-    });
-  };
-
-  const handleBusinessAreaBulletPointChange = (
-    cardIndex: number,
-    bpIndex: number,
-    lang: 'en' | 'ar',
-    val: string
-  ) => {
-    setServicesData((prev) => {
-      const list = [...(prev.businessAreasSection?.cards || [])];
-      const card = list[cardIndex];
-      if (!card) return prev;
-      const bulletPoints = [...(card.bulletPoints || [])];
-      const currentBp = bulletPoints[bpIndex] || { id: `bp-${Date.now()}`, text: { en: '', ar: '' } };
-      bulletPoints[bpIndex] = {
-        ...currentBp,
-        text: {
-          ...(currentBp.text || { en: '', ar: '' }),
-          [lang]: val,
-        },
-      };
-      list[cardIndex] = {
-        ...card,
-        bulletPoints,
-      };
-      return {
-        ...prev,
-        businessAreasSection: {
-          ...prev.businessAreasSection,
-          cards: list,
-        },
-      };
-    });
-  };
-
-  const handleBusinessAreaCardChange = (
-    index: number,
-    field: 'icon' | 'title' | 'description' | 'shortDescription' | 'linkUrl',
-    langOrVal: string,
-    val?: string
-  ) => {
-    setServicesData((prev) => {
-      const list = [...(prev.businessAreasSection?.cards || [])];
-      if (!list[index]) return prev;
-      if (field === 'title') {
-        list[index] = {
-          ...list[index],
-          title: {
-            ...list[index].title,
-            [langOrVal as 'en' | 'ar']: val || '',
-          },
-        };
-      } else if (field === 'description' || field === 'shortDescription') {
-        const currentDesc = list[index].description || list[index].shortDescription || { en: '', ar: '' };
-        const currentShortDesc = list[index].shortDescription || list[index].description || { en: '', ar: '' };
-        list[index] = {
-          ...list[index],
-          description: {
-            ...currentDesc,
-            [langOrVal as 'en' | 'ar']: val || '',
-          },
-          shortDescription: {
-            ...currentShortDesc,
-            [langOrVal as 'en' | 'ar']: val || '',
-          },
-        };
-      } else {
-        list[index] = {
-          ...list[index],
-          [field]: langOrVal,
-        };
-      }
-      return {
-        ...prev,
-        businessAreasSection: {
-          ...prev.businessAreasSection,
-          cards: list,
-        },
-      };
-    });
   };
 
   const handleSaveShopData = async () => {
@@ -4134,7 +3917,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           </span>
                         </div>
                         <p className="text-[11px] text-white/50">
-                          Division sectors & services forming Projects Innovator ({servicesData.businessAreasSection.cards.length} business areas)
+                          Division sectors & services forming Projects Innovator
                         </p>
                       </div>
                     </div>
@@ -10369,31 +10152,22 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                     </Link>
                   </div>
                 </Card>
-                {/* SECTION 1: OUR SERVICES (IMAGE 1) */}
+                {/* OUR SERVICES — SECTION HEADER */}
                 <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-700 flex items-center justify-center font-bold text-white text-xs">
-                        1
+                        ★
                       </div>
                       <div>
                         <CardTitle className="text-base font-bold text-white">
-                          Section 1: Our Services (Page Header & Solution Cards)
+                          Our Services — Section Header
                         </CardTitle>
                         <p className="text-xs text-white/50">
-                          Main page headline, healthcare introductory description, and 4 solution cards
+                          Main section title and description displayed at the top of the Services section
                         </p>
                       </div>
                     </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddServiceCard}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Service Card
-                    </Button>
                   </CardHeader>
 
                   <CardContent className="p-6 space-y-6">
@@ -10405,15 +10179,19 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       {activeLangTab === 'en' && (
                         <input
                           type="text"
-                          value={servicesData.headerSection.title.en}
+                          value={servicesData.businessAreasSection.title.en}
                           onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
+                            setServicesData((prev) => ({
+                              ...prev,
                               headerSection: {
-                                ...servicesData.headerSection,
-                                title: { ...servicesData.headerSection.title, en: e.target.value },
+                                ...prev.headerSection,
+                                title: { ...prev.headerSection?.title, en: e.target.value },
                               },
-                            })
+                              businessAreasSection: {
+                                ...prev.businessAreasSection,
+                                title: { ...prev.businessAreasSection.title, en: e.target.value },
+                              },
+                            }))
                           }
                           placeholder="e.g. Our Services"
                           className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
@@ -10423,15 +10201,19 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                         <input
                           type="text"
                           dir="rtl"
-                          value={servicesData.headerSection.title.ar}
+                          value={servicesData.businessAreasSection.title.ar}
                           onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
+                            setServicesData((prev) => ({
+                              ...prev,
                               headerSection: {
-                                ...servicesData.headerSection,
-                                title: { ...servicesData.headerSection.title, ar: e.target.value },
+                                ...prev.headerSection,
+                                title: { ...prev.headerSection?.title, ar: e.target.value },
                               },
-                            })
+                              businessAreasSection: {
+                                ...prev.businessAreasSection,
+                                title: { ...prev.businessAreasSection.title, ar: e.target.value },
+                              },
+                            }))
                           }
                           placeholder="مثال: خدماتنا"
                           className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
@@ -10447,223 +10229,21 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                       {activeLangTab === 'en' && (
                         <textarea
                           rows={3}
-                          value={servicesData.headerSection.description.en}
-                          onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
-                              headerSection: {
-                                ...servicesData.headerSection,
-                                description: { ...servicesData.headerSection.description, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Discover our medical equipment, laboratory supplies, and healthcare solutions..."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <textarea
-                          rows={3}
-                          dir="rtl"
-                          value={servicesData.headerSection.description.ar}
-                          onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
-                              headerSection: {
-                                ...servicesData.headerSection,
-                                description: { ...servicesData.headerSection.description, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: اكتشف معداتنا الطبية ومستلزمات المختبرات والحلول الصحية المصممة لدعم المتخصصين والمنشآت الصحية."
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Repeating Service Solution Cards */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider">
-                        Service Solution Cards ({servicesData.headerSection.cards.length})
-                      </h4>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {servicesData.headerSection.cards.map((card, cIdx) => (
-                          <div
-                            key={card.id || cIdx}
-                            className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all"
-                          >
-                            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                              <span className="text-xs font-bold text-purple-400">
-                                Solution #{cIdx + 1}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveServiceCard(cIdx)}
-                                className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                title="Delete solution card"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-
-                            {/* Lucide Icon Dropdown */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">Lucide Icon</label>
-                              <LucideIconSelect
-                                value={card.icon}
-                                onChange={(newIcon) => handleServiceCardChange(cIdx, 'icon', newIcon)}
-                                options={SERVICES_SOLUTION_ICONS}
-                              />
-                            </div>
-
-                            {/* Title */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={card.title.en}
-                                  onChange={(e) => handleServiceCardChange(cIdx, 'title', 'en', e.target.value)}
-                                  placeholder="e.g. Comprehensive Medical & Laboratory Solutions"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={card.title.ar}
-                                  onChange={(e) => handleServiceCardChange(cIdx, 'title', 'ar', e.target.value)}
-                                  placeholder="مثال: حلول طبية ومخبرية شاملة"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Description */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <textarea
-                                  rows={3}
-                                  value={card.description.en}
-                                  onChange={(e) => handleServiceCardChange(cIdx, 'description', 'en', e.target.value)}
-                                  placeholder="e.g. We provide comprehensive solutions in medical..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <textarea
-                                  rows={3}
-                                  dir="rtl"
-                                  value={card.description.ar}
-                                  onChange={(e) => handleServiceCardChange(cIdx, 'description', 'ar', e.target.value)}
-                                  placeholder="مثال: نقدم حلولاً شاملة في المعدات والمستلزمات الطبية..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* SECTION 2: OUR BUSINESS AREAS (IMAGE 2) */}
-                <Card className="bg-[#0b1028] border border-white/10 shadow-xl overflow-hidden">
-                  <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-700 flex items-center justify-center font-bold text-white text-xs">
-                        2
-                      </div>
-                      <div>
-                        <CardTitle className="text-base font-bold text-white">
-                          Section 2: Our Business Areas
-                        </CardTitle>
-                        <p className="text-xs text-white/50">
-                          Sectors and service divisions forming the Projects Innovator group
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleAddBusinessAreaCard}
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Business Area
-                    </Button>
-                  </CardHeader>
-
-                  <CardContent className="p-6 space-y-6">
-                    {/* Main Title */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Main Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <input
-                          type="text"
-                          value={servicesData.businessAreasSection.title.en}
-                          onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
-                              businessAreasSection: {
-                                ...servicesData.businessAreasSection,
-                                title: { ...servicesData.businessAreasSection.title, en: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="e.g. Our Business Areas"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D]"
-                        />
-                      )}
-                      {activeLangTab === 'ar' && (
-                        <input
-                          type="text"
-                          dir="rtl"
-                          value={servicesData.businessAreasSection.title.ar}
-                          onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
-                              businessAreasSection: {
-                                ...servicesData.businessAreasSection,
-                                title: { ...servicesData.businessAreasSection.title, ar: e.target.value },
-                              },
-                            })
-                          }
-                          placeholder="مثال: مجالات أعمالنا"
-                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] text-right"
-                        />
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                      <label className="text-xs font-medium text-white/80 block mb-1">
-                        Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                      </label>
-                      {activeLangTab === 'en' && (
-                        <textarea
-                          rows={3}
                           value={servicesData.businessAreasSection.description.en}
                           onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
-                              businessAreasSection: {
-                                ...servicesData.businessAreasSection,
-                                description: { ...servicesData.businessAreasSection.description, en: e.target.value },
+                            setServicesData((prev) => ({
+                              ...prev,
+                              headerSection: {
+                                ...prev.headerSection,
+                                description: { ...prev.headerSection?.description, en: e.target.value },
                               },
-                            })
+                              businessAreasSection: {
+                                ...prev.businessAreasSection,
+                                description: { ...prev.businessAreasSection.description, en: e.target.value },
+                              },
+                            }))
                           }
-                          placeholder="e.g. Explore the sectors and services that form the Projects Innovator group."
+                          placeholder="e.g. Explore our medical equipment, laboratory supplies, and healthcare solutions."
                           className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none"
                         />
                       )}
@@ -10673,198 +10253,22 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                           dir="rtl"
                           value={servicesData.businessAreasSection.description.ar}
                           onChange={(e) =>
-                            setServicesData({
-                              ...servicesData,
-                              businessAreasSection: {
-                                ...servicesData.businessAreasSection,
-                                description: { ...servicesData.businessAreasSection.description, ar: e.target.value },
+                            setServicesData((prev) => ({
+                              ...prev,
+                              headerSection: {
+                                ...prev.headerSection,
+                                description: { ...prev.headerSection?.description, ar: e.target.value },
                               },
-                            })
+                              businessAreasSection: {
+                                ...prev.businessAreasSection,
+                                description: { ...prev.businessAreasSection.description, ar: e.target.value },
+                              },
+                            }))
                           }
-                          placeholder="مثال: استكشف القطاعات والخدمات التي تشكل مجموعة مبتكر المشاريع."
+                          placeholder="مثال: استكشف معداتنا الطبية ومستلزمات المختبرات والحلول الصحية."
                           className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#F68E2D] resize-none text-right"
                         />
                       )}
-                    </div>
-
-                    {/* Repeating Service Cards */}
-                    <div className="pt-4 border-t border-white/10 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-semibold text-white/80 uppercase tracking-wider flex items-center gap-2">
-                          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                          Service Cards ({servicesData.businessAreasSection.cards.length})
-                        </h4>
-                        <Button
-                          type="button"
-                          onClick={handleAddBusinessAreaCard}
-                          size="sm"
-                          className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md shadow-red-600/20"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Add Service Card
-                        </Button>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {servicesData.businessAreasSection.cards.map((card, aIdx) => (
-                          <div
-                            key={card.id || aIdx}
-                            className="p-5 rounded-2xl bg-white/5 hover:bg-white/[0.08] border border-white/10 space-y-4 relative transition-all flex flex-col justify-between"
-                          >
-                            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                              <span className="text-xs font-bold text-purple-400">
-                                Service #{aIdx + 1}
-                              </span>
-                              {servicesData.businessAreasSection.cards.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveBusinessAreaCard(aIdx)}
-                                  className="text-white/40 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                                  title="Delete service card"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-                            </div>
-
-                            {/* Title */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Title ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <input
-                                  type="text"
-                                  value={card.title.en}
-                                  onChange={(e) => handleBusinessAreaCardChange(aIdx, 'title', 'en', e.target.value)}
-                                  placeholder="e.g. Medical & Laboratory Equipment"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <input
-                                  type="text"
-                                  dir="rtl"
-                                  value={card.title.ar}
-                                  onChange={(e) => handleBusinessAreaCardChange(aIdx, 'title', 'ar', e.target.value)}
-                                  placeholder="مثال: المعدات الطبية والمخبرية"
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Short Description */}
-                            <div>
-                              <label className="text-[11px] text-white/60 block mb-1">
-                                Short Description ({activeLangTab === 'en' ? 'English' : 'Arabic'})
-                              </label>
-                              {activeLangTab === 'en' && (
-                                <textarea
-                                  rows={3}
-                                  value={card.shortDescription?.en || card.description?.en || ''}
-                                  onChange={(e) => handleBusinessAreaCardChange(aIdx, 'shortDescription', 'en', e.target.value)}
-                                  placeholder="e.g. Comprehensive medical device solutions..."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none"
-                                />
-                              )}
-                              {activeLangTab === 'ar' && (
-                                <textarea
-                                  rows={3}
-                                  dir="rtl"
-                                  value={card.shortDescription?.ar || card.description?.ar || ''}
-                                  onChange={(e) => handleBusinessAreaCardChange(aIdx, 'shortDescription', 'ar', e.target.value)}
-                                  placeholder="مثال: حلول شاملة للأجهزة الطبية ومعدات الفحص المخبري."
-                                  className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] resize-none text-right"
-                                />
-                              )}
-                            </div>
-
-                            {/* Multiple Bullet Points with Add Button */}
-                            <div className="space-y-2 pt-2 border-t border-white/10">
-                              <div className="flex items-center justify-between">
-                                <label className="text-[11px] font-semibold text-purple-300 flex items-center gap-1.5">
-                                  <span>Bullet Points</span>
-                                  <span className="text-[10px] text-white/40">
-                                    ({card.bulletPoints?.length || 0})
-                                  </span>
-                                </label>
-                                <Button
-                                  type="button"
-                                  onClick={() => handleAddBusinessAreaBulletPoint(aIdx)}
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 px-2 text-[10px] text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded flex items-center gap-1 cursor-pointer"
-                                >
-                                  <Plus className="w-3 h-3" />
-                                  Add Point
-                                </Button>
-                              </div>
-
-                              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                                {(card.bulletPoints || []).map((bp, bpIdx) => (
-                                  <div key={bp.id || bpIdx} className="flex items-center gap-1.5">
-                                    <span className="text-purple-400 text-xs shrink-0">•</span>
-                                    {activeLangTab === 'en' ? (
-                                      <input
-                                        type="text"
-                                        value={bp.text?.en || ''}
-                                        onChange={(e) =>
-                                          handleBusinessAreaBulletPointChange(aIdx, bpIdx, 'en', e.target.value)
-                                        }
-                                        placeholder={`Bullet point #${bpIdx + 1}`}
-                                        className="w-full px-2 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#F68E2D]"
-                                      />
-                                    ) : (
-                                      <input
-                                        type="text"
-                                        dir="rtl"
-                                        value={bp.text?.ar || ''}
-                                        onChange={(e) =>
-                                          handleBusinessAreaBulletPointChange(aIdx, bpIdx, 'ar', e.target.value)
-                                        }
-                                        placeholder={`نقطة #${bpIdx + 1}`}
-                                        className="w-full px-2 py-1 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/20 focus:outline-none focus:border-[#F68E2D] text-right"
-                                      />
-                                    )}
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveBusinessAreaBulletPoint(aIdx, bpIdx)}
-                                      className="p-1 text-white/30 hover:text-red-400 rounded transition-colors shrink-0 cursor-pointer"
-                                      title="Remove point"
-                                    >
-                                      <X className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-                                ))}
-                                {(!card.bulletPoints || card.bulletPoints.length === 0) && (
-                                  <p className="text-[11px] text-white/30 italic py-1">
-                                    No bullet points yet. Click &quot;Add Point&quot; above.
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Navigation Link URL */}
-                            <div className="pt-2 border-t border-white/5">
-                              <label className="text-[11px] text-white/60 flex items-center justify-between mb-1">
-                                <span>Target Route / URL</span>
-                                <span className="text-[10px] text-amber-400/80 font-normal flex items-center gap-1">
-                                  <Lock className="w-2.5 h-2.5" />
-                                  Fixed Route
-                                </span>
-                              </label>
-                              <input
-                                type="text"
-                                readOnly
-                                disabled
-                                value={card.linkUrl || '/services'}
-                                title="Target URL is fixed by system navigation and cannot be edited"
-                                className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/5 text-white/40 cursor-not-allowed select-none"
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -16730,86 +16134,19 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
               )}
 
 
-              {/* ----------------- SERVICES PREVIEW (MATCHING REFERENCE IMAGES) ----------------- */}
+              {/* ----------------- SERVICES PREVIEW ----------------- */}
               {editingTabId === 'services' && (
-                <div className="space-y-16 max-w-5xl mx-auto">
-                  {/* SECTION 1: OUR SERVICES (IMAGE 1) */}
+                <div className="space-y-10 max-w-5xl mx-auto">
                   <div className="space-y-4">
                     <p className="text-xs text-white/40 tracking-wider">
                       {previewLang === 'ar' ? 'الرئيسية / خدماتنا' : 'Home / Our Services'}
                     </p>
                     <h1 className="text-3xl sm:text-5xl font-black text-white">
-                      {servicesData.headerSection.title[previewLang] || 'Our Services'}
+                      {servicesData.businessAreasSection.title[previewLang] || servicesData.headerSection?.title?.[previewLang] || 'Our Services'}
                     </h1>
                     <p className="text-sm sm:text-base text-white/70 max-w-2xl leading-relaxed">
-                      {servicesData.headerSection.description[previewLang]}
+                      {servicesData.businessAreasSection.description[previewLang] || servicesData.headerSection?.description?.[previewLang]}
                     </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
-                      {servicesData.headerSection.cards.map((card, idx) => (
-                        <div
-                          key={card.id || idx}
-                          className="p-6 sm:p-7 rounded-3xl bg-[#0b1028]/90 border border-white/10 hover:border-red-500/30 transition-all space-y-4 shadow-xl flex flex-col justify-between"
-                        >
-                          <div className="w-10 h-10 rounded-xl bg-red-600/15 border border-red-500/30 text-red-500 flex items-center justify-center">
-                            {renderCustomIcon(card.icon, "w-5 h-5")}
-                          </div>
-                          <div className="space-y-2">
-                            <h3 className="text-base font-bold text-white leading-snug">
-                              {card.title[previewLang]}
-                            </h3>
-                            <p className="text-xs sm:text-sm text-white/60 leading-relaxed">
-                              {card.description[previewLang]}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* SECTION 2: OUR BUSINESS AREAS (IMAGE 2) */}
-                  <div className="space-y-8 pt-10 border-t border-white/10 text-center">
-                    <div className="space-y-2 max-w-2xl mx-auto">
-                      <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
-                        {servicesData.businessAreasSection.title[previewLang] || 'Our Business Areas'}
-                      </h2>
-                      <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
-                        {servicesData.businessAreasSection.description[previewLang]}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-                      {servicesData.businessAreasSection.cards.map((card, idx) => (
-                        <a
-                          key={card.id || idx}
-                          href={card.linkUrl || '#'}
-                          className="p-6 sm:p-7 rounded-3xl bg-[#0b1028]/90 border border-white/10 hover:border-red-500/30 transition-all space-y-4 group relative block cursor-pointer"
-                        >
-                          <div className="flex items-center justify-end">
-                            <ArrowUpRight className="w-4 h-4 text-white/40 group-hover:text-red-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                          </div>
-
-                          <div className="space-y-2">
-                            <h3 className="text-base font-bold text-white group-hover:text-red-400 transition-colors">
-                              {card.title[previewLang]}
-                            </h3>
-                            <p className="text-xs text-white/60 leading-relaxed">
-                              {card.shortDescription?.[previewLang] || card.description[previewLang]}
-                            </p>
-                            {card.bulletPoints && card.bulletPoints.length > 0 && (
-                              <ul className="pt-2 space-y-1.5 border-t border-white/5">
-                                {card.bulletPoints.map((bp, bpI) => (
-                                  <li key={bp.id || bpI} className="text-xs text-white/70 flex items-start gap-1.5">
-                                    <span className="text-purple-400 shrink-0">•</span>
-                                    <span>{bp.text?.[previewLang] || bp.text?.en || ''}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        </a>
-                      ))}
-                    </div>
                   </div>
                 </div>
               )}
