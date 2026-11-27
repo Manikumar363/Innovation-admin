@@ -490,7 +490,15 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
       ...initialCmsProjectsData.headerSection,
       ...(res?.headerSection || {}),
       projects: res?.headerSection?.projects && res.headerSection.projects.length > 0
-        ? res.headerSection.projects
+        ? res.headerSection.projects.map((p: any) => ({
+            id: p.id || `proj-${Date.now()}`,
+            category: p.category || { en: '', ar: '' },
+            title: p.title || { en: '', ar: '' },
+            description: p.description || { en: '', ar: '' },
+            client: typeof p.client === 'string' ? { en: p.client, ar: p.client } : (p.client || { en: '', ar: '' }),
+            image: p.image || '',
+            linkUrl: p.linkUrl || '',
+          }))
         : initialCmsProjectsData.headerSection.projects,
     },
     bannerSection: {
@@ -1334,8 +1342,8 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
     const newProject: ProjectCard = {
       id: `proj-${Date.now()}`,
       category: { en: 'Innovation', ar: 'الابتكار' },
-      status: { en: 'Ongoing', ar: 'قيد التنفيذ' },
-      statusType: 'ongoing',
+      client: { en: '', ar: '' },
+      image: '',
       title: { en: '', ar: '' },
       description: { en: '', ar: '' },
       linkUrl: '',
@@ -1362,27 +1370,18 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
 
   const handleProjectChange = (
     index: number,
-    field: 'category' | 'status' | 'statusType' | 'title' | 'description' | 'linkUrl',
+    field: 'category' | 'client' | 'image' | 'title' | 'description' | 'linkUrl',
     langOrVal: string,
     val?: string
   ) => {
     setProjectsData((prev) => {
       const list = [...(prev.headerSection?.projects || [])];
-      if (field === 'category' || field === 'status' || field === 'title' || field === 'description') {
+      if (field === 'category' || field === 'client' || field === 'title' || field === 'description') {
         list[index] = {
           ...list[index],
           [field]: {
-            ...list[index][field],
+            ...((list[index] as any)[field] || { en: '', ar: '' }),
             [langOrVal as 'en' | 'ar']: val || '',
-          },
-        };
-      } else if (field === 'statusType') {
-        list[index] = {
-          ...list[index],
-          statusType: langOrVal as 'completed' | 'ongoing' | 'planned',
-          status: {
-            en: langOrVal === 'completed' ? 'Completed' : langOrVal === 'planned' ? 'Planned' : 'Ongoing',
-            ar: langOrVal === 'completed' ? 'مكتمل' : langOrVal === 'planned' ? 'مخطط له' : 'قيد التنفيذ',
           },
         };
       } else {
@@ -11424,7 +11423,7 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                             className="bg-[#12162e] border border-white/10 hover:border-white/20 rounded-xl p-5 space-y-4 transition-all shadow-lg flex flex-col justify-between"
                           >
                             <div className="space-y-4">
-                              {/* Card Header with index, status preview, and remove button */}
+                              {/* Card Header with index and remove button */}
                               <div className="flex items-center justify-between pb-3 border-b border-white/5">
                                 <div className="flex items-center gap-2">
                                   <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 border border-purple-500/30 text-purple-400">
@@ -11435,16 +11434,6 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${project.statusType === 'completed'
-                                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                      : project.statusType === 'planned'
-                                        ? 'bg-sky-500/10 border-sky-500/30 text-sky-400'
-                                        : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                                      }`}
-                                  >
-                                    {project.statusType}
-                                  </span>
                                   <button
                                     type="button"
                                     onClick={() => handleRemoveProject(pIdx)}
@@ -11456,45 +11445,69 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                                 </div>
                               </div>
 
-                              {/* Category and Status Type */}
+                              {/* Category and Client */}
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {activeLangTab === 'en' ? (
-                                  <div className="space-y-1">
-                                    <label className="text-[11px] font-semibold text-white/70">🇬🇧 Category Tag</label>
-                                    <input
-                                      type="text"
-                                      value={project.category?.en || ''}
-                                      onChange={(e) => handleProjectChange(pIdx, 'category', 'en', e.target.value)}
-                                      placeholder="e.g. Urban Innovation"
-                                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
-                                    />
-                                  </div>
+                                  <>
+                                    <div className="space-y-1">
+                                      <label className="text-[11px] font-semibold text-white/70">🇬🇧 Category Tag</label>
+                                      <input
+                                        type="text"
+                                        value={project.category?.en || ''}
+                                        onChange={(e) => handleProjectChange(pIdx, 'category', 'en', e.target.value)}
+                                        placeholder="e.g. Urban Innovation"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[11px] font-semibold text-white/70">🇬🇧 Client / Beneficiary</label>
+                                      <input
+                                        type="text"
+                                        value={project.client?.en || ''}
+                                        onChange={(e) => handleProjectChange(pIdx, 'client', 'en', e.target.value)}
+                                        placeholder="e.g. Baghdad Municipality"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D]"
+                                      />
+                                    </div>
+                                  </>
                                 ) : (
-                                  <div className="space-y-1">
-                                    <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 وسم الفئة بالعربية</label>
-                                    <input
-                                      type="text"
-                                      dir="rtl"
-                                      value={project.category?.ar || ''}
-                                      onChange={(e) => handleProjectChange(pIdx, 'category', 'ar', e.target.value)}
-                                      placeholder="مثال: الابتكار الحضري"
-                                      className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
-                                    />
-                                  </div>
+                                  <>
+                                    <div className="space-y-1">
+                                      <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 وسم الفئة بالعربية</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={project.category?.ar || ''}
+                                        onChange={(e) => handleProjectChange(pIdx, 'category', 'ar', e.target.value)}
+                                        placeholder="مثال: الابتكار الحضري"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[11px] font-semibold text-[#F68E2D] block text-right">🇸🇦 الجهة المستفيدة / العميل</label>
+                                      <input
+                                        type="text"
+                                        dir="rtl"
+                                        value={project.client?.ar || ''}
+                                        onChange={(e) => handleProjectChange(pIdx, 'client', 'ar', e.target.value)}
+                                        placeholder="مثال: أمانة بغداد"
+                                        className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/30 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-[#F68E2D] text-right"
+                                      />
+                                    </div>
+                                  </>
                                 )}
+                              </div>
 
-                                <div className="space-y-1">
-                                  <label className="text-[11px] font-semibold text-white/70">Status Lifecycle</label>
-                                  <select
-                                    value={project.statusType || 'ongoing'}
-                                    onChange={(e) => handleProjectChange(pIdx, 'statusType', e.target.value)}
-                                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#F68E2D]"
-                                  >
-                                    <option value="completed" className="bg-[#12162e] text-white">Completed (مكتمل)</option>
-                                    <option value="ongoing" className="bg-[#12162e] text-white">Ongoing (قيد التنفيذ)</option>
-                                    <option value="planned" className="bg-[#12162e] text-white">Planned (مخطط له)</option>
-                                  </select>
-                                </div>
+                              {/* Project Image */}
+                              <div className="space-y-1">
+                                <ImageUploadField
+                                  label="Project Image"
+                                  compact
+                                  folder="projects"
+                                  value={project.image || ''}
+                                  onChange={(url) => handleProjectChange(pIdx, 'image', url)}
+                                  placeholder="Project cover image URL or upload from device"
+                                />
                               </div>
 
                               {/* Title */}
@@ -16960,45 +16973,45 @@ export const CmsHomePage: React.FC<CmsHomePageProps> = ({ role = 'admin' }) => {
                               displayedProjects.map((project, idx) => (
                                 <div
                                   key={project.id || idx}
-                                  className="rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all p-6 flex flex-col justify-between shadow-2xl group min-h-[200px]"
+                                  className="rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all overflow-hidden flex flex-col justify-between shadow-2xl group min-h-[220px]"
                                 >
                                   <div>
-                                    {/* Card Top Row: Category in Red, Status Badge in Pill on Right */}
-                                    <div className="flex items-center justify-between gap-2 mb-3">
-                                      <span className="text-xs font-semibold text-red-500 tracking-wider">
-                                        {project.category[previewLang]}
-                                      </span>
-                                      <span
-                                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
-                                          project.statusType === 'completed'
-                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                                            : project.statusType === 'planned'
-                                              ? 'bg-sky-500/10 border-sky-500/30 text-sky-400'
-                                              : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                                        }`}
-                                      >
-                                        {project.status[previewLang] ||
-                                          (project.statusType === 'completed'
-                                            ? 'Completed'
-                                            : project.statusType === 'planned'
-                                              ? 'Planned'
-                                              : 'Ongoing')}
-                                      </span>
+                                    {project.image && (
+                                      <div className="w-full h-36 overflow-hidden relative border-b border-white/10">
+                                        <img
+                                          src={project.image}
+                                          alt={project.title?.[previewLang] || 'Project'}
+                                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                      </div>
+                                    )}
+                                    <div className="p-6">
+                                      {/* Card Top Row: Category in Red, Client Badge on Right */}
+                                      <div className="flex items-center justify-between gap-2 mb-3">
+                                        <span className="text-xs font-semibold text-red-500 tracking-wider">
+                                          {project.category[previewLang]}
+                                        </span>
+                                        {project.client?.[previewLang] && (
+                                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/5 border border-white/15 text-white/80">
+                                            {project.client[previewLang]}
+                                          </span>
+                                        )}
+                                      </div>
+
+                                      {/* Project Title */}
+                                      <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors mb-2">
+                                        {project.title[previewLang]}
+                                      </h3>
+
+                                      {/* Project Description */}
+                                      <p className="text-xs text-white/60 leading-relaxed">
+                                        {project.description[previewLang]}
+                                      </p>
                                     </div>
-
-                                    {/* Project Title */}
-                                    <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors mb-2">
-                                      {project.title[previewLang]}
-                                    </h3>
-
-                                    {/* Project Description */}
-                                    <p className="text-xs text-white/60 leading-relaxed">
-                                      {project.description[previewLang]}
-                                    </p>
                                   </div>
 
                                   {project.linkUrl && (
-                                    <div className="pt-4 mt-2 flex items-center justify-end">
+                                    <div className="px-6 pb-6 pt-0 flex items-center justify-end">
                                       <span className="text-[11px] text-white/40 group-hover:text-red-400 flex items-center gap-1 transition-colors">
                                         Explore <ArrowUpRight className="w-3.5 h-3.5" />
                                       </span>
